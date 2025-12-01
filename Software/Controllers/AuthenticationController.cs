@@ -129,6 +129,7 @@ namespace Momayezi.Controllers
             }
             #endregion
 
+
             #region اطلاعات ردیس و کوکی
             // افزودن لاگ برای لاگین موفق
             await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, User?.FullName, User?.Id, true, $"کاربر {User.FullName} وارد شد.");
