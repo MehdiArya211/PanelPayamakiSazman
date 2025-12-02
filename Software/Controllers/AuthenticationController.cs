@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.CookieServices;
 using Services.RedisService;
 using Services.SessionServices;
+using System.Net.Http.Headers;
 using System.Reflection;
 using Utilities.Extentions;
 
@@ -160,14 +161,56 @@ namespace Momayezi.Controllers
 
 
         #region خروج از حساب کاربری - logout
-        public ActionResult Logout()
+        public async Task<ActionResult> Logout()
         {
             var user = Session.GetUser();
-            _ = Redis.db.SetLoginLog(Redis.ContextAccessor,FajrActionType.logOut, user.Username, user.FullName, user.Id, true, $"کاربر {user.FullName} خارج شد.", true).Result;
-            Session.RemoveUser();
-            HttpContext.Response.Cookies.Delete("_Session.cookie");
-            return RedirectToAction("index");
+
+            if (user != null)
+            {
+                // 1) فراخوانی وب‌سرویس logout
+                try
+                {
+                    using var client = new HttpClient();
+
+                    var request = new HttpRequestMessage(HttpMethod.Post,
+                        "http://87.107.111.44:8010/api/auth/logout");
+
+                    // 🔹 استفاده از AccessToken کاربر جاری
+                    request.Headers.Authorization =
+                        new AuthenticationHeaderValue("Bearer", user.AccessToken);
+
+                    using var response = await client.SendAsync(request);
+
+                    // (اختیاری) اگر لازم داری خروجی سرویس را بخوانی:
+                    // var content = await response.Content.ReadAsStringAsync();
+                }
+                catch (Exception ex)
+                {
+                    // لاگ خطا در صورت نیاز
+                }
+
+                // 2) ثبت لاگ خروج
+                _ = Redis.db.SetLoginLog(
+                    Redis.ContextAccessor,
+                    FajrActionType.logOut,
+                    user.Username,
+                    user.FullName,
+                    user.Id,
+                    true,
+                    $"کاربر {user.FullName} خارج شد.",
+                    true
+                ).Result;
+
+                // 3) حذف سشن
+                Session.RemoveUser();
+
+                // 4) حذف کوکی
+                HttpContext.Response.Cookies.Delete("_Session.cookie");
+            }
+
+            return RedirectToAction("Index");
         }
+
         #endregion
 
 
