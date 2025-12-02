@@ -1,0 +1,79 @@
+﻿@model DTO.User.UserEditDTO
+@using DTO.Base
+
+<div class="modal-header">
+    <h5 class="modal-title">ویرایش کاربر</h5>
+
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+    <div class="alert alert-info py-2 text-center small">
+        پرکردن فیلدهای ستاره‌دار الزامی است.
+    </div>
+
+    <form asp-action="Edit" class="edit-form" onsubmit="return user.edit.save(event)">
+
+        <input asp-for="Id" type="hidden" />
+        <input type="hidden" name="OldRoleId" value="@Model.RoleId" />
+        <input type="hidden" name="OldType" value="@Model.Type" />
+
+        <div class="text-danger text-center mb-2">@ViewBag.Error</div>
+
+        <div class="row g-3">
+
+            <!-- نام کاربری -->
+            <div class="col-md-4">
+                <label asp-for="Username" class="form-label required"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نام کامل -->
+            <div class="col-md-4">
+                <label asp-for="Name" class="form-label required"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- موبایل -->
+            <div class="col-md-4">
+                <label asp-for="Mobile" class="form-label required"></label>
+                <input asp-for="Mobile" class="form-control" style="direction:ltr;text-align:right" placeholder="09*********" />
+                <span asp-validation-for="Mobile" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نقش -->
+            <div class="col-md-4">
+                <label asp-for="RoleId" class="form-label required"></label>
+                <select asp-for="RoleId" class="form-select" asp-items="ViewBag.RoleId"></select>
+                <span asp-validation-for="RoleId" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نوع کاربر -->
+            <div class="col-md-4">
+                <label asp-for="Type" class="form-label required"></label>
+                <select asp-for="Type" class="form-select" asp-items="ViewBag.UserType"></select>
+                <span asp-validation-for="Type" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- فعال / غیرفعال -->
+            <div class="col-md-4 d-flex align-items-end">
+                <div class="form-check form-switch">
+                    <input asp-for="IsEnabled" class="form-check-input" />
+                    <label class="form-check-label">فعال باشد</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-save"></i>
+                ذخیره اطلاعات
+            </button>
+        </div>
+
+    </form>
+</div>

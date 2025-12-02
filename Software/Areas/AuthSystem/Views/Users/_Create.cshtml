@@ -1,0 +1,135 @@
+﻿@model DTO.User.UserCreateDTO
+
+<style>
+    /* ========= Modal New Style ========= */
+    .modal-content {
+        border-radius: 16px !important;
+        border: none !important;
+        padding-top: 10px;
+        box-shadow: 0 0 30px rgba(0,0,0,.12);
+    }
+
+    .form-control-custom {
+        border-radius: 10px !important;
+        border: 1px solid #d0d7de !important;
+        padding: 8px 12px !important;
+        transition: .2s;
+    }
+
+        .form-control-custom:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(13,110,253,.18) !important;
+        }
+
+    .form-label.required::after {
+        content: " *";
+        color: red;
+    }
+
+    .btn-save {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 10px 25px;
+    }
+
+        .btn-save i {
+            margin-left: 6px;
+        }
+
+    /* دارک مود */
+    body.dark .modal-content {
+        background: #1f1f1f;
+        color: #e5e5e5;
+        border: 1px solid #333 !important;
+    }
+
+    body.dark .form-control-custom {
+        background: #2a2a2a;
+        color: #eee;
+        border-color: #444 !important;
+    }
+</style>
+
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-person-plus text-primary"></i> افزودن کاربر جدید
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+
+<div class="modal-body px-4">
+
+    <p class="text-muted small text-center mb-3">
+        لطفاً تمام فیلدهای ستاره‌دار را تکمیل کنید.
+    </p>
+
+    <!-- جای پیام خطای AJAX -->
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-action="Create" class="create-form" onsubmit="return user.create.save(event)">
+
+        <div class="row g-3">
+
+            <!-- Username -->
+            <div class="col-md-4">
+                <label asp-for="Username" class="form-label required"></label>
+                <input asp-for="Username" class="form-control form-control-custom" />
+                <span asp-validation-for="Username" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- Name -->
+            <div class="col-md-4">
+                <label asp-for="Name" class="form-label required"></label>
+                <input asp-for="Name" class="form-control form-control-custom" />
+                <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- Mobile -->
+            <div class="col-md-4">
+                <label asp-for="Mobile" class="form-label required"></label>
+                <input asp-for="Mobile" class="form-control form-control-custom"
+                       placeholder="09*********" style="direction:ltr;text-align:right" />
+                <span asp-validation-for="Mobile" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="col-md-4">
+                <label asp-for="Password" class="form-label required"></label>
+                <input asp-for="Password" type="password" class="form-control form-control-custom" />
+                <span asp-validation-for="Password" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- RePassword -->
+            <div class="col-md-4">
+                <label asp-for="RePassword" class="form-label required"></label>
+                <input asp-for="RePassword" type="password" class="form-control form-control-custom" />
+                <span asp-validation-for="RePassword" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- Role -->
+            <div class="col-md-4">
+                <label asp-for="RoleId" class="form-label required"></label>
+                <select asp-for="RoleId" class="form-select form-control-custom" asp-items="ViewBag.RoleId"></select>
+                <span asp-validation-for="RoleId" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- Type -->
+            <div class="col-md-4">
+                <label asp-for="Type" class="form-label required"></label>
+                <select asp-for="Type" class="form-select form-control-custom" asp-items="ViewBag.UserType"></select>
+                <span asp-validation-for="Type" class="text-danger small d-block mt-1"></span>
+            </div>
+
+        </div>
+
+        <!-- Submit -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4 btn-save">
+                <i class="bi bi-check-circle"></i> ذخیره اطلاعات
+            </button>
+        </div>
+
+    </form>
+</div>

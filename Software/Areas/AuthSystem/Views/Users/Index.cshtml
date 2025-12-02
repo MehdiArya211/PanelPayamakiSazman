@@ -1,0 +1,347 @@
+﻿@model IEnumerable<DTO.User.UserDataTableDTO>
+@using Services.SessionServices
+
+@{
+    ViewData["Title"] = "لیست کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var Admin = Context.Session.GetUser();
+}
+
+<div class="container-fluid">
+
+    <!-- ========= Header ========= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">مدیریت کاربران</h4>
+
+        <button class="btn btn-success px-3 shadow-sm" onclick="user.create.loadForm()">
+            <i class="bi bi-person-plus"></i> افزودن کاربر جدید
+        </button>
+    </div>
+
+
+    <!-- ========= Filters ========= -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light fw-bold">
+            فیلترهای جستجو
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <label class="form-label">نام کاربر</label>
+                    <input id="FilterName" class="form-control" placeholder="مثال: علی رضایی" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">نام کاربری</label>
+                    <input id="FilterUsername" class="form-control" placeholder="username" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">شماره موبایل</label>
+                    <input id="FilterMobile" class="form-control" placeholder="0912..." />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">نقش کاربر</label>
+                    <select id="FilterRoleId" class="form-select" asp-items="ViewBag.Roles">
+                        <option value="">همه نقش‌ها</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">از تاریخ</label>
+                    <div id="VueStartDate">
+                        <date-picker v-model="date"
+                                     type="date"
+                                     auto-submit="true"
+                                     input-class="form-control"
+                                     alt-format="YYYY-MM-DD HH:mm:ss"
+                                     alt-name="FilterStartDate"></date-picker>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">تا تاریخ</label>
+                    <div id="VueEndDate">
+                        <date-picker v-model="date"
+                                     type="date"
+                                     auto-submit="true"
+                                     input-class="form-control"
+                                     alt-format="YYYY-MM-DD HH:mm:ss"
+                                     alt-name="FilterEndDate"></date-picker>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">وضعیت</label>
+                    <select id="FilterIsEnabled" class="form-select">
+                        <option value="">همه</option>
+                        <option value="True">فعال</option>
+                        <option value="False">غیرفعال</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 text-end mt-3">
+                    <button class="btn btn-primary px-4 shadow-sm" onclick="user.list.reload()">
+                        <i class="bi bi-search"></i> جستجو
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ========= DataTable ========= -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+            لیست کاربران سیستم
+        </div>
+
+        <div class="card-body">
+
+            <table id="datatables" class="table table-hover text-center align-middle" style="width:100%">
+                <thead class="fw-bold">
+                    <tr>
+                        <th>شناسه</th>
+                        <th>نام کامل</th>
+                        <th>نام کاربری</th>
+                        <th>موبایل</th>
+                        <th>نقش</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <!-- ========= Modal ========= -->
+    <div class="modal fade" id="base-modal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" id="modal-form"></div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+@section Scripts {
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="~/assets/js/jquery.datatables.js"></script>
+
+    <script src="~/assets/selectize/selectize.min.js"></script>
+
+    <script src="~/assets/VuePersianDateTimePicker/vue.min.js"></script>
+    <script src="~/assets/VuePersianDateTimePicker/moment/moment.min.js"></script>
+    <script src="~/assets/VuePersianDateTimePicker/moment/moment-jalaali.js"></script>
+    <script src="~/assets/VuePersianDateTimePicker/dist/vue-persian-datetime-picker-browser.js"></script>
+
+    <script src="~/Areas/AuthSystem/js/User.js" asp-append-version="true"></script>
+
+}
+
+
+
+@section Styles {
+    <link href="~/assets/selectize/selectize.bootstrap3.css" rel="stylesheet" />
+
+    <style>
+
+        /* ===============================
+                   MODERN MINIMAL DATATABLE STYLE
+                   =============================== */
+
+        #datatables {
+            border-radius: 14px !important;
+            overflow: hidden;
+            background: var(--bg-sidebar);
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+            #datatables thead th {
+                background: var(--bg-sidebar);
+                color: var(--text-main);
+                border-bottom: 1px solid rgba(0,0,0,0.12);
+                padding: 12px 10px;
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+            #datatables tbody tr {
+                transition: .2s;
+                border-bottom: 1px solid rgba(0,0,0,.05);
+            }
+
+                #datatables tbody tr:hover {
+                    background: rgba(13,110,253, .06) !important;
+                }
+
+            #datatables tbody td {
+                padding: 10px 6px !important;
+            }
+
+
+        /* ========= Pagination Minimal ========= */
+
+        .dataTables_paginate {
+            margin-top: 20px !important;
+        }
+
+            .dataTables_paginate .pagination {
+                justify-content: center !important;
+                gap: 5px;
+            }
+
+        .page-link {
+            border-radius: 8px !important;
+            border: none !important;
+            font-size: 12px;
+            padding: 5px 10px;
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            transition: 0.2s ease;
+        }
+
+            .page-link:hover {
+                background: var(--primary-soft);
+                color: var(--primary);
+            }
+
+        .page-item.active .page-link {
+            background: var(--primary) !important;
+            color: #fff !important;
+        }
+
+        /* دکمه‌های قبلی و بعدی */
+        .page-item.previous .page-link,
+        .page-item.next .page-link {
+            border-radius: 30px !important;
+            padding: 5px 16px !important;
+            background: var(--primary);
+            color: #fff !important;
+            font-size: 14px;
+        }
+
+            .page-item.previous .page-link::before {
+                content: "◀";
+            }
+
+            .page-item.next .page-link::before {
+                content: "▶";
+            }
+
+        .page-item.previous span,
+        .page-item.next span {
+            display: none !important;
+        }
+
+
+        /* ========= Search Input ========= */
+
+        .dataTables_filter input {
+            border-radius: 30px;
+            border: 1px solid rgba(0,0,0,0.15);
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+            .dataTables_filter input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px rgba(13,110,253,.15);
+            }
+
+
+        /* ========= Dark Mode ========= */
+        body.dark #datatables {
+            border-color: #333;
+        }
+
+            body.dark #datatables thead th {
+                background: #1e1e1e;
+                border-bottom-color: #333;
+            }
+
+            body.dark #datatables tbody tr {
+                border-bottom-color: #262626;
+            }
+
+        body.dark .page-link {
+            background: #222 !important;
+            color: #bbb !important;
+        }
+
+            body.dark .page-link:hover {
+                background: #333 !important;
+                color: #fff !important;
+            }
+
+        body.dark .page-item.active .page-link {
+            background: var(--primary) !important;
+        }
+
+        body.dark .dataTables_filter input {
+            background: #1e1e1e;
+            border-color: #444;
+            color: #eee;
+        }
+        /* ========= ACTION BUTTONS (Icons) ========= */
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 3px;
+            color: white;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+            .action-btn i {
+                font-size: 16px;
+            }
+
+            .action-btn.edit {
+                background: #0d6efd;
+            }
+
+            .action-btn.delete {
+                background: #dc3545;
+            }
+
+            .action-btn.edit:hover {
+                background: #0b5ed7;
+                transform: translateY(-2px);
+            }
+
+            .action-btn.delete:hover {
+                background: #bb2d3b;
+                transform: translateY(-2px);
+            }
+
+        /* دارک مود */
+        body.dark .action-btn.edit {
+            background: #1f6feb;
+        }
+
+        body.dark .action-btn.delete {
+            background: #c0392b;
+        }
+
+    </style>
+}

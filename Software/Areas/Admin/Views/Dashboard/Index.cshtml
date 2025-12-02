@@ -1,0 +1,246 @@
+﻿@model Domain.Entities.UserLog
+@using Services.SessionServices
+@using Domain.Resources
+@using Utilities.Extentions
+
+@{
+    ViewData["Title"] = "داشبورد";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var User = Context.Session.GetUser();
+
+    // --- این مقادیر را بعداً از دیتابیس پر کن ---
+    int TotalSms = ViewBag.TotalSms ?? 1200;
+    int SuccessSms = ViewBag.SuccessSms ?? 980;
+    int FailedSms = ViewBag.FailedSms ?? 220;
+
+    int TodaySent = ViewBag.TodaySent ?? 135;
+    int TodayFailed = ViewBag.TodayFailed ?? 22;
+    int TodayQueued = ViewBag.TodayQueued ?? 18;
+}
+
+<div class="container">
+
+    <!-- ===== عنوان ===== -->
+    <div class="text-center mb-4">
+        <h3>
+            به سامانه <b class="text-primary">@Config.SiteNameFa</b> خوش آمدید
+        </h3>
+    </div>
+
+
+    <!-- ********************** کارت‌های آماری ********************** -->
+    <div class="row g-4 mb-4">
+
+        <!-- کل پیامک‌ها -->
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 rounded-4 p-3 text-white"
+                 style="background: linear-gradient(135deg,#005bea,#00c6fb);">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>کل پیامک‌ها</h6>
+                        <h2 class="fw-bold">@TotalSms</h2>
+                    </div>
+                    <div class="display-4 opacity-50">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- پیامک موفق -->
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 rounded-4 p-3 text-white"
+                 style="background: linear-gradient(135deg,#1e9600,#26a0da,#00c9fd);">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>موفق</h6>
+                        <h2 class="fw-bold">@SuccessSms</h2>
+                    </div>
+                    <div class="display-4 opacity-50">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- پیامک ناموفق -->
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 rounded-4 p-3 text-white"
+                 style="background: linear-gradient(135deg,#ff512f,#dd2476);">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>ناموفق</h6>
+                        <h2 class="fw-bold">@FailedSms</h2>
+                    </div>
+                    <div class="display-4 opacity-50">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- **************************************************************** -->
+    <!-- ********************** نمودارهای حرفه‌ای ************************ -->
+    <!-- **************************************************************** -->
+
+    <div class="row g-4">
+
+        <!-- نمودار خطی -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header fw-bold">آمار پیامک‌ها (۳۰ روز اخیر)</div>
+                <div class="card-body">
+                    <canvas id="chart30Days" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- نمودار میله‌ای -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header fw-bold">آمار امروز</div>
+                <div class="card-body">
+                    <canvas id="chartToday" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- نمودار دونات -->
+        <div class="col-lg-6 mx-auto">
+            <div class="card shadow-lg rounded-4 mt-4">
+                <div class="card-header fw-bold">درصد موفق / ناموفق</div>
+                <div class="card-body text-center">
+                    <canvas id="chartRatio" height="230"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<!-- ************** Modal خوش آمد ************** -->
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">پیام سامانه</h5>
+                <button type="button" class="btn-close" onclick="closeWelcomeModal()"></button>
+            </div>
+
+            <div class="modal-body">
+
+                @if (Model != null)
+                {
+                    <div class="alert alert-info d-flex gap-3">
+                        <i class="bi bi-clock-history fs-3"></i>
+                        <div>
+                            آخرین ورود:
+                            <b>@Model.CreateDate.ToPersianDateTime().ToLongDateString()</b>
+                            ساعت
+                            <b>@Model.CreateDate.ToPersianDateTime().ToLongTimeString()</b>
+                            <br />
+                            آی‌پی:
+                            <b>@Model.UserIp</b>
+                        </div>
+                    </div>
+                }
+
+                <div class="border rounded p-3 bg-light">
+                    <h6 class="fw-bold"><i class="bi bi-exclamation-triangle text-warning"></i> توجه!</h6>
+
+                    <ul class="small text-muted mb-0">
+                        <li>تمام فعالیت‌های شما در سامانه ثبت و قابل پیگیری است.</li>
+                        <li>در حفظ امنیت حساب کاربری خود کوشا باشید.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary px-4" onclick="closeWelcomeModal()">متوجه شدم</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+
+    <!-- Modal -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let showModal = localStorage.getItem("showDashboardModal");
+            if (showModal !== "false") {
+                new bootstrap.Modal("#welcomeModal").show();
+            }
+        });
+
+        function closeWelcomeModal() {
+            localStorage.setItem("showDashboardModal", "false");
+            bootstrap.Modal.getInstance(document.getElementById("welcomeModal")).hide();
+        }
+    </script>
+
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        /* =================== LINE CHART (30 days) =================== */
+        new Chart(document.getElementById('chart30Days'), {
+            type: 'line',
+            data: {
+                labels: ["۳۰","۲۹","۲۸","۲۷","۲۶","۲۵","۲۴","۲۳","۲۲","۲۱"],
+                datasets: [{
+                    label: 'پیام‌ها',
+                    data: [50, 40, 65, 38, 70, 52, 80, 60, 95, 120],
+                    borderWidth: 3,
+                    tension: .4
+                }]
+            }
+        });
+
+
+        /* =================== BAR CHART (Today) =================== */
+        new Chart(document.getElementById('chartToday'), {
+            type: 'bar',
+            data: {
+                labels: ["ارسالی", "ناموفق", "در صف"],
+                datasets: [{
+                    label: "تعداد",
+                    data: [@TodaySent, @TodayFailed, @TodayQueued],
+                    borderWidth: 2
+                }]
+            }
+        });
+
+
+        /* =================== DOUGHNUT (Success/Fail) =================== */
+        new Chart(document.getElementById('chartRatio'), {
+            type: 'doughnut',
+            data: {
+                labels: ["موفق", "ناموفق"],
+                datasets: [{
+                    data: [@SuccessSms, @FailedSms],
+                }]
+            }
+        });
+
+    </script>
+
+}
