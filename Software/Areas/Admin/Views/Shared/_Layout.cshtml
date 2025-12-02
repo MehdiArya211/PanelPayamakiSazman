@@ -6,6 +6,7 @@
     var User = Context.Session.GetUser();
     var Menus = User?.Menus ?? new List<MenuSessionDTO>();
 
+    string currentArea = ViewContext.RouteData.Values["Area"]?.ToString()?.ToLower() ?? "";
     string currentController = ViewContext.RouteData.Values["Controller"]?.ToString()?.ToLower() ?? "";
     string currentAction = ViewContext.RouteData.Values["Action"]?.ToString()?.ToLower() ?? "";
 
@@ -25,7 +26,7 @@
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- DataTables -->
+    <!-- DataTables Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
     <!-- TomSelect -->
@@ -80,26 +81,20 @@
 
         /* Desktop */
         @@media (min-width: 769px) {
-            .sidebar
-
-        {
-            transform: translateX(0);
-        }
-
+            .sidebar {
+                transform: translateX(0);
+            }
         }
 
         /* Mobile */
         @@media (max-width: 768px) {
-            .sidebar
+            .sidebar {
+                transform: translateX(100%);
+            }
 
-        {
-            transform: translateX(100%);
-        }
-
-        .sidebar.show {
-            transform: translateX(0);
-        }
-
+                .sidebar.show {
+                    transform: translateX(0);
+                }
         }
 
         .sidebar-link {
@@ -143,6 +138,27 @@
                     color: #fff;
                 }
 
+        .sidebar-group-title {
+            font-size: .75rem;
+            letter-spacing: .03em;
+        }
+
+        /* Backdrop for mobile */
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.35);
+            z-index: 1030;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .25s ease, visibility .25s ease;
+        }
+
+            .sidebar-backdrop.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
         /* ================= MAIN CONTENT ================= */
         .main-content {
             margin-right: 250px;
@@ -151,12 +167,9 @@
         }
 
         @@media (max-width: 768px) {
-            .main-content
-
-        {
-            margin-right: 0;
-        }
-
+            .main-content {
+                margin-right: 0;
+            }
         }
 
         .navbar {
@@ -200,7 +213,6 @@
                 box-shadow: 0 3px 10px rgba(13,110,253,.25);
             }
 
-            /* Circles for prev / next */
             .dataTables_wrapper .dataTables_paginate .page-item.previous .page-link,
             .dataTables_wrapper .dataTables_paginate .page-item.next .page-link {
                 border-radius: 50% !important;
@@ -228,6 +240,13 @@
             .dataTables_wrapper .dataTables_paginate .page-item.next span {
                 display: none !important;
             }
+
+        /* جدول‌ها وسط‌چین */
+        table.dataTable td,
+        table.dataTable th {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
     </style>
 
     @RenderSection("Styles", required: false)
@@ -253,17 +272,17 @@
             </div>
 
             <div class="collapse mt-3" id="profileMenu">
-                <a class="sidebar-link @(currentController == "profile" && currentAction == "edit" ? "active" : "")"
+                <a class="sidebar-link @(currentArea == "admin" && currentController == "profile" && currentAction == "edit" ? "active" : "")"
                    asp-area="Admin" asp-controller="Profile" asp-action="Edit">
                     <i class="bi bi-person"></i> ویرایش پروفایل
                 </a>
 
-                <a class="sidebar-link @(currentController == "profile" && currentAction == "changepassword" ? "active" : "")"
+                <a class="sidebar-link @(currentArea == "admin" && currentController == "profile" && currentAction == "changepassword" ? "active" : "")"
                    asp-area="Admin" asp-controller="Profile" asp-action="ChangePassword">
                     <i class="bi bi-key"></i> تغییر رمز عبور
                 </a>
 
-                <a class="sidebar-link @(currentController == "profile" && currentAction == "loginlog" ? "active" : "")"
+                <a class="sidebar-link @(currentArea == "admin" && currentController == "profile" && currentAction == "loginlog" ? "active" : "")"
                    asp-area="Admin" asp-controller="Profile" asp-action="LoginLog">
                     <i class="bi bi-clock-history"></i> لاگ ورود
                 </a>
@@ -279,52 +298,84 @@
 
             @foreach (var menu in Menus.Where(m => m.ParentId == null && m.ShowInMenu).OrderBy(m => m.Order))
             {
-                var childs = Menus.Where(m => m.ParentId == menu.Id && m.ShowInMenu).OrderBy(m => m.Order).ToList();
+                var childs = Menus
+                .Where(m => m.ParentId == menu.Id && m.ShowInMenu)
+                .OrderBy(m => m.Order)
+                .ToList();
+
                 bool hasChildren = childs.Any();
-                bool isActiveParent = (menu.Controller?.ToLower() == currentController);
+
+                // آیا یکی از بچه‌ها فعال است؟
+                bool hasActiveChild = childs.Any(child =>
+                (child.Area ?? "").ToLower() == currentArea &&
+                (child.Controller ?? "").ToLower() == currentController &&
+                (child.Action ?? "").ToLower() == currentAction
+                );
+
+                bool isActiveParent =
+                (menu.Area ?? "").ToLower() == currentArea &&
+                (menu.Controller ?? "").ToLower() == currentController &&
+                (string.IsNullOrEmpty(menu.Action) || (menu.Action ?? "").ToLower() == currentAction || hasActiveChild);
+
                 string collapseId = $"menu_{menu.Id}";
 
                 <li class="mb-1">
+
                     @if (hasChildren && !menu.HasLink)
                     {
-                        <button class="sidebar-link accordion-button collapsed w-100 text-start"
-                                data-bs-toggle="collapse" data-bs-target="#@collapseId">
+                        <button class="sidebar-link accordion-button w-100 text-start @(hasActiveChild ? "" : "collapsed")"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#@collapseId"
+                                aria-expanded="@(hasActiveChild.ToString().ToLower())"
+                                aria-controls="@collapseId">
                             <i class="@menu.Icon"></i> @menu.Title
                         </button>
                     }
                     else
                     {
                         <a class="sidebar-link @(isActiveParent ? "active" : "")"
-                           href="@Url.Action(menu.Action, menu.Controller, menu.Params)">
-                            <i class="@menu.Icon"></i> @menu.Title
-                        </a>
-                    }
+                           href="@Url.Action(menu.Action,
+                                                                        menu.Controller,
+                                                                        new { area = menu.Area })">
+                    <i class="@menu.Icon"></i> @menu.Title
+                </a>
+                                }
 
                     @if (hasChildren)
                     {
-                        <div id="@collapseId" class="accordion-collapse collapse">
+                        <div id="@collapseId"
+                             class="accordion-collapse collapse @(hasActiveChild ? "show" : "")"
+                             data-bs-parent="#mainMenu">
+
                             <div class="submenu accordion-body">
                                 @foreach (var child in childs)
                                 {
                                     bool isChildActive =
-                                    child.Controller?.ToLower() == currentController &&
-                                    child.Action?.ToLower() == currentAction;
+                                    (child.Area ?? "").ToLower() == currentArea &&
+                                    (child.Controller ?? "").ToLower() == currentController &&
+                                    (child.Action ?? "").ToLower() == currentAction;
 
                                     <a class="@(isChildActive ? "active" : "")"
-                                       href="@Url.Action(child.Action, child.Controller, child.Params)">
-                                        <i class="@child.Icon"></i> @child.Title
-                                    </a>
-                                }
+                                       href="@Url.Action(child.Action,
+                                                                                                child.Controller,
+                                                                                                new { area = child.Area })">
+                            <i class="@child.Icon"></i> @child.Title
+                        </a>
+                                                }
                             </div>
+
                         </div>
                     }
+
                 </li>
             }
 
             <div class="sidebar-group-title px-2 text-muted mt-4 small">سامانه</div>
 
             <li>
-                <a class="sidebar-link" asp-area="Admin" asp-controller="Dashboard" asp-action="ClearCache">
+                <a class="sidebar-link @(currentArea == "admin" && currentController == "dashboard" && currentAction == "clearcache" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Dashboard" asp-action="ClearCache">
                     <i class="bi bi-arrow-repeat"></i> پاک‌سازی کش
                 </a>
             </li>
@@ -369,19 +420,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- DataTables -->
+    <!-- DataTables (jQuery wrapper + Bootstrap 5 integration) -->
     <script src="~/assets/js/jquery.datatables.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         // ======= FIX PAGINATION RENDERER =======
         $.extend(true, $.fn.dataTable.defaults, {
             renderer: 'bootstrap'
         });
     </script>
-
-    <link rel="stylesheet"
-          href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
 
     <!-- Tom Select -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>

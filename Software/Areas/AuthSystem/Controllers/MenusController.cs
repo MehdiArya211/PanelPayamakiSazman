@@ -49,7 +49,7 @@ namespace Momayezi.Areas.AuthSystem.Controllers
         /// <param name="ParentId">شناسه والد</param>
         /// <param name="ParentName">عنوان والد</param>
         /// <returns></returns>
-        public IActionResult LoadCreateForm(long? ParentId, string ParentName)
+        public IActionResult LoadCreateForm0(long? ParentId, string ParentName)
         {
             var model = new Menu
             {
@@ -59,6 +59,28 @@ namespace Momayezi.Areas.AuthSystem.Controllers
             ViewBag.ParentName = ParentName;
             return PartialView("_Create", model);
         }
+
+        public IActionResult LoadCreateForm(long? ParentId)
+        {
+            var model = new Menu
+            {
+                ParentId = ParentId
+            };
+
+            // گرفتن نام والد فقط وقتی ParentId وجود دارد
+            if (ParentId.HasValue && ParentId.Value > 0)
+            {
+                var parent = menuManager.GetById(ParentId);
+                ViewBag.ParentName = parent?.Title ?? "";
+            }
+            else
+            {
+                ViewBag.ParentName = "";
+            }
+
+            return PartialView("_Create", model);
+        }
+
 
 
         /// <summary>

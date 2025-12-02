@@ -1,36 +1,40 @@
-﻿//breadcrumb
+﻿// ===============================
+//  Breadcrumb (در صورت نیاز)
+// ===============================
 var breadcrumb = [];
 breadcrumb.push({ title: "پنل ادمین", link: "/AuthSystem/Dashboard" });
 breadcrumb.push({ title: "منو‌ ها", link: "#" });
 
 
-// عملیات مربوط به مدیریت منوها
+// ===============================
+//  عملیات مربوط به مدیریت منوها
+// ===============================
 var menu = {
-    // منو انتخاب شده
+
+    // منوی انتخاب شده در درخت
     selectedItem: null,
 
 
     // رفرش کردن لیست منو ها
     refreshList: function () {
-        $.get("/AuthSystem/" + controller + "/GetAll",
-            function (data) {
-                menu.treeView.initial(data);
-            });
+        $.get("/AuthSystem/" + controller + "/GetAll", function (data) {
+            menu.treeView.initial(data);
+        });
     },
-    
 
 
-    // تری ویو
+    // ===============================
+    //  TreeView
+    // ===============================
     treeView: {
 
         // راه اندازی تری ویو
-        initial: function(data) {
-            //menu.selectedItem = null;
-            
+        initial: function (data) {
+
             var model = menu.treeView.reshapeData(data, null);
 
-            if (!model || model.length == 0) {
-                $("#treeview").html("<div class='text-center'>موردی برای نمایش یافت نشد.</div>");
+            if (!model || model.length === 0) {
+                $("#treeview").html("<div class='text-center py-3'>موردی برای نمایش یافت نشد.</div>");
                 return;
             }
 
@@ -51,13 +55,14 @@ var menu = {
 
             // انتخاب و باز کردن ساختار درختی آخرین نودی که انتخاب شده بود
             if (menu.selectedItem) {
-                var UnselectedNode = $("#treeview").treeview('getUnselected');
-                for (var j = 0; j < UnselectedNode.length; j++) {
-                    var node = UnselectedNode[j];
-                    if (node.id == menu.selectedItem.id) {
+                var unSelectedNodes = $("#treeview").treeview('getUnselected');
+                for (var j = 0; j < unSelectedNodes.length; j++) {
+                    var node = unSelectedNodes[j];
+                    if (node.id === menu.selectedItem.id) {
                         $("#treeview").treeview('selectNode', [node, { silent: false }]);
-                        if (node.nodes != null && node.nodes.length > 0)
+                        if (node.nodes && node.nodes.length > 0)
                             $("#treeview").treeview('expandNode', node);
+
                         while (node.parentId != null) {
                             var parent = $("#treeview").treeview('getParent', node);
                             $("#treeview").treeview('expandNode', parent);
@@ -66,262 +71,334 @@ var menu = {
                     }
                 }
             }
-
         },
 
 
-        // استخراج داده ها با ساختار مناسب برای تری ویو
+        // تبدیل داده‌ها به مدل مورد نیاز treeview
         reshapeData: function (data, parentId) {
-            if (data == null || data.length == 0)
+            if (!data || data.length === 0)
                 return null;
 
             var model = data.filter(function (obj) {
                 return obj.parentId === parentId;
             });
 
-            if (model == null || model.length == 0)
+            if (!model || model.length === 0)
                 return null;
-            
+
             $.each(model, function () {
+
+                // اضافه کردن بچه‌ها
                 this.nodes = menu.treeView.reshapeData(data, this.id);
+
+                // رنگ پس‌زمینه برای غیرفعال‌ها
                 if (!this.isEnabled)
-                    this.backColor = "rgba(0, 0, 0, 0.1)";
-                var icon = ''; // '<i>' + this.text.substring(0, 3) + '</i>';
-                if (this.icon)
-                    icon = '<i class="material-icons">' + this.icon + '</i>'
-                this.text = icon + '<span class="node-title">' +this.text+ '</span>';
+                    this.backColor = "rgba(0, 0, 0, 0.06)";
+
+                // آیکن
+                var iconHtml = this.icon ? `<i class="${this.icon}"></i> ` : "";
+
+                // *** نکته مهم ***
+                // text باید برابر title باشد
+                this.text = iconHtml + `<span class="node-title">${this.title}</span>`;
             });
+
             return model;
         }
+
+
+
     },
 
 
 
-
-    // ایجاد منو جدید
+    // ===============================
+    //  ایجاد منو
+    // ===============================
     create: {
+
         // لود کردن فرم افزودن منو جدید
         loadForm: function () {
-            var data = {
-                ParentId: menu.selectedItem == null ? null : menu.selectedItem.id,
-                ParentName: menu.selectedItem == null ? null : menu.selectedItem.title
-            };
-            $.get("/AuthSystem/" + controller + "/LoadCreateForm",
-                data,
-                function (res) {
-                    $("#modal-form").html(res);
-                    $.material.init();
-                    modal.open();
-                    $('[data-toggle="tooltip"]').tooltip();
 
-                    /*اعمال ولیدیشن به فرمی که با اجکس لود شده است*/
-                    var form = $(".create-form")
-                        .removeData("validator")
-                        .removeData("unobtrusiveValidation");
-                    $.validator.unobtrusive.parse(form);
+            var data = {};
+
+            if (menu.selectedItem) {
+                data.ParentId = menu.selectedItem.id;
+            }
+
+            $.get("/AuthSystem/" + controller + "/LoadCreateForm", data, function (res) {
+
+                $("#modal-form").html(res);
+
+                const modalEl = document.getElementById('base-modal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
                 });
-        },
+
+                var form = $(".create-form")
+                    .removeData("validator")
+                    .removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+
+            });
+        }
+
+
+
+        ,
 
 
         // ذخیره کردن فرم افزودن منو جدید
         save: function (e) {
             e.preventDefault();
-            var targetUrl = $(".create-form").attr("action");
 
-            /*ولیدیت کردن فرم*/
             var $form = $(".create-form");
+            var targetUrl = $form.attr("action");
+
+            // ولیدیت jQuery Validate
             $form.validate();
             if (!$form.valid()) return false;
 
+            // اعتبارسنجی اختصاصی لینک
+            if (!menu.validate(".create-form")) return false;
 
-            /*اعتبار سنجی فرم*/
-            var isValid = menu.validate(".create-form");
-            if (!isValid) return false;
-
-
-            /*رندر کردن پارامترها*/
+            // رندر کردن پارامترها
             menu.parameters.render();
 
-            /*جمع آوری دیتای فرم*/
-            var data = $(".create-form").serialize();
+            var data = $form.serialize();
 
-            /*ثبت فرم با اجکس*/
-            $.post(targetUrl,
-                data,
-                function (res) {
-                    if (res.status) {
-                        modal.close();
-                        menu.refreshList();
-                    }
-                    else {
-                        $("#modal-form .create-error").html(res.message);
-                        $("#base-modal").scrollTop(0);
-                    }
-                }).fail(function () {
-                    $("#modal-form .create-error").html("ذخیره اطلاعات با خطا همراه بوده است. مجددا اقدام کنید.");
+            $.post(targetUrl, data, function (res) {
+
+                if (res.status) {
+                    // بستن مدال
+                    const modalEl = document.getElementById('base-modal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    modalInstance && modalInstance.hide();
+
+                    // رفرش تری‌ویو
+                    menu.refreshList();
+
+                    // ریست دکمه‌ها
+                    $(".edit-btn,.delete-btn").addClass("hide");
+                    $(".create-btn").html("افزودن منو جدید");
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "ثبت شد",
+                        text: "منو با موفقیت ایجاد شد.",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+                else {
+                    $("#modal-form .create-error").html(res.message || "خطا در ثبت اطلاعات.");
                     $("#base-modal").scrollTop(0);
-                });
+                }
+
+            }).fail(function () {
+                $("#modal-form .create-error").html("ذخیره اطلاعات با خطا همراه بوده است. مجددا اقدام کنید.");
+                $("#base-modal").scrollTop(0);
+            });
+
             return false;
         }
     },
 
 
 
-
-
-    // ویرایش منو
+    // ===============================
+    //  ویرایش منو
+    // ===============================
     edit: {
+
         // لود کردن فرم ویرایش منو
         loadForm: function () {
             if (menu.selectedItem == null) {
-                alert("منوی مورد نظر را انتخاب کنید!");
+                Swal.fire({
+                    icon: "warning",
+                    title: "توجه",
+                    text: "منوی مورد نظر را انتخاب کنید!"
+                });
                 return;
             }
+
             var id = menu.selectedItem.id;
-            $.get("/AuthSystem/" + controller + "/LoadEditForm/" + id,
-                function (res) {
-                    $("#modal-form").html(res);
-                    $.material.init();
-                    menu.parameters.expand();
-                    modal.open();
-                    $('[data-toggle="tooltip"]').tooltip();
-                    
-                    /*اعمال ولیدیشن به فرمی که با اجکس لود شده است*/
-                    var form = $(".edit-form")
-                        .removeData("validator")
-                        .removeData("unobtrusiveValidation");
-                    $.validator.unobtrusive.parse(form);
+
+            $.get("/AuthSystem/" + controller + "/LoadEditForm/" + id, function (res) {
+                $("#modal-form").html(res);
+
+                const modalEl = document.getElementById('base-modal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                // گسترش پارامترها اگر وجود دارند
+                menu.parameters.expand();
+
+                // تولتیپ‌ها
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
                 });
+
+                // اعمال ولیدیشن unobtrusive روی فرم ویرایش
+                var form = $(".edit-form")
+                    .removeData("validator")
+                    .removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            });
         },
 
 
-        // ذخیره کردن فرم ویرایش منو
+        // ذخیره کردن فرم ویرایش
         save: function (e) {
             e.preventDefault();
-            var targetUrl = $(".edit-form").attr("action");
 
-            /*ولیدیت کردن فرم*/
             var $form = $(".edit-form");
+            var targetUrl = $form.attr("action");
+
+            // ولیدیت
             $form.validate();
             if (!$form.valid()) return false;
 
+            // اعتبارسنجی اختصاصی لینک
+            if (!menu.validate(".edit-form")) return false;
 
-            /*اعتبار سنجی فرم*/
-            var isValid = menu.validate(".edit-form");
-            if (!isValid) return false;
-
-
-            /*رندر کردن پارامترها*/
+            // رندر پارامترها
             menu.parameters.render();
 
+            var data = $form.serialize();
 
-            /*جمع آوری دیتای فرم*/
-            var data = $(".edit-form").serialize();
+            $.post(targetUrl, data, function (res) {
 
-            /*ثبت فرم با اجکس*/
-            $.post(targetUrl,
-                data,
-                function (res) {
-                    if (res.status) {
-                        modal.close();
-                        menu.refreshList();
-                        $(".edit-btn,.delete-btn").addClass("hide");
-                        $(".create-btn").html("افزودن منو جدید");
-                    }
-                    else {
-                        $("#modal-form .edit-error").html(res.message);
-                        $("#base-modal").scrollTop(0);
-                    }
-                }).fail(function () {
-                    $("#modal-form .edit-error").html("ذخیره اطلاعات با خطا همراه بوده است. مجددا اقدام کنید.");
+                if (res.status) {
+                    const modalEl = document.getElementById('base-modal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    modalInstance && modalInstance.hide();
+
+                    menu.refreshList();
+                    $(".edit-btn,.delete-btn").addClass("hide");
+                    $(".create-btn").html("افزودن منو جدید");
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "ویرایش شد",
+                        text: "منو با موفقیت ویرایش شد.",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+                else {
+                    $("#modal-form .edit-error").html(res.message || "خطا در ویرایش اطلاعات.");
                     $("#base-modal").scrollTop(0);
-                });
+                }
+
+            }).fail(function () {
+                $("#modal-form .edit-error").html("ذخیره اطلاعات با خطا همراه بوده است. مجددا اقدام کنید.");
+                $("#base-modal").scrollTop(0);
+            });
+
             return false;
         }
     },
 
 
 
-
-    // حذف منو
+    // ===============================
+    //  حذف منو
+    // ===============================
     delete: {
+
         loadForm: function () {
-            if (!menu.selectedItem)
-                showNotification("لطفا ابتدا منو مورد نظر را انتخاب نمایید !");
-
-            else if (menu.selectedItem.nodes != null && menu.selectedItem.nodes.length > 0)
-                showNotification('لطفا ابتدا زیر مجموعه های این منو را حذف کنید.');
-
-            else
-                swal({
-                    title: 'آیا مطمئنید ؟',
-                    text: "بعد از حذف اطلاعات این منو قابل بازگشت نیست.",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonClass: 'btn btn-danger',
-                    cancelButtonClass: 'btn btn-default',
-                    confirmButtonText: 'بله ، حذف شود !',
-                    cancelButtonText: 'لغو',
-                    buttonsStyling: false
-                }).then(function (isConfirm) {
-                    if (isConfirm)
-                        menu.delete.confirm();
+            if (!menu.selectedItem) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "توجه",
+                    text: "لطفاً ابتدا منو مورد نظر را انتخاب نمایید!"
                 });
+                return;
+            }
+
+            if (menu.selectedItem.nodes != null && menu.selectedItem.nodes.length > 0) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "توجه",
+                    text: "لطفاً ابتدا زیرمنوهای این منو را حذف کنید."
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'آیا مطمئن هستید؟',
+                text: "بعد از حذف، اطلاعات این منو قابل بازگشت نیست.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله، حذف شود',
+                cancelButtonText: 'لغو',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    menu.delete.confirm();
+                }
+            });
         },
 
         confirm: function () {
-            $.post("/AuthSystem/" + controller + "/Delete/" + menu.selectedItem.id,
-                function (res) {
-                    if (res.status) {
-                        menu.refreshList();
-                        $(".edit-btn,.delete-btn").addClass("hide");
-                        $(".create-btn").html("افزودن منو جدید");
-                        swal({
-                            title: 'حذف شد !',
-                            text: 'منو مورد نظر با موفقیت حذف شد',
-                            type: 'success',
-                            confirmButtonClass: "btn btn-success",
-                            confirmButtonText: "باشه",
-                            buttonsStyling: false
-                        });
-                    }
-                    else {
-                        swal({
-                            title: 'حذف نشد !',
-                            text: res.message,
-                            type: 'error',
-                            confirmButtonClass: "btn btn-danger",
-                            confirmButtonText: "باشه",
-                            buttonsStyling: false
-                        });
-                    }
-                }).fail(function () {
-                    swal({
-                        title: 'حذف نشد !',
-                        text: 'لطفا ابتدا زیر مجموعه های این منو را حذف کنید.',
-                        type: 'error',
-                        confirmButtonClass: "btn btn-danger",
-                        confirmButtonText: "باشه",
-                        buttonsStyling: false
+            $.post("/AuthSystem/" + controller + "/Delete/" + menu.selectedItem.id, function (res) {
+
+                if (res.status) {
+                    menu.refreshList();
+                    $(".edit-btn,.delete-btn").addClass("hide");
+                    $(".create-btn").html("افزودن منو جدید");
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'حذف شد',
+                        text: 'منو با موفقیت حذف شد.',
+                        confirmButtonText: 'باشه'
                     });
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'حذف نشد',
+                        text: res.message || 'خطایی رخ داده است.',
+                        confirmButtonText: 'باشه'
+                    });
+                }
+
+            }).fail(function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'حذف نشد',
+                    text: 'لطفاً ابتدا زیرمجموعه‌های این منو را حذف کنید.',
+                    confirmButtonText: 'باشه'
                 });
-
+            });
         }
-
     },
 
 
 
-    // اعتبار سنجی
+    // ===============================
+    //  اعتبارسنجی لینک
+    // ===============================
     validate: function (form) {
-        if ($(form).find('.HasLink').is(':checked')) {
-            if (!$(form).find('#Controller').val()) {
+        var $form = $(form);
+
+        if ($form.find('.HasLink').is(':checked')) {
+
+            if (!$form.find('#Controller').val()) {
                 $("#modal-form .error").html('کنترلر را وارد کنید!');
                 $("#base-modal").scrollTop(0);
                 return false;
             }
-            if (!$(form).find('#Action').val()) {
-                $("#modal-form .erro").html('اکشن را وارد کنید!');
+            if (!$form.find('#Action').val()) {
+                $("#modal-form .error").html('اکشن را وارد کنید!');
                 $("#base-modal").scrollTop(0);
                 return false;
             }
@@ -331,69 +408,79 @@ var menu = {
 
 
 
-    // پارامتر ها
+    // ===============================
+    //  مدیریت پارامترهای آدرس
+    // ===============================
     parameters: {
 
-        // آیتم افزودن پارامتر جدید
+        // تولید HTML یک آیتم پارامتر
         item: function (index, key, value) {
-            var keyStr = "";
-            var valStr = "";
-            if (key)
-                keyStr = ' value="' + key + '"';
-            if (value)
-                valStr = ' value="' + value + '"';
+            var keyStr = key ? ' value="' + key + '"' : "";
+            var valStr = value ? ' value="' + value + '"' : "";
 
-            var tmp = '<div class="col-md-12 parameter-item" rel="' + index + '">'
-                + '<div class="form-group col-md-4">'
-                + '<label class="control-label text-right col-md-12">کلید</label>'
-                + '<div class="col-md-12">'
-                + '<input name="key' + index + '" id="key' + index + '" class="form-control" ' + keyStr + ' />'
-                + '</div>'
-                + '</div>'
-                + '<div class="form-group col-md-4">'
-                + '<label class="control-label text-right col-md-12">مقدار</label>'
-                + '<div class="col-md-12">'
-                + '<input name="value' + index + '" id="value' + index + '" class="form-control" ' + valStr + '/>'
-                + '</div>'
-                + '</div>'
-                + '<div class="form-group col-md-4">'
-                + '<a class="btn btn-simple btn-danger btn-icon delete" onclick="menu.parameters.delete(this)" data-toggle="tooltip" title = "حذف پارامتر" >'
-                + '<i class="material-icons text-danger">delete</i>'
-                + '</a>'
-                + '</div >'
-                + '</div>';
+            var tmp =
+                '<div class="col-md-12 parameter-item mb-2" rel="' + index + '">' +
+                '  <div class="row g-2">' +
+
+                '    <div class="col-md-4">' +
+                '      <label class="form-label">کلید</label>' +
+                '      <input name="key' + index + '" id="key' + index + '" class="form-control form-control-sm" ' + keyStr + ' />' +
+                '    </div>' +
+
+                '    <div class="col-md-4">' +
+                '      <label class="form-label">مقدار</label>' +
+                '      <input name="value' + index + '" id="value' + index + '" class="form-control form-control-sm" ' + valStr + ' />' +
+                '    </div>' +
+
+                '    <div class="col-md-4 d-flex align-items-end">' +
+                '      <button type="button" class="btn btn-outline-danger btn-sm ms-2 delete" ' +
+                '              onclick="menu.parameters.delete(this)" data-bs-toggle="tooltip" title="حذف پارامتر">' +
+                '          <i class="bi bi-trash"></i>' +
+                '      </button>' +
+                '    </div>' +
+
+                '  </div>' +
+                '</div>';
 
             return tmp;
         },
 
 
-
         // افزودن پارامتر جدید
         add: function () {
             var index = 1;
-            if ($('.parameters-section .parameter-item:last-of-type').length > 0) {
-                var rel = $('.parameters-section .parameter-item:last-of-type').attr('rel');
-                var index = parseInt(rel) + 1;
+            var $last = $('.parameters-section .parameter-item:last-of-type');
+
+            if ($last.length > 0) {
+                var rel = $last.attr('rel');
+                index = parseInt(rel, 10) + 1;
             }
+
             $('.parameters-section .card-body').append(menu.parameters.item(index));
-            $('[data-toggle="tooltip"]').tooltip();
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         },
 
 
-        // حذف پارامتر
+        // حذف یک پارامتر
         delete: function (el) {
-            $(el).parents('.parameter-item').remove();
+            $(el).closest('.parameter-item').remove();
         },
 
 
-        // جمع آوری پارامترها و تبدیل به رشته
+        // جمع‌آوری پارامترها و تبدیل به JSON رشته‌ای
         render: function () {
             var parameters = {};
             var parameterItems = $('.parameters-section .parameter-item');
+
             $.each(parameterItems, function () {
                 var index = $(this).attr('rel');
                 var key = $(this).find('#key' + index).val().trim();
                 var val = $(this).find('#value' + index).val().trim();
+
                 if (key && val)
                     parameters[key] = val;
             });
@@ -405,17 +492,19 @@ var menu = {
         },
 
 
-
-        // تبدیل رشته به پارامتر ها هنگام ویرایش
+        // تبدیل رشته JSON به آیتم‌های فرم هنگام ویرایش
         expand: function () {
             var parameters = $("#Parameters").val();
+
             if (!parameters) {
                 menu.parameters.add();
                 return;
             }
 
-            var obj = JSON.parse(parameters);
-            if (!obj) {
+            var obj = {};
+            try {
+                obj = JSON.parse(parameters);
+            } catch (e) {
                 menu.parameters.add();
                 return;
             }
@@ -424,24 +513,23 @@ var menu = {
             Object.keys(obj).forEach(function (key) {
                 var value = obj[key];
                 $('.parameters-section .card-body').append(menu.parameters.item(index, key, value));
-                $('[data-toggle="tooltip"]').tooltip();
                 index++;
             });
-        },
 
-
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
     }
-
-}
-
+};
 
 
+// اجرای اولیه
 menu.refreshList();
 
 
-
-
-//باز کردن یا بستن بخش مربوط به لینک
+// باز/بستن بخش لینک (همان قبلی)
 var toggleSlide = function (el, target) {
     if (!$(el).is(":checked")) {
         $(target).slideUp();
@@ -449,18 +537,4 @@ var toggleSlide = function (el, target) {
     else {
         $(target).slideDown();
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
