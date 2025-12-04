@@ -10,7 +10,7 @@ namespace Momayezi.Areas.Admin.Controllers
 {
     [Area("Admin")]
     //[UserAuthorize(Area: "admin", Controller: "dashboard", Action: "index")]
-    [UserAuthorize(IsPublic: true)]
+    //[UserAuthorize(IsPublic: true)]
     public class DashboardController : Controller
     {
         private readonly IMemoryCache cache;
