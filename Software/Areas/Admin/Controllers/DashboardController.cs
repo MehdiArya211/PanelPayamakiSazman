@@ -1,4 +1,5 @@
 ﻿using BLL.Interface;
+using Domain.Entities;
 using Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -29,7 +30,7 @@ namespace Momayezi.Areas.Admin.Controllers
         public IActionResult Index()
         {
             var User = HttpContext.Session.GetUser();
-            var lastLoginLog = UserLogManager.GetUserLastLogin(User.Username);
+            var lastLoginLog = new UserLog();
             return View(lastLoginLog);
         }
 
