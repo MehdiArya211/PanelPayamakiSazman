@@ -17,7 +17,8 @@ namespace BLL.Interface
         /// <param name="Username">نام کاربری</param>
         /// <param name="Password">کلمه عبور</param>
         /// <returns></returns>
-        BaseResult Login(string Username = null, string Password = null, int? UserId = null);
+        //BaseResult Login(string Username = null, string Password = null, int? UserId = null);
+        Task<BaseResult> Login(string Username = null, string Password = null);
 
 
         /// <summary>

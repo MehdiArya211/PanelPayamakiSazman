@@ -113,7 +113,7 @@ namespace Momayezi.Controllers
             #endregion
 
             #region عملیات لاگین
-            var res = AuthManager.Login(Mobile, Password);
+            var res =await AuthManager.Login(Mobile, Password);
             var User = res.Model as UserSessionDTO;
             if (!res.Status)
             {
