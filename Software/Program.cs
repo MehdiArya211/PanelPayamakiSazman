@@ -2,8 +2,10 @@
 using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
+using BLL.Project.SecurityQuestion;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
+using BLL.Project.User;
 using Filters;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -168,6 +170,16 @@ services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();
 
 #region SenderNumberSpeciality
 services.AddScoped<ISenderNumberSpecialityManager,SenderNumberSpecialityManager>();
+
+#endregion
+
+#region systemuser
+services.AddScoped<ISystemUserManager, SystemUserManager>();
+
+#endregion
+
+#region SecurityQuestion
+services.AddScoped<ISecurityQuestionManager, SecurityQuestionManager>();
 
 #endregion
 

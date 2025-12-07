@@ -1,4 +1,4 @@
-﻿var systemuser = {
+﻿var securityQuestion = {
 
     list: {
         table: null,
@@ -15,50 +15,34 @@
                 responsive: true,
 
                 ajax: {
-                    url: "/Project/SystemUser/GetList",
+                    url: "/Project/SecurityQuestion/GetList",
                     type: "POST",
-                    dataType: "json",
-                    data: function (d) {
-
-                        d.extra_filter_username = $("#filter_username").val();
-                        d.extra_filter_fullname = $("#filter_fullname").val();
-                        d.extra_filter_mobile = $("#filter_mobile").val();
-                    }
+                    dataType: "json"
                 },
 
                 columns: [
                     { data: "id" },
-                    { data: "userName" },
-                    { data: "fullName" },
-                    { data: "mobileNumber" },
-                    { data: "nationalCode" },
-                    {
-                        data: "isActive",
-                        render: function (val) {
-                            return val ? "<span class='text-success'>فعال</span>"
-                                : "<span class='text-danger'>غیرفعال</span>";
-                        }
-                    },
+                    { data: "text" },
                     {
                         data: null,
                         className: "text-center",
                         render: function (data, type, row) {
                             return `
-                                <div class="d-flex justify-content-center gap-2">
+                            <div class="d-flex justify-content-center gap-2">
 
-                                    <button onclick="systemuser.edit.loadForm('${row.id}')"
-                                            class="btn btn-light action-btn"
-                                            title="ویرایش">
-                                        <i class="bi bi-pencil text-primary"></i>
-                                    </button>
+                                <button onclick="securityQuestion.edit.loadForm('${row.id}')"
+                                        class="btn btn-light action-btn"
+                                        title="ویرایش">
+                                    <i class="bi bi-pencil text-primary"></i>
+                                </button>
 
-                                    <button onclick="systemuser.delete.confirm('${row.id}', '${row.fullName}')"
-                                            class="btn btn-light action-btn"
-                                            title="حذف">
-                                        <i class="bi bi-trash text-danger"></i>
-                                    </button>
+                                <button onclick="securityQuestion.delete.confirm('${row.id}', '${row.title}')"
+                                        class="btn btn-light action-btn"
+                                        title="حذف">
+                                    <i class="bi bi-trash text-danger"></i>
+                                </button>
 
-                                </div>`;
+                            </div>`;
                         }
                     }
                 ],
@@ -69,14 +53,16 @@
         },
 
         reload: function () {
-            systemuser.list.table.ajax.reload(null, false);
+            securityQuestion.list.table.ajax.reload(null, false);
         }
     },
 
     create: {
 
         loadForm: function () {
-            $.get("/Project/SystemUser/LoadCreateForm", function (res) {
+
+            $.get("/Project/SecurityQuestion/LoadCreateForm", function (res) {
+
                 $("#modal-form").html(res);
 
                 const modal = new bootstrap.Modal(document.getElementById("base-modal"));
@@ -91,38 +77,47 @@
         },
 
         save: function (e) {
+
             e.preventDefault();
 
             var form = $(".create-form");
+
             form.validate();
             if (!form.valid()) return;
 
             $.post(form.attr("action"), form.serialize())
                 .done(res => {
+
                     if (res.status) {
-                        systemuser.list.reload();
-                        bootstrap.Modal.getInstance(document.getElementById("base-modal")).hide();
+                        securityQuestion.list.reload();
+
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("base-modal"));
+                        modal.hide();
 
                         Swal.fire({
                             icon: "success",
-                            title: "موفق",
-                            text: "کاربر با موفقیت ایجاد شد."
+                            title: "عملیات موفق",
+                            text: "سوال امنیتی با موفقیت ایجاد شد."
                         });
                     }
                     else {
                         $(".create-form .error").html(res.message);
                     }
                 })
-                .fail(() => $(".create-form .error").html("خطا در ارتباط با سرور"));
+                .fail(() => {
+                    $(".create-form .error").html("خطا در ذخیره اطلاعات.");
+                });
         }
     },
 
     edit: {
 
         loadForm: function (id) {
-            $.get("/Project/SystemUser/LoadEditForm", { id: id }, function (res) {
+
+            $.get("/Project/SecurityQuestion/LoadEditForm", { id: id }, function (res) {
 
                 $("#modal-form").html(res);
+
                 const modal = new bootstrap.Modal(document.getElementById("base-modal"));
                 modal.show();
 
@@ -131,16 +126,20 @@
                     .removeData("unobtrusiveValidation");
 
                 $.validator.unobtrusive.parse(form);
+
             });
         },
 
         save: function (e) {
+
             e.preventDefault();
 
             var form = $(".edit-form");
+
             form.validate();
             if (!form.valid()) return;
 
+            // آنتی‌فورجری توکن
             var token = form.find('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
@@ -150,14 +149,15 @@
                 success: function (res) {
 
                     if (res.status) {
-                        systemuser.list.reload();
+                        securityQuestion.list.reload();
 
-                        bootstrap.Modal.getInstance(document.getElementById("base-modal")).hide();
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("base-modal"));
+                        modal.hide();
 
                         Swal.fire({
                             icon: "success",
-                            title: "ویرایش شد",
-                            text: "اطلاعات کاربر با موفقیت ویرایش شد."
+                            title: "عملیات موفق",
+                            text: "ویرایش با موفقیت انجام شد."
                         });
                     }
                     else {
@@ -173,11 +173,11 @@
 
     delete: {
 
-        confirm: function (id, name) {
+        confirm: function (id, title) {
 
             Swal.fire({
-                title: "حذف کاربر",
-                text: `آیا از حذف «${name}» مطمئن هستید؟`,
+                title: "حذف سوال",
+                text: `آیا از حذف «${title}» مطمئن هستید؟`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "بله، حذف شود",
@@ -185,23 +185,24 @@
             }).then(result => {
 
                 if (result.isConfirmed) {
-                    systemuser.delete.exec(id);
+                    securityQuestion.delete.exec(id);
                 }
             });
         },
 
         exec: function (id) {
 
-            $.post("/Project/SystemUser/Delete", { id: id })
+            $.post("/Project/SecurityQuestion/Delete", { id: id })
 
                 .done(res => {
+
                     if (res.status) {
-                        systemuser.list.reload();
+                        securityQuestion.list.reload();
 
                         Swal.fire({
                             icon: "success",
                             title: "حذف شد",
-                            text: "کاربر با موفقیت حذف شد."
+                            text: "سوال با موفقیت حذف شد."
                         });
                     }
                     else {
@@ -213,21 +214,29 @@
                     }
                 })
 
-                .fail(() => Swal.fire({
-                    icon: "error",
-                    title: "خطا",
-                    text: "در ارتباط با سرور خطایی رخ داد."
-                }));
+                .fail(() => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "خطا",
+                        text: "در ارتباط با سرور خطایی رخ داد."
+                    });
+                });
         }
     }
 };
 
+/* ============================
+   EXECUTE ON PAGE LOAD
+============================ */
 $(document).ready(function () {
-    systemuser.list.initial();
+    securityQuestion.list.initial();
 
-    $("#btnFilter").click(() => systemuser.list.reload());
-    $("#btnResetFilter").click(() => {
-        $("#filter_username,#filter_fullname,#filter_mobile").val("");
-        systemuser.list.reload();
+    $("#btnFilter").on("click", function () {
+        securityQuestion.list.reload();
+    });
+
+    $("#btnResetFilter").on("click", function () {
+        $("#filter_title").val("");
+        securityQuestion.list.reload();
     });
 });

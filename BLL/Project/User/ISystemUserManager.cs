@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Project.User
 {
-    public interface IUserManager
+    public interface ISystemUserManager
     {
         /// <summary>
         /// جستجو (DataTable)

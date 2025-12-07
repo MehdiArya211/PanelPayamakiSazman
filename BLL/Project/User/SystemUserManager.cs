@@ -1,5 +1,6 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
+using DTO.Project.SecurityQuestion;
 using DTO.Project.SenderNumberSubAreaList;
 using DTO.Project.User;
 using DTO.WebApi;
@@ -12,14 +13,14 @@ using static System.Net.WebRequestMethods;
 
 namespace BLL.Project.User
 {
-    public class UserManager : IUserManager
+    public class SystemUserManager : ISystemUserManager
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
         //  private readonly string _baseUrl;
 
 
-        public UserManager(IHttpContextAccessor accessor, IConfiguration config)
+        public SystemUserManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
@@ -101,7 +102,7 @@ namespace BLL.Project.User
             };
         }
 
-        public BaseResult Create(SystemUserCreateDTO model)
+        public BaseResult Create0(SystemUserCreateDTO model)
         {
             try
             {
@@ -124,6 +125,56 @@ namespace BLL.Project.User
                 return new BaseResult(false, ex.Message);
             }
         }
+
+        public BaseResult Create(SystemUserCreateDTO model)
+        {
+            try
+            {
+                SetAuth();
+
+                var url = "http://87.107.111.44:8010/api/admin/users";
+
+                var body = new
+                {
+                    unitId = model.UnitId,
+                    userName = model.UserName,
+                    initialPassword = model.InitialPassword,
+                    firstName = model.FirstName,
+                    lastName = model.LastName,
+                    nationalCode = model.NationalCode,
+                    mobileNumber = model.MobileNumber,
+
+                    //securityQuestions = model.SecurityQuestions != null
+                    //    ? model.SecurityQuestions.Select(q => new SecurityQuestionBodyDTO
+                    //    {
+                    //        QuestionId = q.id,
+                    //        Answer = q.Title
+                    //    }).ToList()
+                    //    : new List<SecurityQuestionBodyDTO>(),
+
+                    roleIds = (model.RoleIds != null && model.RoleIds.Any())
+                        ? model.RoleIds
+                        : null
+                };
+
+
+                var json = JsonSerializer.Serialize(body);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PostAsync(url, content).Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult(true, "کاربر با موفقیت ثبت شد.");
+
+                var errorJson = res.Content.ReadAsStringAsync().Result;
+                return new BaseResult(false, errorJson);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult(false, ex.Message);
+            }
+        }
+
 
         public SystemUserEditDTO GetById(string id)
         {

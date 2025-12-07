@@ -1,62 +1,52 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model DTO.Project.User.SystemUserCreateDTO
+﻿@model DTO.Project.User.SystemUserCreateDTO
 
-<div class="modal-header border-0 pb-0">
-    <h5 class="modal-title fw-bold">
-        <i class="bi bi-person-plus text-primary"></i> افزودن کاربر جدید
-    </h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
+<form asp-area="Project"
+      asp-controller="SystemUser"
+      asp-action="Create"
+      class="create-form"
+      onsubmit="return users.create.save(event)">
 
-<div class="modal-body px-4">
+    @Html.AntiForgeryToken()
 
-    <div class="error text-danger text-center mb-2"></div>
+    <div class="row g-3">
 
-    <form asp-area="Project"
-          asp-controller="SystemUser"
-          asp-action="Create"
-          class="create-form"
-          onsubmit="return users.create.save(event)">
-
-        @Html.AntiForgeryToken()
-
-        <div class="row g-3">
-
-            <div class="col-md-6">
-                <label class="form-label required">نام کاربری</label>
-                <input asp-for="UserName" class="form-control" required />
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label required">نام کامل</label>
-                <input asp-for="FullName" class="form-control" required />
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label required">موبایل</label>
-                <input asp-for="MobileNumber" class="form-control" required />
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">کد ملی</label>
-                <input asp-for="NationalCode" class="form-control" />
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">وضعیت</label>
-                <select asp-for="IsActive" class="form-select">
-                    <option value="true">فعال</option>
-                    <option value="false">غیرفعال</option>
-                </select>
-            </div>
-
+        <div class="col-md-6">
+            <label class="form-label required">نام کاربری</label>
+            <input asp-for="UserName" class="form-control" required />
         </div>
 
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-check-circle"></i> ذخیره
-            </button>
+        <div class="col-md-6">
+            <label class="form-label required">رمز اولیه</label>
+            <input asp-for="InitialPassword" class="form-control" required />
         </div>
 
-    </form>
-</div>
+        <div class="col-md-6">
+            <label class="form-label required">نام</label>
+            <input asp-for="FirstName" class="form-control" required />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">نام خانوادگی</label>
+            <input asp-for="LastName" class="form-control" required />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">کد ملی</label>
+            <input asp-for="NationalCode" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">موبایل</label>
+            <input asp-for="MobileNumber" class="form-control" required />
+        </div>
+
+        <!-- فعلاً ساده: بدون انتخاب نقش و سوال امنیتی -->
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-check-circle"></i> ذخیره
+        </button>
+    </div>
+
+</form>
