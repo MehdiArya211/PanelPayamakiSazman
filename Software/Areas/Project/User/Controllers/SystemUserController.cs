@@ -1,20 +1,18 @@
-﻿using BLL.Project.SenderNumberSpeciality;
-using BLL.Project.SenderNumberSubArea;
+﻿using BLL.Project.SenderNumberSubArea;
+using BLL.Project.User;
 using DTO.DataTable;
-using DTO.Project.SenderNumberSpeciality;
-using DTO.Project.SenderNumberSubAreaList;
+using DTO.Project.User;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SenderNumberSpeciality.Controllers
+namespace Software.Areas.Project.User.Controllers
 {
-    [Area("Project")]
-    public class SenderNumberSpecialityController : Controller
+    public class SystemUserController : Controller
     {
-        private readonly ISenderNumberSpecialityManager _senderNumberSpecialityManager;
+        private readonly IUserManager _userManager;
 
-        public SenderNumberSpecialityController(ISenderNumberSpecialityManager senderNumberSpecialityManager)
+        public SystemUserController(IUserManager userManager)
         {
-            _senderNumberSpecialityManager = senderNumberSpecialityManager;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -23,35 +21,32 @@ namespace Software.Areas.Project.SenderNumberSpeciality.Controllers
         }
 
         [HttpPost]
-        [IgnoreAntiforgeryToken]
         public IActionResult GetList()
         {
-
             var search = new DataTableSearchDTO();
 
             search.start = int.Parse(Request.Form["start"]);
             search.length = int.Parse(Request.Form["length"]);
             search.draw = Request.Form["draw"];
-            search.searchValue = Request.Form["search[value]"];
 
             var colIndex = Request.Form["order[0][column]"];
             search.sortDirection = Request.Form["order[0][dir]"];
             search.sortColumnName = Request.Form[$"columns[{colIndex}][data]"];
 
-            var result = _senderNumberSpecialityManager.GetDataTableDTO(search);
+            var result = _userManager.GetDataTable(search);
 
             return Json(result);
         }
 
         public IActionResult LoadCreateForm()
         {
-            var model = new SenderNumberSpecialityCreateDTO();
-            return PartialView("_Create", model);
+            return PartialView("_Create", new SystemUserCreateDTO());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SenderNumberSpecialityCreateDTO model)
+
+        public IActionResult Create(SystemUserCreateDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -61,26 +56,20 @@ namespace Software.Areas.Project.SenderNumberSpeciality.Controllers
                     message = "اطلاعات ارسال‌شده معتبر نیست!"
                 });
             }
-
-            var res = _senderNumberSpecialityManager.Create(model);
+            var res = _userManager.Create(model);
             return Json(res);
         }
 
-
         public IActionResult LoadEditForm(string id)
         {
-            var model = _senderNumberSpecialityManager.GetById(id);
-
-            if (model == null)
-                return Content("خطا در دریافت اطلاعات.");
-
+            var model = _userManager.GetById(id);
             return PartialView("_Edit", model);
         }
 
         [HttpPut]
         [ValidateAntiForgeryToken]
 
-        public IActionResult Edit(SenderNumberSpecialityEditDTO model)
+        public IActionResult Edit(SystemUserEditDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -90,16 +79,15 @@ namespace Software.Areas.Project.SenderNumberSpeciality.Controllers
                     message = "اطلاعات ارسال‌شده معتبر نیست!"
                 });
             }
-            var res = _senderNumberSpecialityManager.Update(model);
+            var res = _userManager.Update(model);
             return Json(res);
         }
-
 
         [HttpPost]
         public IActionResult Delete(string id)
         {
-            var result = _senderNumberSpecialityManager.Delete(id);
-            return Json(result);
+            var res = _userManager.Delete(id);
+            return Json(res);
         }
     }
 }

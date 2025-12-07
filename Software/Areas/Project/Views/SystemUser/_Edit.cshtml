@@ -1,0 +1,64 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.User.SystemUserEditDTO
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-pencil-square text-primary"></i> ویرایش کاربر
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="SystemUser"
+          asp-action="Edit"
+          class="edit-form"
+          method="post"
+          onsubmit="return users.edit.save(event)">
+
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label required">نام کاربری</label>
+                <input asp-for="UserName" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">نام کامل</label>
+                <input asp-for="FullName" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">موبایل</label>
+                <input asp-for="MobileNumber" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">کد ملی</label>
+                <input asp-for="NationalCode" class="form-control" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">وضعیت</label>
+                <select asp-for="IsActive" class="form-select">
+                    <option value="true">فعال</option>
+                    <option value="false">غیرفعال</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-circle"></i> ذخیره تغییرات
+            </button>
+        </div>
+
+    </form>
+</div>

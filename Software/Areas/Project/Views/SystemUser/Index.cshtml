@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "مدیریت کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .search-card {
+            background: var(--bg-sidebar);
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,.06);
+        }
+    </style>
+}
+
+<div class="container-fluid">
+
+    <h4 class="fw-bold mb-3">مدیریت کاربران سیستم</h4>
+
+    <!-- ------------------ SEARCH BOX ------------------ -->
+    <div class="search-card p-3 mb-4">
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">نام کاربری:</label>
+                <input type="text" id="filter_username" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">نام و نام خانوادگی:</label>
+                <input type="text" id="filter_fullname" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">موبایل:</label>
+                <input type="text" id="filter_mobile" class="form-control" />
+            </div>
+
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-primary" id="btnFilter">
+                <i class="bi bi-search"></i> جستجو
+            </button>
+
+            <button class="btn btn-secondary" id="btnResetFilter">
+                <i class="bi bi-x-circle"></i> پاک‌سازی
+            </button>
+        </div>
+    </div>
+
+    <div class="table-card">
+
+        <h5 class="fw-bold mb-2">لیست کاربران</h5>
+
+        <div class="mb-3">
+            <button class="btn btn-success" onclick="users.create.loadForm()">
+                <i class="bi bi-plus-circle"></i> کاربر جدید
+            </button>
+        </div>
+
+        <table id="datatables" class="table table-hover table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>شناسه</th>
+                    <th>نام کاربری</th>
+                    <th>نام کامل</th>
+                    <th>موبایل</th>
+                    <th>کدملی</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/areas/project/systemuser.js"></script>
+}

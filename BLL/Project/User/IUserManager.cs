@@ -1,0 +1,44 @@
+﻿using DTO.Base;
+using DTO.DataTable;
+using DTO.Project.User;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BLL.Project.User
+{
+    public interface IUserManager
+    {
+        /// <summary>
+        /// جستجو (DataTable)
+        /// </summary>
+        DataTableResponseDTO<SystemUserListDTO> GetDataTable(DataTableSearchDTO search);
+
+        /// <summary>
+        /// دریافت همه کاربران
+        /// </summary>
+        List<SystemUserListDTO> GetAll();
+
+        /// <summary>
+        /// ایجاد کاربر جدید
+        /// </summary>
+        BaseResult Create(SystemUserCreateDTO model);
+
+        /// <summary>
+        /// دریافت یک کاربر با شناسه
+        /// </summary>
+        SystemUserEditDTO GetById(string id);
+
+        /// <summary>
+        /// ویرایش کاربر
+        /// </summary>
+        BaseResult Update(SystemUserEditDTO model);
+
+        /// <summary>
+        /// حذف کاربر
+        /// </summary>
+        BaseResult Delete(string id);
+    }
+}

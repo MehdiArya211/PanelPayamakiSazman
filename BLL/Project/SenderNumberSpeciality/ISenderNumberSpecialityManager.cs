@@ -15,5 +15,15 @@ namespace BLL.Project.SenderNumberSpeciality
         public DataTableResponseDTO<SenderNumberSpecialityListDTO> GetDataTableDTO(DataTableSearchDTO search);
         public BaseResult Create(SenderNumberSpecialityCreateDTO model);
 
+        public BaseResult Delete(string code);
+        public SenderNumberSpecialityEditDTO GetById(string id);
+
+        public BaseResult Update(SenderNumberSpecialityEditDTO model);
+        public List<SenderNumberSpecialityListDTO> GetAll();
+
+
+
+
+
     }
 }
