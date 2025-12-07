@@ -11,16 +11,16 @@ namespace DTO.Project.sendernumberorganizationlevelsDTO
 {
     class organizationlevelsDto :  EntityDTO
     {
-        public string Code { get; set; }
+            public string Code { get; set; }
 
 
-        [MaxLength(200, ErrorMessage = "{0} حداکثر می تواند {1} کاراکتر باشد.")]
-        public string Title { get; set; }
+            [MaxLength(200, ErrorMessage = "{0} حداکثر می تواند {1} کاراکتر باشد.")]
+            public string Title { get; set; }
 
 
 
-        [MaxLength(5000, ErrorMessage = "{0} حداکثر می تواند {1} کاراکتر باشد.")]
-        public string description { get; set; }
+            [MaxLength(5000, ErrorMessage = "{0} حداکثر می تواند {1} کاراکتر باشد.")]
+            public string description { get; set; }
 
 
 

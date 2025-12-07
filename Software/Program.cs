@@ -155,6 +155,11 @@ services.AddScoped<IUserManager, UserManager>();
 services.AddScoped<IUserLogManager, UserLogManager>();
 #endregion
 
+#region Projects
+services.AddScoped<IUnitsManager, UnitsManager>();
+
+
+#endregion
 
 #region Shared
 services.AddScoped<IConstantManager, ConstantManager>();

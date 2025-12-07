@@ -1,19 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace DTO.WebApi
 {
     public class LoginApiResultDTO
     {
-        public string accessToken { get; set; }
-        public string refreshToken { get; set; }
-        public DateTime accessTokenExpiresAt { get; set; }
-        public DateTime refreshTokenExpiresAt { get; set; }
-        public Guid sessionId { get; set; }
-        public bool mustChangePassword { get; set; }
-        public bool passwordExpired { get; set; }
+        [JsonPropertyName("accessToken")]
+        public string AccessToken { get; set; }
+
+        [JsonPropertyName("refreshToken")]
+        public string RefreshToken { get; set; }
+
+        [JsonPropertyName("accessTokenExpiresAt")]
+        public DateTime AccessTokenExpiresAt { get; set; }
+
+        [JsonPropertyName("refreshTokenExpiresAt")]
+        public DateTime RefreshTokenExpiresAt { get; set; }
+
+        // JSON: "sessionId": "019af3bc-e4dd-77ac-8b87-0dc9212864da"
+        [JsonPropertyName("sessionId")]
+        public Guid SessionId { get; set; }
+
+        [JsonPropertyName("mustChangePassword")]
+        public bool MustChangePassword { get; set; }
+
+        [JsonPropertyName("passwordExpired")]
+        public bool PasswordExpired { get; set; }
+    }
+    public class ApiResponse<T>
+    {
+        [JsonPropertyName("data")]
+        public T Data { get; set; }
+
+        [JsonPropertyName("traceId")]
+        public string TraceId { get; set; }
     }
 }

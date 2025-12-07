@@ -49,18 +49,15 @@ namespace DTO.User
         /// </summary>
         public IEnumerable<MenuSessionDTO> Menus { get; set; }
 
-
-        [Display(Name = "کلمه عبور تغییر کرده است")]
-        public bool PasswordIsChanged { get; set; }
-
+      
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
         public DateTime AccessTokenExpiresAt { get; set; }
         public DateTime RefreshTokenExpiresAt { get; set; }
         public Guid SessionId { get; set; }
 
+        public bool PasswordIsChanged { get; set; }
         public bool PasswordExpired { get; set; }
-
         #region سلکتور
         /// <summary>
         /// فیلدهای لازم برای استخراج مدل از موجودیت مربوطه

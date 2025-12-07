@@ -1,6 +1,7 @@
 ﻿using BLL.Interface;
 using Domain.Entities;
 using Domain.Enums;
+using DTO;
 using DTO.Base;
 using DTO.Menu;
 using DTO.User;
@@ -59,7 +60,6 @@ namespace BLL
                 var request = new HttpRequestMessage(HttpMethod.Post,
                     "http://87.107.111.44:8010/api/auth/login");
 
-
                 var body = new
                 {
                     userName = Username,
@@ -85,9 +85,16 @@ namespace BLL
                 }
 
                 string json = await response.Content.ReadAsStringAsync();
-                var apiResult = System.Text.Json.JsonSerializer.Deserialize<LoginApiResultDTO>(json);
 
-                if (apiResult == null)
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var apiResponse = System.Text.Json.JsonSerializer
+                    .Deserialize<DTO.WebApi.ApiResponse<LoginApiResultDTO>>(json, options);
+
+                if (apiResponse?.Data == null)
                 {
                     return new BaseResult
                     {
@@ -96,26 +103,31 @@ namespace BLL
                     };
                 }
 
+                var apiResult = apiResponse.Data; // اینجا پره، خودت گفتی
+
                 var user = new UserSessionDTO
                 {
-                    AccessToken = apiResult.accessToken,
-                    RefreshToken = apiResult.refreshToken,
-                    AccessTokenExpiresAt = apiResult.accessTokenExpiresAt,
-                    RefreshTokenExpiresAt = apiResult.refreshTokenExpiresAt,
-                    SessionId = apiResult.sessionId,
-                    PasswordIsChanged = apiResult.mustChangePassword,
-                    PasswordExpired = apiResult.passwordExpired,
+                    AccessToken = apiResult.AccessToken,
+                    RefreshToken = apiResult.RefreshToken,
+                    AccessTokenExpiresAt = apiResult.AccessTokenExpiresAt,
+                    RefreshTokenExpiresAt = apiResult.RefreshTokenExpiresAt,
+                    SessionId = apiResult.SessionId, // Guid
+
+                    PasswordIsChanged = apiResult.MustChangePassword,
+                    PasswordExpired = apiResult.PasswordExpired,
                     Username = Username,
-                    FullName = Username // اگر سرویس پروفایل داری بگو تا دقیقش کنم
+                    FullName = Username
                 };
 
-                Session.SetUser(user);
+                var jsonUser = System.Text.Json.JsonSerializer.Serialize(user);
+                Session.SetString("UserSessionRaw", jsonUser);
 
+                var readBack = Session.GetString("UserSessionRaw");
+                Session.SetUser(user);
                 return new BaseResult
                 {
                     Status = true,
-                    Message = "ورود با موفقیت انجام شد",
-                    Model = user
+                    Message = "ورود موفق"
                 };
             }
             catch (Exception ex)
@@ -124,7 +136,7 @@ namespace BLL
                 {
                     Status = false,
                     Message = "خطا در ارتباط با سرویس احراز هویت",
-                    Model = ex.Message
+                    Model = ex.ToString()
                 };
             }
         }
