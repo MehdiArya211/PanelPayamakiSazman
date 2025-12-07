@@ -2,6 +2,8 @@
 using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
+using BLL.Project.SenderNumberSpeciality;
+using BLL.Project.SenderNumberSubArea;
 using Filters;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -13,6 +15,8 @@ using StackExchange.Redis.Extensions.Utf8Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton(builder.Configuration);
+
 builder.Services.AddSignalR();
 
 // Add services to the container.
@@ -157,6 +161,15 @@ services.AddScoped<IUserLogManager, UserLogManager>();
 
 #region Projects
 services.AddScoped<IUnitsManager, UnitsManager>();
+#region SenderNumberSubArea
+services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();
+
+#endregion
+
+#region SenderNumberSpeciality
+services.AddScoped<ISenderNumberSpecialityManager,SenderNumberSpecialityManager>();
+
+#endregion
 
 
 #endregion

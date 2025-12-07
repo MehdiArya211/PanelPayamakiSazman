@@ -15,6 +15,7 @@
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <title>پنل مدیریت – @Config.SiteNameFa</title>
@@ -31,15 +32,20 @@
 
     <!-- TomSelect -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <link href="~/admin.css" rel="stylesheet" />
 
-    <!-- Vue Persian Datepicker -->
-    <link href="~/assets/VuePersianDateTimePicker/dist/vue-persian-datetime-picker-browser.css" rel="stylesheet" />
 
-    <!-- =========================================================
-         GLOBAL THEME + SIDEBAR + RESPONSIVE + DATATABLE PAGING
-    ========================================================== -->
-    <style>
+    <!-- GLOBAL THEME + SIDEBAR + RESPONSIVE + DATATABLE PAGING -->
+<style>
+        /* ============================================================
+           ZBM ADMIN PANEL – MAIN STYLESHEET
+           Clean + Organized + Responsive + Dark Mode Supported
+           ============================================================ */
 
+
+        /* ===========================
+           GLOBAL VARIABLES
+           =========================== */
         :root {
             --primary: #0d6efd;
             --primary-soft: rgba(13,110,253,.08);
@@ -65,235 +71,62 @@
             overflow-x: hidden;
         }
 
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            width: 250px;
-            background: var(--bg-sidebar);
-            border-left: 1px solid #e5e7eb;
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            overflow-y: auto;
-            z-index: 1040;
-            transition: transform .3s ease;
-        }
 
-        /* Desktop */
-        @@media (min-width: 769px) {
-            .sidebar {
-                transform: translateX(0);
-            }
-        }
-
-        /* Mobile */
-        @@media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(100%);
-            }
-
-                .sidebar.show {
-                    transform: translateX(0);
-                }
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            padding: .65rem .95rem;
-            border-radius: .6rem;
-            margin: .2rem 0;
-            text-decoration: none;
-            color: var(--text-main);
-            transition: .2s;
-            font-size: .92rem;
-        }
-
-            .sidebar-link:hover {
-                background: var(--primary-soft);
-                color: var(--primary);
-            }
-
-            .sidebar-link.active {
-                background: var(--primary);
-                color: white !important;
-            }
-
-        .submenu {
-            padding-right: 1.7rem;
-        }
-
-            .submenu a {
-                font-size: .86rem;
-                padding: .45rem .8rem;
-                border-radius: .5rem;
-                display: block;
-                margin-bottom: .2rem;
-                color: var(--text-main);
-            }
-
-                .submenu a.active {
-                    background: var(--primary);
-                    color: #fff;
-                }
-
-        .sidebar-group-title {
-            font-size: .75rem;
-            letter-spacing: .03em;
-        }
-
-        /* Backdrop for mobile */
-        .sidebar-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.35);
-            z-index: 1030;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .25s ease, visibility .25s ease;
-        }
-
-            .sidebar-backdrop.show {
-                opacity: 1;
-                visibility: visible;
-            }
-
-        /* ================= MAIN CONTENT ================= */
-        .main-content {
-            margin-right: 250px;
-            min-height: 100vh;
-            transition: margin-right .3s;
-        }
-
-        @@media (max-width: 768px) {
-            .main-content {
-                margin-right: 0;
-            }
-        }
-
-        .navbar {
-            background: var(--bg-navbar);
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        /* ===================== BEAUTIFUL PAGINATION ====================== */
-
-        .dataTables_wrapper .dataTables_paginate {
-            margin-top: 20px;
-        }
-
-            .dataTables_wrapper .dataTables_paginate .pagination {
-                justify-content: center !important;
-                gap: 6px;
-                flex-wrap: wrap;
-            }
-
-            .dataTables_wrapper .dataTables_paginate .page-link {
-                border: none !important;
-                background: var(--bg-sidebar);
-                color: var(--text-main);
-                border-radius: 10px !important;
-                padding: 7px 14px !important;
-                font-size: .85rem;
-                font-weight: 600;
-                transition: .25s;
-                box-shadow: 0 1px 4px rgba(0,0,0,.10);
-            }
-
-                .dataTables_wrapper .dataTables_paginate .page-link:hover {
-                    background: var(--primary-soft);
-                    color: var(--primary);
-                    transform: translateY(-2px);
-                }
-
-            .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-                background: var(--primary) !important;
-                color: white !important;
-                box-shadow: 0 3px 10px rgba(13,110,253,.25);
-            }
-
-            .dataTables_wrapper .dataTables_paginate .page-item.previous .page-link,
-            .dataTables_wrapper .dataTables_paginate .page-item.next .page-link {
-                border-radius: 50% !important;
-                width: 40px;
-                height: 40px;
-                padding: 0 !important;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--primary);
-                color: white !important;
-            }
-
-                .dataTables_wrapper .dataTables_paginate .page-item.previous .page-link::before {
-                    content: "\F12F";
-                    font-family: 'bootstrap-icons';
-                }
-
-                .dataTables_wrapper .dataTables_paginate .page-item.next .page-link::before {
-                    content: "\F138";
-                    font-family: 'bootstrap-icons';
-                }
-
-            .dataTables_wrapper .dataTables_paginate .page-item.previous span,
-            .dataTables_wrapper .dataTables_paginate .page-item.next span {
-                display: none !important;
-            }
-
-        /* جدول‌ها وسط‌چین */
-        table.dataTable td,
-        table.dataTable th {
-            text-align: center !important;
-            vertical-align: middle !important;
-        }
     </style>
+
 
     @RenderSection("Styles", required: false)
 </head>
 
+
+
 <body>
 
-    <!-- ================= Sidebar ================= -->
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebarMenu">
 
         <div class="p-3 fw-bold border-bottom text-center">
             📩 @Config.SiteNameFa
         </div>
 
-        <!-- User Profile Box -->
+        <!-- PROFILE -->
         <div class="border-bottom p-3 text-center">
             <img src="~/assets/img/user-icon.svg" width="65" class="rounded-circle mb-2"
                  data-bs-toggle="collapse" data-bs-target="#profileMenu" />
 
-            <div class="fw-bold mt-2"
-                 data-bs-toggle="collapse" data-bs-target="#profileMenu">
+            <div class="fw-bold mt-2" data-bs-toggle="collapse" data-bs-target="#profileMenu">
                 @User.FullName
             </div>
 
             <div class="collapse mt-3" id="profileMenu">
+
                 <a class="sidebar-link @(currentArea == "admin" && currentController == "profile" && currentAction == "edit" ? "active" : "")"
                    asp-area="Admin" asp-controller="Profile" asp-action="Edit">
-                    <i class="bi bi-person"></i> ویرایش پروفایل
+                    <i class="bi bi-person"></i>
+                    ویرایش پروفایل
                 </a>
 
                 <a class="sidebar-link @(currentArea == "admin" && currentController == "profile" && currentAction == "changepassword" ? "active" : "")"
                    asp-area="Admin" asp-controller="Profile" asp-action="ChangePassword">
-                    <i class="bi bi-key"></i> تغییر رمز عبور
+                    <i class="bi bi-key"></i>
+                    تغییر رمز عبور
                 </a>
 
                 <a class="sidebar-link @(currentArea == "admin" && currentController == "profile" && currentAction == "loginlog" ? "active" : "")"
                    asp-area="Admin" asp-controller="Profile" asp-action="LoginLog">
-                    <i class="bi bi-clock-history"></i> لاگ ورود
+                    <i class="bi bi-clock-history"></i>
+                    لاگ ورود
                 </a>
 
-                <a class="sidebar-link text-danger" asp-controller="Authentication" asp-action="Logout">
-                    <i class="bi bi-box-arrow-left"></i> خروج
+                <a class="sidebar-link text-danger"
+                   asp-controller="Authentication" asp-action="Logout">
+                    <i class="bi bi-box-arrow-left"></i>
+                    خروج
                 </a>
             </div>
         </div>
 
-        <!-- Dynamic Menu -->
+        <!-- DYNAMIC MENU -->
         <ul class="list-unstyled px-2 mt-3 accordion" id="mainMenu">
 
             @foreach (var menu in Menus.Where(m => m.ParentId == null && m.ShowInMenu).OrderBy(m => m.Order))
@@ -305,7 +138,6 @@
 
                 bool hasChildren = childs.Any();
 
-                // آیا یکی از بچه‌ها فعال است؟
                 bool hasActiveChild = childs.Any(child =>
                 (child.Area ?? "").ToLower() == currentArea &&
                 (child.Controller ?? "").ToLower() == currentController &&
@@ -315,7 +147,9 @@
                 bool isActiveParent =
                 (menu.Area ?? "").ToLower() == currentArea &&
                 (menu.Controller ?? "").ToLower() == currentController &&
-                (string.IsNullOrEmpty(menu.Action) || (menu.Action ?? "").ToLower() == currentAction || hasActiveChild);
+                (string.IsNullOrEmpty(menu.Action) ||
+                (menu.Action ?? "").ToLower() == currentAction ||
+                hasActiveChild);
 
                 string collapseId = $"menu_{menu.Id}";
 
@@ -329,18 +163,19 @@
                                 data-bs-target="#@collapseId"
                                 aria-expanded="@(hasActiveChild.ToString().ToLower())"
                                 aria-controls="@collapseId">
-                            <i class="@menu.Icon"></i> @menu.Title
+
+                            <i class="@menu.Icon"></i>
+                            @menu.Title
                         </button>
                     }
                     else
                     {
                         <a class="sidebar-link @(isActiveParent ? "active" : "")"
-                           href="@Url.Action(menu.Action,
-                                                                        menu.Controller,
-                                                                        new { area = menu.Area })">
-                    <i class="@menu.Icon"></i> @menu.Title
-                </a>
-                                }
+                           href="@Url.Action(menu.Action, menu.Controller, new { area = menu.Area })">
+                            <i class="@menu.Icon"></i>
+                            @menu.Title
+                        </a>
+                    }
 
                     @if (hasChildren)
                     {
@@ -349,6 +184,7 @@
                              data-bs-parent="#mainMenu">
 
                             <div class="submenu accordion-body">
+
                                 @foreach (var child in childs)
                                 {
                                     bool isChildActive =
@@ -357,50 +193,55 @@
                                     (child.Action ?? "").ToLower() == currentAction;
 
                                     <a class="@(isChildActive ? "active" : "")"
-                                       href="@Url.Action(child.Action,
-                                                                                                child.Controller,
-                                                                                                new { area = child.Area })">
-                            <i class="@child.Icon"></i> @child.Title
-                        </a>
-                                                }
-                            </div>
+                                       href="@Url.Action(child.Action, child.Controller, new { area = child.Area })">
+                                        <i class="@child.Icon"></i>
+                                        @child.Title
+                                    </a>
+                                }
 
+                            </div>
                         </div>
                     }
 
                 </li>
             }
 
-            <div class="sidebar-group-title px-2 text-muted mt-4 small">سامانه</div>
+            <div class="sidebar-group-title px-2 text-muted mt-4 small">
+                سامانه
+            </div>
 
             <li>
                 <a class="sidebar-link @(currentArea == "admin" && currentController == "dashboard" && currentAction == "clearcache" ? "active" : "")"
                    asp-area="Admin" asp-controller="Dashboard" asp-action="ClearCache">
-                    <i class="bi bi-arrow-repeat"></i> پاک‌سازی کش
+                    <i class="bi bi-arrow-repeat"></i>
+                    پاک‌سازی کش
                 </a>
             </li>
+
         </ul>
 
-        <!-- Dark / Light toggle -->
+        <!-- DARK MODE -->
         <div class="p-3 border-top text-center">
             <button id="toggleDark" class="btn btn-sm btn-secondary w-100">
-                <i class="bi bi-moon"></i> حالت شب / روز
+                <i class="bi bi-moon"></i>
+                حالت شب / روز
             </button>
         </div>
 
     </aside>
 
-    <!-- Backdrop for mobile -->
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-    <!-- ================= MAIN ================= -->
+    <!-- MAIN -->
     <main class="main-content">
 
         <nav class="navbar px-3 d-flex align-items-center">
             <button id="btnToggleSidebar" class="btn btn-outline-secondary d-md-none me-2">
                 <i class="bi bi-list"></i>
             </button>
+
             <h6 class="fw-bold mb-0">@ViewData["Title"]</h6>
+
             <div class="ms-auto"></div>
         </nav>
 
@@ -414,46 +255,45 @@
 
     </main>
 
-    <!-- ================= SCRIPTS ================= -->
 
+    <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ADD THESE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- DataTables (jQuery wrapper + Bootstrap 5 integration) -->
-    <script src="~/assets/js/jquery.datatables.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
-        // ======= FIX PAGINATION RENDERER =======
         $.extend(true, $.fn.dataTable.defaults, {
             renderer: 'bootstrap'
         });
     </script>
 
-    <!-- Tom Select -->
+    <!-- TomSelect -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
-    <!-- Persian Date Picker -->
-    <script src="~/assets/VuePersianDateTimePicker/vue.min.js"></script>
-    <script src="~/assets/VuePersianDateTimePicker/moment/moment.min.js"></script>
-    <script src="~/assets/VuePersianDateTimePicker/moment/moment-jalaali.js"></script>
-    <script src="~/assets/VuePersianDateTimePicker/dist/vue-persian-datetime-picker-browser.js"></script>
+
 
     <!-- Sidebar + Dark Mode -->
     <script>
         (function () {
+
             const sidebar = document.getElementById("sidebarMenu");
             const backdrop = document.getElementById("sidebarBackdrop");
             const toggleBtn = document.getElementById("btnToggleSidebar");
 
             toggleBtn?.addEventListener("click", () => {
                 const isShown = sidebar.classList.contains("show");
-
                 if (!isShown) {
                     sidebar.classList.add("show");
                     backdrop.classList.add("show");
-                } else {
+                }
+                else {
                     sidebar.classList.remove("show");
                     backdrop.classList.remove("show");
                 }
@@ -479,33 +319,55 @@
 
             toggleDark.addEventListener("click", () => {
                 body.classList.toggle("dark");
-                localStorage.setItem("darkmode", body.classList.contains("dark") ? "on" : "off");
+                localStorage.setItem(
+                    "darkmode",
+                    body.classList.contains("dark") ? "on" : "off"
+                );
             });
+
         })();
     </script>
 
-    <!-- Tom Select initializer -->
+    <!-- TomSelect init -->
     <script>
         function initTomSelect() {
             document.querySelectorAll("select").forEach(function (el) {
-                if (!el.classList.contains("ts-wrapper")) {
-                    new TomSelect(el, {
-                        maxOptions: 500,
-                        sortField: { field: "text", direction: "asc" },
-                        render: {
-                            option: data => `<div class="py-1 px-2">${data.text}</div>`,
-                            item: data => `<div class="py-1">${data.text}</div>`
-                        }
-                    });
+
+                // ❶: سلکت‌های دیتاتیبل (تعداد ردیف‌ها) را دست نزن
+                if (el.closest('.dataTables_length')) {
+                    return;
                 }
+
+                // ❷: اگر قبلاً تبدیل شده، دوباره تبدیلش نکن
+                if (el.tomselect || el.classList.contains('ts-hidden-accessible')) {
+                    return;
+                }
+
+                new TomSelect(el, {
+                    maxOptions: 500,
+                    sortField: { field: "text", direction: "asc" },
+                    render: {
+                        option: data => `<div class="py-1 px-2">${data.text}</div>`,
+                        item: data => `<div class="py-1">${data.text}</div>`
+                    }
+                });
             });
         }
+
 
         document.addEventListener("DOMContentLoaded", initTomSelect);
         document.addEventListener("shown.bs.modal", initTomSelect);
     </script>
 
     @RenderSection("Scripts", required: false)
+    <!-- Global Modal -->
+    <div class="modal fade" id="base-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" id="modal-form">
+                <!-- Ajax content loads here -->
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

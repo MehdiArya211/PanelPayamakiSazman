@@ -8,6 +8,7 @@ using Services.RedisService;
 using Services.SessionServices;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text;
 using Utilities.Extentions;
 
 
@@ -67,192 +68,105 @@ namespace Momayezi.Controllers
 
 
 
-
-        /// <summary>
-        /// لاگین با یوزر پس
-        /// </summary>
-        /// <param name="Mobile">نام کاربری</param>
-        /// <param name="Password">پسورد</param>
-        /// <param name="MenuId">اگر لاگین جهت احراز هویت مجدد برای منو خاص بود مقدار دارد</param>
-        /// <param name="RetUrl"></param>
-        /// <returns></returns>
-        //[HttpPost]
-        //public async Task<IActionResult> Index(string Mobile, string Password, string Captcha, string RetUrl, long? MenuId)
-        //{
-        //    FajrActionType fajrActionType = MenuId == null ? FajrActionType.logIn : FajrActionType.logInSecurePage;
-
-        //    #region بررسی تعداد تلاش برای لاگین و قفل بودن حساب کاربری
-        //    //لاگ دفعات تلاش برای لاگین
-        //    var loginLog = await Redis.db.SetLoginLog(Mobile);
-        //    var FailedLoginCount = ConstantManager.GetFailedLoginCount();
-        //    if (loginLog != null && loginLog.Count > FailedLoginCount)
-        //    {
-        //        fajrActionType = FajrActionType.BlockUser;
-        //        var diff = (int)(loginLog.CreateDate.AddMinutes(20) - DateTime.Now).TotalMinutes;
-        //        await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, null, null, false, $"مسدود شدن حساب کاربری تا {diff} دقیقه دیگر به دلیل {loginLog.Count} بار ورود اشتباه کلمه عبور. ");
-        //        ViewBag.Error = $"حساب کاربری شما بدلیل ورود اشتباه کلمه عبور تا {diff} دقیقه آینده مسدود می باشد.";
-        //        return View();
-        //    }
-        //    #endregion
-
-        //    #region بررسی کپچا در صورت وجود
-        //    // برای دفعات بعدی لاگین در صورت اشتباه وارد کردن کلمه عبور، کپچا نشان داده شود
-        //    ViewBag.captcha = true;
-        //    var showCaptcha = HttpContext.GetCookieShowCaptcha();
-        //    HttpContext.SetCookieShowCaptcha();
-
-        //    if (showCaptcha)
-        //    {
-        //        var captcha = HttpContext.Session.GetString("Captcha")?.Trim().ToEnglishNumber();
-        //        if (string.IsNullOrEmpty(captcha) || captcha != Captcha)
-        //        {
-        //            await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, null, null, false, "کد امنیتی صحیح نیست!");
-        //            ViewBag.Error = "کد امنیتی صحیح نیست!";
-        //            return View();
-        //        }
-        //    }
-        //    #endregion
-
-        //    #region عملیات لاگین
-        //    var res = await AuthManager.Login(Mobile, Password);
-        //    var User = res.Model as UserSessionDTO;
-        //    if (!res.Status)
-        //    {
-        //        await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, User?.FullName, User?.Id, false, res.Message);
-        //        if (User == null)
-        //        {
-        //            ViewBag.Error = res.Message;
-        //            ViewBag.InvalidLogin = true;
-
-        //            return View();
-        //        }
-        //    }
-        //    #endregion
-
-        //    #region اطلاعات ردیس و کوکی
-        //    // افزودن لاگ برای لاگین موفق
-        //    await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, User?.FullName, User?.Id, true, $"کاربر {User.FullName} وارد شد.");
-
-        //    if (MenuId == null)
-        //    {
-        //        // افزودن توکن کاربر به ردیس برای جلوگیری از لاگین همزمان 2 نفر با یک اکانت
-        //        var token = await Redis.db.SetLoginToken(User.Id);
-
-        //        // افزودن توکن به کوکی
-        //        HttpContext.SetCookieUserToken(token);
-        //    }
-        //    else
-        //    {
-        //        // اگر لاگین جهت احراز هویت مجدد برای منو خاص بود، اطلاعات درون ردیس ذخیره شود
-        //        await Redis.db.SetUserReAuthorizeMenu((int)MenuId, User.Id);
-        //    }
-        //    // حذف اطلاعات مربوط به کنترل تعداد دفعات تلاش برای لاگین
-        //    await Redis.db.RemoveLoginLog(Mobile);
-
-        //    // حذف اطلاعات نمایش کپچا به کاربر
-        //    HttpContext.RemoveCookieShowCaptcha();
-        //    #endregion
-
-        //    //if (!string.IsNullOrEmpty(RetUrl))
-        //    //    return Redirect(RetUrl);
-
-        //    return RedirectToAction("index", "Dashboard", new { area = "Admin" });
-        //}
-
-
         [HttpPost]
         public async Task<IActionResult> Index(string Mobile, string Password, string Captcha, string RetUrl, int? MenuId)
         {
             FajrActionType fajrActionType = MenuId == null ? FajrActionType.logIn : FajrActionType.logInSecurePage;
 
-            // ------------------ عملیات لاگین ------------------
             var res = await AuthManager.Login(Mobile, Password);
             var user = res.Model as UserSessionDTO;
-            #region بررسی تعداد تلاش برای لاگین و قفل بودن حساب کاربری
-            //لاگ دفعات تلاش برای لاگین
-            var loginLog = await Redis.db.SetLoginLog(Mobile);
-            var FailedLoginCount = ConstantManager.GetFailedLoginCount();
-            if (loginLog != null && loginLog.Count > FailedLoginCount)
-            {
-                fajrActionType = FajrActionType.BlockUser;
-                var diff = (int)(loginLog.CreateDate.AddMinutes(20) - DateTime.Now).TotalMinutes;
-                await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, null, null, false, $"مسدود شدن حساب کاربری تا {diff} دقیقه دیگر به دلیل {loginLog.Count} بار ورود اشتباه کلمه عبور. ");
-                ViewBag.Error = $"حساب کاربری شما بدلیل ورود اشتباه کلمه عبور تا {diff} دقیقه آینده مسدود می باشد.";
-                return View();
-            }
-            #endregion
 
-            #region بررسی کپچا در صورت وجود
-            // برای دفعات بعدی لاگین در صورت اشتباه وارد کردن کلمه عبور، کپچا نشان داده شود
-            ViewBag.captcha = true;
-            var showCaptcha = HttpContext.GetCookieShowCaptcha();
-            HttpContext.SetCookieShowCaptcha();
-
-            if (showCaptcha)
+            // ❗ اگر رمز منقضی یا نیاز به تغییر دارد
+            if (user != null && (user.PasswordExpired || user.PasswordIsChanged))
             {
-                var captcha = HttpContext.Session.GetString("Captcha")?.Trim().ToEnglishNumber();
-                if (string.IsNullOrEmpty(captcha) || captcha != Captcha)
-                {
-                    await Redis.db.SetLoginLog(Redis.ContextAccessor, fajrActionType, Mobile, null, null, false, "کد امنیتی صحیح نیست!");
-                    ViewBag.Error = "کد امنیتی صحیح نیست!";
-                    return View();
-                }
+                // ذخیره اطلاعات لازم برای تغییر رمز
+                HttpContext.Session.SetString("ChangePass_Username", Mobile);
+                HttpContext.Session.SetString("ChangePass_CurrentPassword", Password);
+                HttpContext.Session.SetString("ChangePass_Token", user.AccessToken);
+
+                return RedirectToAction("ForceChangePassword");
             }
-            #endregion
-            // لاگین ناموفق = همین‌جا برگرد
+
+            // ادامه همان کد شما…
             if (!res.Status || user == null)
             {
-                await Redis.db.SetLoginLog(
-                Redis.ContextAccessor,
-                    fajrActionType,
-                    Mobile,
-                    user?.FullName,
-                    user?.Id,
-                    false,
-                    res.Message
-                );
-
                 ViewBag.Error = res.Message;
                 ViewBag.InvalidLogin = true;
                 return View();
             }
 
-            // ------------------ سشن + ردیس + کوکی ------------------
-
-            // 1) سشن کاربر (این چیزی است که Dashboard می‌خواد)
-            HttpContext.Session.SetUser(user);  // ==> این خط مهم است
-
-            // 2) لاگ لاگین موفق
-            await Redis.db.SetLoginLog(
-            Redis.ContextAccessor,
-                fajrActionType,
-                Mobile,
-                user.FullName,
-                user.Id,
-                true,
-                $"کاربر {user.FullName} وارد شد."
-            );
-
-            if (MenuId == null)
-            {
-                // توکن جلوگیری از لاگین همزمان
-                var token = await Redis.db.SetLoginToken(user.Id);
-                HttpContext.SetCookieUserToken(token);
-            }
-            else
-            {
-                // لاگین برای احراز هویت مجدد
-                await Redis.db.SetUserReAuthorizeMenu((int)MenuId, user.Id);
-            }
-
-            await Redis.db.RemoveLoginLog(Mobile);
-            HttpContext.RemoveCookieShowCaptcha();
-
-            // RetUrl را فعلاً کنار گذاشتی، اوکی
+            HttpContext.Session.SetUser(user);
             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
         }
 
 
+        public IActionResult ForceChangePassword()
+        {
+            var token = HttpContext.Session.GetString("ChangePass_Token");
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToAction("Index");
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForceChangePassword(string NewPassword)
+        {
+            var username = HttpContext.Session.GetString("ChangePass_Username");
+            var oldPassword = HttpContext.Session.GetString("ChangePass_CurrentPassword");
+            var token = HttpContext.Session.GetString("ChangePass_Token");
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(oldPassword) || string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "اطلاعات سشن یافت نشد.";
+                return RedirectToAction("Index");
+            }
+
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "http://87.107.111.44:8010/api/auth/change-password");
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var body = new
+            {
+                userName = username,
+                currentPassword = oldPassword,
+                newPassword = NewPassword
+            };
+
+            request.Content = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(body),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await client.SendAsync(request);
+            var result = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["Error"] = "خطا در تغییر رمز عبور: " + result;
+                return RedirectToAction("ForceChangePassword");
+            }
+
+            // ✔ لاگین جدید با رمز جدید
+            var login = await AuthManager.Login(username, NewPassword);
+
+            if (!login.Status)
+            {
+                TempData["Error"] = "رمز تغییر کرد، اما ورود مجدد ناموفق بود.";
+                return RedirectToAction("Index");
+            }
+
+            HttpContext.Session.SetUser(login.Model as UserSessionDTO);
+
+            // پاک‌کردن سشن‌ها
+            HttpContext.Session.Remove("ChangePass_Username");
+            HttpContext.Session.Remove("ChangePass_CurrentPassword");
+            HttpContext.Session.Remove("ChangePass_Token");
+
+            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+        }
 
 
 

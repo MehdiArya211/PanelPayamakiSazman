@@ -1,0 +1,52 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model DTO.Project.SenderNumberSpeciality.SenderNumberSpecialityEditDTO
+
+    <form asp-area="Project"
+      asp-controller="SenderNumberSubArea"
+          asp-action="Edit"
+          class="edit-form">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="modal-header">
+        <h5 class="modal-title">ویرایش حوزه فرعی (@Model.code)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="mb-3">
+            <label class="form-label required">کد</label>
+            <input class="form-control zbm-control"
+                   value="@Model.code"
+                   name="Code" maxlength="2" minlength="2" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">عنوان</label>
+            <input class="form-control zbm-control"
+                   value="@Model.title"
+                   name="Title" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">توضیحات</label>
+            <textarea class="form-control zbm-control"
+                      name="Description">@Model.description</textarea>
+        </div>
+
+        <div class="text-danger error"></div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit" class="btn btn-primary zbm-btn-save" onclick="SenderNumberSpeciality.edit.save(event)">
+            <i class="bi bi-check-lg"></i>
+            ذخیره
+        </button>
+    </div>
+
+</form>

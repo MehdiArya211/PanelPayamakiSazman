@@ -103,7 +103,7 @@ namespace BLL
                     };
                 }
 
-                var apiResult = apiResponse.Data; // اینجا پره، خودت گفتی
+                var apiResult = apiResponse.Data;
 
                 var user = new UserSessionDTO
                 {
@@ -111,23 +111,24 @@ namespace BLL
                     RefreshToken = apiResult.RefreshToken,
                     AccessTokenExpiresAt = apiResult.AccessTokenExpiresAt,
                     RefreshTokenExpiresAt = apiResult.RefreshTokenExpiresAt,
-                    SessionId = apiResult.SessionId, // Guid
-
+                    SessionId = apiResult.SessionId,
                     PasswordIsChanged = apiResult.MustChangePassword,
                     PasswordExpired = apiResult.PasswordExpired,
                     Username = Username,
                     FullName = Username
                 };
 
+                Session.SetString("AdminToken", apiResult.AccessToken);
+
                 var jsonUser = System.Text.Json.JsonSerializer.Serialize(user);
                 Session.SetString("UserSessionRaw", jsonUser);
-
-                var readBack = Session.GetString("UserSessionRaw");
                 Session.SetUser(user);
+
                 return new BaseResult
                 {
                     Status = true,
-                    Message = "ورود موفق"
+                    Message = "ورود موفق",
+                    Model = user  // ✔ مهم
                 };
             }
             catch (Exception ex)
@@ -140,6 +141,7 @@ namespace BLL
                 };
             }
         }
+
 
 
 

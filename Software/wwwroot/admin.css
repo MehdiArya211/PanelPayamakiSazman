@@ -1,0 +1,260 @@
+﻿/* ============================================================
+   ZBM ADMIN PANEL – MAIN STYLESHEET
+   Clean + Organized + Responsive + Dark Mode Supported
+   ============================================================ */
+
+
+/* ===========================
+   GLOBAL VARIABLES
+   =========================== */
+:root {
+    --primary: #0d6efd;
+    --primary-soft: rgba(13,110,253,.08);
+    --bg-sidebar: #ffffff;
+    --bg-navbar: #ffffff;
+    --bg-body: #f3f4f6;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+}
+
+body.dark {
+    --bg-sidebar: #1e1e1e;
+    --bg-navbar: #1f1f1f;
+    --bg-body: #181818;
+    --text-main: #e5e5e5;
+    --text-muted: #9ca3af;
+    --primary-soft: rgba(13,110,253,.30);
+}
+
+body {
+    background: var(--bg-body);
+    font-family: "IRANSans", "Segoe UI", sans-serif;
+    overflow-x: hidden;
+}
+
+
+
+/* ===========================
+   SIDEBAR
+   =========================== */
+.sidebar {
+    width: 250px;
+    background: var(--bg-sidebar);
+    border-left: 1px solid #e5e7eb;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 1040;
+    transition: transform .3s ease;
+}
+
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(100%);
+    }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+}
+
+
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .65rem .95rem;
+    border-radius: .6rem;
+    margin: .2rem 0;
+    color: var(--text-main);
+    font-size: .92rem;
+    text-decoration: none;
+    transition: .2s;
+}
+
+    .sidebar-link:hover {
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    .sidebar-link.active {
+        background: var(--primary);
+        color: #fff !important;
+    }
+
+
+
+/* ===========================
+   MAIN WRAPPER
+   =========================== */
+.main-content {
+    margin-right: 250px;
+    min-height: 100vh;
+    transition: .3s;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-right: 0;
+    }
+}
+
+.navbar {
+    background: var(--bg-navbar);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+
+/* ======================================================
+   DATATABLE – TABLE STYLE
+   ====================================================== */
+table.dataTable {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: none !important;
+}
+
+    table.dataTable thead th:first-child {
+        border-top-right-radius: 14px !important;
+    }
+
+    table.dataTable thead th:last-child {
+        border-top-left-radius: 14px !important;
+    }
+
+    table.dataTable tbody tr:last-child td:first-child {
+        border-bottom-right-radius: 14px !important;
+    }
+
+    table.dataTable tbody tr:last-child td:last-child {
+        border-bottom-left-radius: 14px !important;
+    }
+
+    table.dataTable thead th {
+        background: var(--primary) !important;
+        color: white !important;
+        font-size: .90rem;
+        border: none;
+        padding: 12px !important;
+    }
+
+
+
+/* ===========================
+   DATATABLE CONTAINER (CARD)
+   =========================== */
+.table-card {
+    background: var(--bg-sidebar);
+    border-radius: 14px !important;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    border: 1px solid #e5e7eb;
+}
+
+    .table-card h5 {
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+
+
+/* ======================================================
+   ZBM COMPONENTS – CUSTOM UI
+   ====================================================== */
+
+/* Action Buttons */
+.zbm-action-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: .25s;
+    padding: 0 !important;
+}
+
+    .zbm-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 8px rgba(0,0,0,.15);
+    }
+
+body.dark .zbm-action-btn {
+    background: #2a2a2a !important;
+    color: #eee !important;
+}
+
+
+
+/* Filter Box */
+.zbm-filter-card {
+    background: var(--bg-sidebar);
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    padding: 20px;
+}
+
+body.dark .zbm-filter-card {
+    background: #1f1f1f;
+    border-color: #333;
+    box-shadow: 0 3px 12px rgba(0,0,0,.45);
+}
+
+
+
+/* ===========================
+   Responsive Components
+   =========================== */
+@media (max-width: 768px) {
+    .zbm-filter-card {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .zbm-action-btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+/* وسط‌چین کردن کل جدول */
+#datatables th,
+#datatables td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+    /* وسط‌چین کردن ستون عملیات */
+    #datatables td:last-child,
+    #datatables th:last-child {
+        text-align: center !important;
+    }
+
+/* ردیف‌ها دقیقاً زیر عنوان قرار بگیرند */
+#datatables tbody tr td {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+/* جستجوی دیتاتیبل سمت چپ */
+.dataTables_filter {
+    float: left !important;
+    text-align: left !important;
+}
+
+    /* ثابت‌سازی لیبل و ورودی جستجو */
+    .dataTables_filter label {
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+    }
