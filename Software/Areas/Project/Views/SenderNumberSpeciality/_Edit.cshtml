@@ -3,7 +3,7 @@
 @model DTO.Project.SenderNumberSpeciality.SenderNumberSpecialityEditDTO
 
     <form asp-area="Project"
-      asp-controller="SenderNumberSubArea"
+      asp-controller="SenderNumberSpeciality"
           asp-action="Edit"
           class="edit-form">
     @Html.AntiForgeryToken()
@@ -43,10 +43,8 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
-        <button type="submit" class="btn btn-primary zbm-btn-save" onclick="SenderNumberSpeciality.edit.save(event)">
-            <i class="bi bi-check-lg"></i>
-            ذخیره
-        </button>
+            <button type="button" class="btn btn-primary zbm-btn-save" onclick="sendnumberspeciality.edit.save(event)">ویرایش</button>
+
     </div>
 
 </form>

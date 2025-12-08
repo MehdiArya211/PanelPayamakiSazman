@@ -96,6 +96,14 @@ namespace Software.Areas.Project.SenderNumberSubArea
         [HttpPost]
         public IActionResult Delete(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new
+                {
+                    status = false,
+                    message = "اطلاعات ارسال‌شده معتبر نیست!"
+                });
+            }
             var result = _senderNumberSubAreaManager.Delete(id);
             return Json(result);
         }

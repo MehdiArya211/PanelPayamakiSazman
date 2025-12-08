@@ -77,7 +77,7 @@ namespace Software.Areas.Project.SenderNumberSpeciality.Controllers
             return PartialView("_Edit", model);
         }
 
-        [HttpPut]
+        [HttpPost]
         [ValidateAntiForgeryToken]
 
         public IActionResult Edit(SenderNumberSpecialityEditDTO model)

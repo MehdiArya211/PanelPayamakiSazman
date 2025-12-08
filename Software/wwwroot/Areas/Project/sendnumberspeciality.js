@@ -175,7 +175,72 @@ var sendnumberspeciality = {
 
             $.ajax({
                 url: form.attr("action"),
-                type: "PUT",
+                type: "POST",
+                data: form.serialize(), // شامل توکن هم هست
+                success: function (res) {
+
+                    if (res.status) {
+
+                        sendnumberspeciality.list.reload();
+
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("base-modal"));
+                        modal.hide();
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "عملیات موفق",
+                            text: "ویرایش با موفقیت انجام شد."
+                        });
+                    }
+                    else {
+                        $(".edit-form .error").html(res.message);
+                    }
+                },
+                error: function () {
+                    $(".edit-form .error").html("خطا در ارتباط با سرور");
+                }
+            });
+        }
+
+    },
+
+
+    edit0: {
+
+        loadForm: function (id) {
+
+            $.get("/Project/SenderNumberSpeciality/LoadEditForm", { id: id }, function (res) {
+
+                $("#modal-form").html(res);
+
+                const modal = new bootstrap.Modal(document.getElementById("base-modal"));
+                modal.show();
+
+                var form = $(".edit-form")
+                    .removeData("validator")
+                    .removeData("unobtrusiveValidation");
+
+                $.validator.unobtrusive.parse(form);
+
+            });
+        },
+
+
+        save: function (e) {
+
+            e.preventDefault();
+
+            var form = $(".edit-form");
+
+            form.validate();
+            if (!form.valid()) return;
+
+            // گرفتن آنتی فورجری توکن
+            var token = form.find('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: form.attr("action"),
+                type: "POST",
                 data: form.serialize(), // شامل توکن هم هست
                 success: function (res) {
 

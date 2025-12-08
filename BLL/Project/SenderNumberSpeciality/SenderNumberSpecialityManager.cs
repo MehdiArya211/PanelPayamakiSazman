@@ -145,7 +145,7 @@ namespace BLL.Project.SenderNumberSpeciality
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{model.Id}";
+                var url = $"http://87.107.111.44:8010/api/admin/sender-number-specialties/{model.Id}";
 
                 var body = new
                 {
@@ -177,7 +177,7 @@ namespace BLL.Project.SenderNumberSpeciality
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{id}";
+                var url = $"http://87.107.111.44:8010/api/admin/sender-number-specialties/{id}";
 
                 var res = _client.GetAsync(url).Result;
 
