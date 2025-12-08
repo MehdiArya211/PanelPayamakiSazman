@@ -36,16 +36,16 @@
 
 
     <!-- GLOBAL THEME + SIDEBAR + RESPONSIVE + DATATABLE PAGING -->
-<style>
+    <style>
         /* ============================================================
-           ZBM ADMIN PANEL – MAIN STYLESHEET
-           Clean + Organized + Responsive + Dark Mode Supported
-           ============================================================ */
+                   ZBM ADMIN PANEL – MAIN STYLESHEET
+                   Clean + Organized + Responsive + Dark Mode Supported
+                   ============================================================ */
 
 
         /* ===========================
-           GLOBAL VARIABLES
-           =========================== */
+                   GLOBAL VARIABLES
+                   =========================== */
         :root {
             --primary: #0d6efd;
             --primary-soft: rgba(13,110,253,.08);
@@ -70,7 +70,6 @@
             font-family: "IRANSans", "Segoe UI", sans-serif;
             overflow-x: hidden;
         }
-
 
     </style>
 
@@ -127,6 +126,79 @@
         </div>
 
         <!-- DYNAMIC MENU -->
+
+        <div class="sidebar-group-title px-2 text-muted mt-4 small">
+            مدیریت سامانه
+        </div>
+        <ul class="list-unstyled px-2">
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "securityquestion" ? "active" : "")"
+                   asp-area="Project" asp-controller="SecurityQuestion" asp-action="Index">
+                    <i class="bi bi-shield-check"></i>
+                    سوالات امنیتی
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "sendernumberspeciality" ? "active" : "")"
+                   asp-area="Project" asp-controller="SenderNumberSpeciality" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    حوزه‌ تخصصی سرشماره
+                </a>
+            </li>
+
+
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "sendernumbersubarea" ? "active" : "")"
+                   asp-area="Project" asp-controller="SenderNumberSubArea" asp-action="Index">
+                    <i class="bi bi-diagram-3"></i>
+                    حوزه‌ فرعی سرشماره
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "systemmenu" ? "active" : "")"
+                   asp-area="Project" asp-controller="SystemMenu" asp-action="Index">
+                    <i class="bi bi-menu-button-wide"></i>
+                    منوها
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "systemrole" ? "active" : "")"
+                   asp-area="Project" asp-controller="SystemRole" asp-action="Index">
+                    <i class="bi bi-people"></i>
+                    نقش‌ها
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "systemuser" ? "active" : "")"
+                   asp-area="Project" asp-controller="SystemUser" asp-action="Index">
+                    <i class="bi bi-person-badge"></i>
+                    کاربران
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "sendernumberorganizationlevels" ? "active" : "")"
+                   asp-area="Project" asp-controller="sendernumberorganizationlevels" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    رده های سازمانی سر شماره
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "Units" ? "active" : "")"
+                   asp-area="Project" asp-controller="Units" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    واحد های سازمانی
+                </a>
+
+            </li>
+        </ul>
+
         <ul class="list-unstyled px-2 mt-3 accordion" id="mainMenu">
 
             @foreach (var menu in Menus.Where(m => m.ParentId == null && m.ShowInMenu).OrderBy(m => m.Order))
@@ -219,7 +291,6 @@
             </li>
 
         </ul>
-
         <!-- DARK MODE -->
         <div class="p-3 border-top text-center">
             <button id="toggleDark" class="btn btn-sm btn-secondary w-100">

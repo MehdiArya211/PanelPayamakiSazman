@@ -1,0 +1,70 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SystemMenu.SystemMenuEditDTO
+<div class="modal-header">
+    <h5 class="modal-title">ویرایش منو </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+<form class="edit-form"
+      asp-area="Project"
+      asp-controller="SystemMenu"
+      asp-action="Edit"
+      onsubmit="return systemmenu.edit.save(event)">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">کلید</label>
+            <input asp-for="Key" class="form-control" required />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">عنوان</label>
+            <input asp-for="Title" class="form-control" required />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">آیکون</label>
+            <input asp-for="Icon" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Route Key</label>
+            <input asp-for="RouteKey" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">ترتیب</label>
+            <input asp-for="Order" type="number" class="form-control" required />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">والد</label>
+            <input asp-for="ParentId" type="number" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">وضعیت</label>
+            <select asp-for="IsActive" class="form-control">
+                <option value="true">فعال</option>
+                <option value="false">غیرفعال</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary px-4">
+            ذخیره تغییرات
+        </button>
+    </div>
+
+</form>
+</div>

@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "مدیریت منوها";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+
+    <h4 class="fw-bold mb-4">مدیریت منوهای سیستم</h4>
+
+    <div class="table-card">
+
+        <div class="d-flex justify-content-between mb-3">
+            <h5 class="fw-bold">لیست منوها</h5>
+
+            <button class="btn btn-success" onclick="systemmenu.create.loadForm()">
+                <i class="bi bi-plus-circle"></i> منوی جدید
+            </button>
+        </div>
+
+        <table id="datatables" class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>شناسه</th>
+                    <th>کلید</th>
+                    <th>عنوان</th>
+                    <th>ترتیب</th>
+                    <th>والد</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/areas/project/systemmenu.js"></script>
+}

@@ -2,6 +2,7 @@
 
 namespace Software.Areas.Project.Controllers
 {
+    [Area("Project")]
     public class sendernumberorganizationlevels : Controller
     {
 

@@ -5,6 +5,8 @@ using BLL.ManageToken;
 using BLL.Project.SecurityQuestion;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
+using BLL.Project.SystemMenu;
+using BLL.Project.SystemRole;
 using BLL.Project.User;
 using Filters;
 using Infrastructure.Data;
@@ -182,7 +184,14 @@ services.AddScoped<ISystemUserManager, SystemUserManager>();
 services.AddScoped<ISecurityQuestionManager, SecurityQuestionManager>();
 
 #endregion
+#region Role
+services.AddScoped<ISystemRoleManager, SystemRoleManager>();
 
+#endregion
+#region menu
+services.AddScoped<ISystemMenuManager, SystemMenuManager>();
+
+#endregion
 
 #endregion
 

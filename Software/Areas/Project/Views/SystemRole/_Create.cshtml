@@ -1,0 +1,43 @@
+﻿@model DTO.Project.SystemRole.SystemRoleCreateDTO
+
+<div class="modal-header">
+    <h5 class="modal-title">ایجاد نقش جدید</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form class="create-form"
+          asp-area="Project"
+          asp-controller="SystemRole"
+          asp-action="Create"
+          onsubmit="return systemrole.create.save(event)">
+
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label required">نام نقش</label>
+            <input asp-for="Name" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label>توضیحات</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>وضعیت</label>
+            <select asp-for="IsActive" class="form-control">
+                <option value="true">فعال</option>
+                <option value="false">غیرفعال</option>
+            </select>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary">ذخیره</button>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,47 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model DTO.Project.SystemRole.SystemRoleEditDTO
+
+<div class="modal-header">
+    <h5 class="modal-title">ویرایش نقش</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form class="edit-form"
+          asp-area="Project"
+          asp-controller="SystemRole"
+          asp-action="Edit"
+          onsubmit="return systemrole.edit.save(event)">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label>نام نقش</label>
+            <input asp-for="Name" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label>توضیحات</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>وضعیت</label>
+            <select asp-for="IsActive" class="form-control">
+                <option value="true">فعال</option>
+                <option value="false">غیرفعال</option>
+            </select>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary">ذخیره تغییرات</button>
+        </div>
+
+    </form>
+</div>
