@@ -1,0 +1,73 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.Unit.UnitEditDTO
+
+<form asp-area="Project"
+      asp-controller="Unit"
+      asp-action="Edit"
+      class="edit-form">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="modal-header">
+        <h5 class="modal-title">ویرایش واحد (@Model.Code)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="mb-3">
+            <label asp-for="Code" class="form-label required">کد</label>
+            <input asp-for="Code"
+                   class="form-control zbm-control"
+                   required />
+            <span asp-validation-for="Code"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label required">نام واحد سازمانی</label>
+            <input asp-for="Name"
+                   class="form-control zbm-control"
+                   required />
+            <span asp-validation-for="Name"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">توضیحات</label>
+            <textarea asp-for="Description"
+                      class="form-control zbm-control"
+                      rows="3"></textarea>
+            <span asp-validation-for="Description"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label class="form-check-label" asp-for="IsActive"></label>
+        </div>
+
+       @*  <div class="mb-3">
+            <label asp-for="ParentId" class="form-label"></label>
+            <input asp-for="ParentId"
+                   class="form-control zbm-control" />
+            <span asp-validation-for="ParentId"
+                  class="text-danger small d-block mt-1"></span>
+        </div> *@
+
+        <div class="text-danger error"></div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit"
+                class="btn btn-primary zbm-btn-save"
+                onclick="unit.edit.save(event)">
+            <i class="bi bi-check-lg"></i>
+            ذخیره
+        </button>
+    </div>
+
+</form>

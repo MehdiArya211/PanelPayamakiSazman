@@ -1,18 +1,18 @@
-﻿using BLL.Project.SenderNumberOrganizationLevel;
+﻿using BLL.Project.Unit;
 using DTO.DataTable;
-using DTO.Project.SenderNumberOrganizationLevel;
+using DTO.Project.Unit;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SenderNumberOrganizationLevel.Controllers
+namespace Software.Areas.Project.Unit.Controllers
 {
     [Area("Project")]
-    public class SenderNumberOrganizationLevelController : Controller
+    public class UnitController : Controller
     {
-        private readonly ISenderNumberOrganizationLevelManager _manager;
+        private readonly IUnitManager _unitManager;
 
-        public SenderNumberOrganizationLevelController(ISenderNumberOrganizationLevelManager manager)
+        public UnitController(IUnitManager unitManager)
         {
-            _manager = manager;
+            _unitManager = unitManager;
         }
 
         public IActionResult Index()
@@ -24,31 +24,31 @@ namespace Software.Areas.Project.SenderNumberOrganizationLevel.Controllers
         [IgnoreAntiforgeryToken]
         public IActionResult GetList()
         {
-            var search = new DataTableSearchDTO
-            {
-                start = int.Parse(Request.Form["start"]),
-                length = int.Parse(Request.Form["length"]),
-                draw = Request.Form["draw"],
-                searchValue = Request.Form["search[value]"]
-            };
+            var search = new DataTableSearchDTO();
+
+            search.start = int.Parse(Request.Form["start"]);
+            search.length = int.Parse(Request.Form["length"]);
+            search.draw = Request.Form["draw"];
+            search.searchValue = Request.Form["search[value]"];
 
             var colIndex = Request.Form["order[0][column]"];
             search.sortDirection = Request.Form["order[0][dir]"];
             search.sortColumnName = Request.Form[$"columns[{colIndex}][data]"];
 
-            var result = _manager.GetDataTableDTO(search);
+            var result = _unitManager.GetDataTableDTO(search);
+
             return Json(result);
         }
 
         public IActionResult LoadCreateForm()
         {
-            var model = new SenderNumberOrganizationLevelCreateDTO();
+            var model = new UnitCreateDTO();
             return PartialView("_Create", model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SenderNumberOrganizationLevelCreateDTO model)
+        public IActionResult Create(UnitCreateDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -59,23 +59,23 @@ namespace Software.Areas.Project.SenderNumberOrganizationLevel.Controllers
                 });
             }
 
-            var res = _manager.Create(model);
+            var res = _unitManager.Create(model);
             return Json(res);
         }
 
         public IActionResult LoadEditForm(string id)
         {
-            var model = _manager.GetById(id);
+            var model = _unitManager.GetById(id);
 
             if (model == null)
-                return Content("خطا در دریافت اطلاعات.");
+                return Content("خطا در دریافت اطلاعات واحد.");
 
             return PartialView("_Edit", model);
         }
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(SenderNumberOrganizationLevelEditDTO model)
+        public IActionResult Edit(UnitEditDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -86,14 +86,7 @@ namespace Software.Areas.Project.SenderNumberOrganizationLevel.Controllers
                 });
             }
 
-            var res = _manager.Update(model);
-            return Json(res);
-        }
-
-        [HttpPost]
-        public IActionResult Delete(string id)
-        {
-            var res = _manager.Delete(id);
+            var res = _unitManager.Update(model);
             return Json(res);
         }
     }

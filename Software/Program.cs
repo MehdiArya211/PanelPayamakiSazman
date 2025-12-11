@@ -3,10 +3,12 @@ using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
 using BLL.Project.SecurityQuestion;
+using BLL.Project.SenderNumberOrganizationLevel;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
 using BLL.Project.SystemMenu;
 using BLL.Project.SystemRole;
+using BLL.Project.Unit;
 using BLL.Project.User;
 using Filters;
 using Infrastructure.Data;
@@ -164,7 +166,9 @@ services.AddScoped<IUserLogManager, UserLogManager>();
 #endregion
 
 #region Projects
-services.AddScoped<IUnitsManager, UnitsManager>();
+services.AddScoped<IUnitManager, UnitManager>();
+services.AddScoped<ISenderNumberOrganizationLevelManager, SenderNumberOrganizationLevelManager>();
+
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();
 

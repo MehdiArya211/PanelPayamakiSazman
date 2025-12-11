@@ -1,0 +1,76 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.Unit.UnitCreateDTO
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-building-add text-primary"></i> افزودن واحد سازمانی جدید
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <p class="text-muted small text-center mb-3">
+        لطفاً تمام فیلدهای ستاره‌دار را تکمیل کنید.
+    </p>
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="Unit"
+          asp-action="Create"
+          class="create-form"
+          onsubmit="return unit.create.save(event)">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label required">کد</label>
+                <input asp-for="Code" class="form-control zbm-control" required />
+                <span asp-validation-for="Code"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <label asp-for="Name" class="zbm-label required">نام واحد سازمانی</label>
+                <input asp-for="Name" class="form-control zbm-control" required />
+                <span asp-validation-for="Name"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Description" class="zbm-label">توضیحات</label>
+                <textarea asp-for="Description"
+                          rows="3"
+                          class="form-control zbm-control"></textarea>
+                <span asp-validation-for="Description"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12 col-sm-6 mt-2">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label class="form-check-label" asp-for="IsActive"></label>
+                </div>
+            </div>
+
+           @*  <div class="col-12 col-sm-6">
+                <label asp-for="ParentId" class="zbm-label"></label>
+                <input asp-for="ParentId"
+                       class="form-control zbm-control"
+                       placeholder="شناسه واحد والد (اختیاری)" />
+                <span asp-validation-for="ParentId"
+                      class="text-danger small d-block mt-1"></span>
+            </div> *@
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4 zbm-btn-save">
+                <i class="bi bi-check-circle"></i> ذخیره اطلاعات
+            </button>
+        </div>
+
+    </form>
+</div>
