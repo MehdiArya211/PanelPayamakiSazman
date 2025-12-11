@@ -3,6 +3,7 @@ using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
 using BLL.Project.SecurityQuestion;
+using BLL.Project.SenderNumber;
 using BLL.Project.SenderNumberOrganizationLevel;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
@@ -168,6 +169,7 @@ services.AddScoped<IUserLogManager, UserLogManager>();
 #region Projects
 services.AddScoped<IUnitManager, UnitManager>();
 services.AddScoped<ISenderNumberOrganizationLevelManager, SenderNumberOrganizationLevelManager>();
+services.AddScoped<ISenderNumberManager, SenderNumberManager>();
 
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();

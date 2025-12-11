@@ -1,0 +1,119 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SenderNumber.SenderNumberFormViewModel
+
+<form asp-area="Project"
+      asp-controller="SenderNumber"
+      asp-action="Edit"
+      class="edit-form">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="EditModel.Id" />
+
+    <div class="modal-header">
+        <h5 class="modal-title">
+            ویرایش سرشماره (@Model.EditModel.FullNumber)
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="row g-3">
+
+            <!-- پیش‌شماره ثابت -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <label class="form-label required">پیش‌شماره ثابت</label>
+                <input asp-for="EditModel.FixedPrefix"
+                       class="form-control zbm-control"
+                       required />
+                <span asp-validation-for="EditModel.FixedPrefix"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- حوزه تخصصی سرشماره -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <label class="form-label required">حوزه تخصصی سرشماره</label>
+                <select asp-for="EditModel.SpecialtyId"
+                        class="form-select zbm-control"
+                        asp-items="Model.SpecialtyOptions"
+                        required>
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="EditModel.SpecialtyId"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- رده سازمانی سرشماره -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <label class="form-label required">رده سازمانی سرشماره</label>
+                <select asp-for="EditModel.OrganizationLevelId"
+                        class="form-select zbm-control"
+                        asp-items="Model.OrganizationLevelOptions"
+                        required>
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="EditModel.OrganizationLevelId"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- حوزه فرعی سرشماره -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <label class="form-label required">حوزه فرعی سرشماره</label>
+                <select asp-for="EditModel.SubAreaId"
+                        class="form-select zbm-control"
+                        asp-items="Model.SubAreaOptions"
+                        required>
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="EditModel.SubAreaId"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <input type="hidden" asp-for="EditModel.Status" />
+
+            <div class="col-12 col-sm-6 col-lg-4">
+                <label class="form-label">وضعیت فعلی</label>
+                <input class="form-control zbm-control"
+                       value="@Model.EditModel.Status"
+                       disabled />
+            </div>
+            <!-- وضعیت -->
+            @*  <div class="col-12 col-sm-6 col-lg-4">
+                <label class="form-label required">وضعیت</label>
+                <select asp-for="EditModel.Status"
+                        class="form-select zbm-control"
+                        asp-items="Model.StatusOptions"
+                        required>
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="EditModel.Status"
+                      class="text-danger small d-block mt-1"></span>
+            </div> *@
+
+            <!-- توضیحات -->
+            <div class="col-12">
+                <label class="form-label">توضیحات</label>
+                <textarea asp-for="EditModel.Description"
+                          rows="3"
+                          class="form-control zbm-control"></textarea>
+                <span asp-validation-for="EditModel.Description"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+        </div>
+
+        <div class="text-danger error mt-2"></div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit"
+                class="btn btn-primary zbm-btn-save"
+                onclick="senderNumber.edit.save(event)">
+            <i class="bi bi-check-lg"></i>
+            ذخیره
+        </button>
+    </div>
+
+</form>
