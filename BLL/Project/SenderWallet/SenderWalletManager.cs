@@ -76,15 +76,15 @@ namespace BLL.Project.SenderWallet
                     return null;
 
                 var apiResponse =
-                    JsonSerializer.Deserialize<ApiResponsePagedDTO<SenderWalletDTO>>(
+                    JsonSerializer.Deserialize<ApiResponseListDTO<SenderWalletDTO>>(
                         jsonResult, JsonOptions);
 
                 var data = apiResponse?.Data;
-                if (data == null || data.Count == 0)
+                if (data == null )
                     return null;
 
                 // فرض: برای هر سرشماره یک کیف پول داریم
-                return data[0];
+                return data;
             }
             catch
             {
@@ -293,9 +293,9 @@ namespace BLL.Project.SenderWallet
                 var body = new
                 {
                     page = 1,
-                    pageSize = 1000,
+                    pageSize = 200,
                     filters = new List<object>(),
-                    sortBy = "fullNumber",
+                    sortBy = "fixedPrefix",
                     sortDescending = false
                 };
 

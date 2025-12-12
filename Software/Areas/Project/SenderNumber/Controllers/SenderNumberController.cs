@@ -155,7 +155,7 @@ namespace Software.Areas.Project.SenderNumber.Controllers
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(SenderNumberEditDTO model)
+        public IActionResult Edit(SenderNumberFormViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -166,7 +166,7 @@ namespace Software.Areas.Project.SenderNumber.Controllers
                 });
             }
 
-            var res = _senderNumberManager.Update(model);
+            var res = _senderNumberManager.Update(model.EditModel);
             return Json(res);
         }
 

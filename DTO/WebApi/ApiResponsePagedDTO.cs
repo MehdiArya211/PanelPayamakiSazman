@@ -17,4 +17,12 @@ namespace DTO.WebApi
         public int TotalCount { get; set; }
     }
 
+
+    public class ApiResponseListDTO<T>
+    {
+        public T Data { get; set; }
+        public object Meta { get; set; }
+        public string TraceId { get; set; }
+    }
+
 }
