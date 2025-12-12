@@ -1,0 +1,79 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SenderChargeRequestConsumer.SenderChargeRequestFormViewModel
+
+<div class="modal-header border-0 pb-0 zbm-modal">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-cash-coin text-primary"></i> ثبت درخواست شارژ
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4 zbm-modal">
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="SenderChargeRequestConsumer"
+          asp-action="Create"
+          class="create-form"
+          enctype="multipart/form-data"
+          onsubmit="return senderChargeReq.create.save(event)">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+
+            <div class="col-12 col-md-6">
+                <label class="zbm-label required">سرشماره</label>
+                <select asp-for="CreateModel.SenderNumberId"
+                        asp-items="Model.SenderNumberOptions"
+                        class="form-select zbm-control" required>
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="CreateModel.SenderNumberId" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="zbm-label required">مبلغ (ریال)</label>
+
+                <!-- نمایش به کاربر با جداکننده -->
+                <input type="text"
+                       id="amountDisplay"
+                       class="form-control zbm-control"
+                       inputmode="numeric"
+                       autocomplete="off"
+                       placeholder="مثلاً 1,500,000"
+                       required />
+
+                <!-- مقدار واقعی که به مدل bind می‌شود -->
+                <input asp-for="CreateModel.Amount"
+                       type="hidden"
+                       id="amountRaw" />
+
+                <span asp-validation-for="CreateModel.Amount" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="zbm-label required">شرح پرداخت</label>
+                <textarea asp-for="CreateModel.PaymentDescription" rows="3" class="form-control zbm-control" required></textarea>
+                <span asp-validation-for="CreateModel.PaymentDescription" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="zbm-label">شماره حساب</label>
+                <input asp-for="CreateModel.BankAccountNumber" class="form-control zbm-control" />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="zbm-label">تصویر رسید</label>
+                <input asp-for="CreateModel.ReceiptImage" type="file" class="form-control zbm-control" accept="image/*" />
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4 zbm-btn-save">
+                <i class="bi bi-check-circle"></i> ثبت
+            </button>
+        </div>
+    </form>
+</div>

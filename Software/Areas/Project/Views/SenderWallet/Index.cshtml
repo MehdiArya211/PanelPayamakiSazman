@@ -1,0 +1,88 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SenderWallet.SenderWalletIndexViewModel
+
+@{
+    ViewData["Title"] = "کیف پول سرشماره‌ها";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-wallet2"></i>
+            کیف پول سرشماره‌ها
+        </h5>
+
+        <div class="d-flex gap-2">
+            <select id="SenderNumberFilter"
+                    class="form-select zbm-control">
+                <option value="">انتخاب سرشماره...</option>
+                @foreach (var item in Model.SenderNumberOptions)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+
+            <button id="btnCharge"
+                    type="button"
+                    class="btn btn-success"
+                    disabled
+                    onclick="senderWallet.charge.loadForm()">
+                <i class="bi bi-plus-circle"></i>
+                شارژ کیف پول
+            </button>
+
+            <button id="btnTransfer"
+                    type="button"
+                    class="btn btn-warning"
+                    disabled
+                    onclick="senderWallet.transfer.loadForm()">
+                <i class="bi bi-arrow-left-right"></i>
+                انتقال بین سرشماره‌ها
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-12 col-md-4">
+                <div class="border rounded p-3 bg-light">
+                    <div class="fw-bold mb-1">موجودی کیف پول</div>
+                    <div id="wallet-balance"
+                         class="fs-4 fw-bold text-primary">
+                        -
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table id="wallet-transactions"
+               class="table table-striped table-bordered w-100">
+            <thead>
+                <tr>
+                    <th>شناسه</th>
+                    <th>مبلغ</th>
+                    <th>نوع بدهکار/بستانکار</th>
+                    <th>نوع تراکنش</th>
+                    <th>مرجع</th>
+                    <th>توضیحات</th>
+                    <th>تاریخ ثبت</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="base-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="modal-form">
+            @* فرم‌های شارژ و انتقال اینجا لود می‌شوند *@
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="~/areas/project/senderwallets.js"></script>
+}

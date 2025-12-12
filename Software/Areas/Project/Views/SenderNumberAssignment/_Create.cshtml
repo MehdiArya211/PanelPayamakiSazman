@@ -1,0 +1,79 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SenderNumberAssignment.SenderNumberAssignmentFormViewModel
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-plus-circle text-primary"></i> تخصیص سرشماره به کاربر
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <p class="text-muted small text-center mb-3">
+        لطفاً سرشماره، کاربر و در صورت نیاز کلاینت را از لیست انتخاب کنید.
+    </p>
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="SenderNumberAssignment"
+          asp-action="Create"
+          class="create-form"
+          onsubmit="return senderAssignment.create.save(event)">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+
+            <div class="col-12 col-md-6">
+                <label class="form-label required">سرشماره</label>
+                <select asp-for="CreateModel.SenderNumberId"
+                        class="form-select zbm-control"
+                        asp-items="Model.SenderNumberOptions">
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="CreateModel.SenderNumberId"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label required">کاربر</label>
+                <select asp-for="CreateModel.UserId"
+                        class="form-select zbm-control"
+                        asp-items="Model.UserOptions">
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="CreateModel.UserId"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label">کلاینت (اختیاری)</label>
+                <select asp-for="CreateModel.ClientId"
+                        class="form-select zbm-control"
+                        asp-items="Model.ClientOptions">
+                    <option value="">بدون کلاینت</option>
+                </select>
+                <span asp-validation-for="CreateModel.ClientId"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label required">توضیحات</label>
+                <textarea asp-for="CreateModel.Description"
+                          rows="3"
+                          class="form-control zbm-control"></textarea>
+                <span asp-validation-for="CreateModel.Description"
+                      class="text-danger small d-block mt-1"></span>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-circle"></i> ذخیره تخصیص
+            </button>
+        </div>
+
+    </form>
+</div>

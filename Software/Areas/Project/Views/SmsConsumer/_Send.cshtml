@@ -1,0 +1,151 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SmsConsumer.SmsSendViewModel
+
+<div class="error text-danger text-center mb-2"></div>
+
+<ul class="nav nav-pills mb-3" id="smsTabs">
+    <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-single">تکی</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-bulk">لیست شماره</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-groups">گروه مخاطبین</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-file">فایل CSV</button>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+    <!-- SINGLE -->
+    <div class="tab-pane fade show active" id="tab-single">
+        <form asp-area="Project" asp-controller="SmsConsumer" asp-action="SendSingle"
+              class="single-form" onsubmit="return sms.send.single(event)">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-2">
+                <label class="zbm-label required">سرشماره</label>
+                <select name="SenderNumberId" class="form-select zbm-control" required
+                        asp-items="Model.SenderNumberOptions">
+                    <option value="">انتخاب کنید...</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">شماره گیرنده</label>
+                <input name="ReceiverNumber" class="form-control zbm-control" required />
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">متن</label>
+                <textarea name="Text" rows="4" class="form-control zbm-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-send"></i>
+                ارسال تکی
+            </button>
+        </form>
+    </div>
+
+    <!-- BULK -->
+    <div class="tab-pane fade" id="tab-bulk">
+        <form asp-area="Project" asp-controller="SmsConsumer" asp-action="SendBulk"
+              class="bulk-form" onsubmit="return sms.send.bulk(event)">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-2">
+                <label class="zbm-label required">سرشماره</label>
+                <select name="SenderNumberId" class="form-select zbm-control" required
+                        asp-items="Model.SenderNumberOptions">
+                    <option value="">انتخاب کنید...</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">لیست شماره‌ها</label>
+                <textarea name="ReceiverNumbersText" rows="5" class="form-control zbm-control"
+                          placeholder="هر شماره در یک خط یا با کاما جدا کنید" required></textarea>
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">متن</label>
+                <textarea name="Text" rows="4" class="form-control zbm-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-send"></i>
+                ارسال گروهی
+            </button>
+        </form>
+    </div>
+
+    <!-- GROUPS -->
+    <div class="tab-pane fade" id="tab-groups">
+        <form asp-area="Project" asp-controller="SmsConsumer" asp-action="SendGroups"
+              class="groups-form" onsubmit="return sms.send.groups(event)">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-2">
+                <label class="zbm-label required">سرشماره</label>
+                <select name="SenderNumberId" class="form-select zbm-control" required
+                        asp-items="Model.SenderNumberOptions">
+                    <option value="">انتخاب کنید...</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">گروه‌ها</label>
+                <select name="ContactGroupIds" class="form-select zbm-control" multiple required
+                        asp-items="Model.ContactGroupOptions">
+                </select>
+                <small class="text-muted">می‌توانید چند گروه انتخاب کنید.</small>
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">متن</label>
+                <textarea name="Text" rows="4" class="form-control zbm-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-send"></i>
+                ارسال به گروه‌ها
+            </button>
+        </form>
+    </div>
+
+    <!-- FILE -->
+    <div class="tab-pane fade" id="tab-file">
+        <form asp-area="Project" asp-controller="SmsConsumer" asp-action="SendFile"
+              class="file-form" enctype="multipart/form-data" onsubmit="return sms.send.file(event)">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-2">
+                <label class="zbm-label required">سرشماره</label>
+                <select name="SenderNumberId" class="form-select zbm-control" required
+                        asp-items="Model.SenderNumberOptions">
+                    <option value="">انتخاب کنید...</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="zbm-label required">متن</label>
+                <textarea name="Text" rows="4" class="form-control zbm-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="zbm-label required">فایل CSV</label>
+                <input name="File" type="file" class="form-control zbm-control" accept=".csv" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-upload"></i>
+                ارسال از فایل
+            </button>
+        </form>
+    </div>
+
+</div>

@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "ارسال پیامک";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row g-3">
+
+    <div class="col-12 col-xl-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="fw-bold mb-0">
+                        <i class="bi bi-send text-primary"></i>
+                        ارسال پیامک
+                    </h6>
+
+                    <button class="btn btn-sm btn-outline-primary" onclick="sms.send.loadForm()">
+                        <i class="bi bi-arrow-repeat"></i>
+                        بارگذاری فرم
+                    </button>
+                </div>
+
+                <div id="send-form-area">
+                    <!-- ajax loads _Send -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">
+                    <i class="bi bi-clock-history text-secondary"></i>
+                    تاریخچه پیامک‌ها
+                </h6>
+
+                <div class="table-responsive">
+                    <table id="datatables" class="table table-striped table-hover align-middle w-100">
+                        <thead>
+                            <tr>
+                               @*  <th>شناسه</th> *@
+                                <th>سرشماره</th>
+                                <th>گیرنده</th>
+                                <th>متن</th>
+                                <th>وضعیت</th>
+                                <th>کانال</th>
+                                <th>تاریخ ثبت</th>
+                                <th>هزینه نهایی</th>
+                                <th>خطا</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="~/areas/project/smsconsumer.js"></script>
+}

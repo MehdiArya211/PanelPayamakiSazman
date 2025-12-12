@@ -1,0 +1,183 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.ContactGroup.ContactGroupContactsViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        <i class="bi bi-person-lines-fill text-success"></i>
+        مدیریت مخاطبین گروه: @Model.GroupName
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-list" type="button">
+                لیست مخاطبین
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-add" type="button">
+                افزودن تکی
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-text" type="button">
+                افزودن با متن
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-csv" type="button">
+                افزودن با CSV
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- =========================
+             TAB: LIST
+        ========================== -->
+        <div class="tab-pane fade show active" id="tab-list">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <button class="btn btn-outline-danger btn-sm" onclick="contactGroup.contacts.deduplicate('@Model.GroupId')">
+                    <i class="bi bi-filter-circle"></i>
+                    حذف تکراری‌ها
+                </button>
+            </div>
+
+            <table id="contactsTable" class="table table-striped table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>شماره تلفن</th>
+                        <th>نام</th>
+                        <th>نام خانوادگی</th>
+                        <th>کد ملی</th>
+                        <th>تاریخ تولد</th>
+                        <th>فیلدهای سفارشی</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <!-- =========================
+             TAB: ADD SINGLE
+        ========================== -->
+        <div class="tab-pane fade" id="tab-add">
+            <div class="error-single text-danger text-center mb-2"></div>
+
+            <form asp-area="Project"
+                  asp-controller="ContactGroup"
+                  asp-action="AddContact"
+                  class="add-single-form"
+                  onsubmit="return contactGroup.contacts.addSingle.save(event)">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="groupId" value="@Model.GroupId" />
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label required">شماره تلفن</label>
+                        <input name="PhoneNumber" class="form-control zbm-control" required />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">کد ملی</label>
+                        <input name="NationalCode" class="form-control zbm-control" />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام</label>
+                        <input name="FirstName" class="form-control zbm-control" />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام خانوادگی</label>
+                        <input name="LastName" class="form-control zbm-control" />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">تاریخ تولد</label>
+                        <input name="BirthDate" class="form-control zbm-control" placeholder="اختیاری" />
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>
+                        ثبت مخاطب
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- =========================
+             TAB: ADD TEXT
+        ========================== -->
+        <div class="tab-pane fade" id="tab-text">
+            <div class="error-text text-danger text-center mb-2"></div>
+
+            <form asp-area="Project"
+                  asp-controller="ContactGroup"
+                  asp-action="AddContactsText"
+                  class="add-text-form"
+                  onsubmit="return contactGroup.contacts.addText.save(event)">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="groupId" value="@Model.GroupId" />
+
+                <label class="form-label required">
+                    شماره‌ها را با کاما (,) جدا کنید
+                </label>
+                <textarea name="numbers" class="form-control zbm-control" rows="6" required
+                          placeholder="0912xxxxxxx,0935xxxxxxx,..."></textarea>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        ثبت شماره‌ها
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- =========================
+             TAB: CSV
+        ========================== -->
+        <div class="tab-pane fade" id="tab-csv">
+            <div class="error-csv text-danger text-center mb-2"></div>
+
+            <form asp-area="Project"
+                  asp-controller="ContactGroup"
+                  asp-action="UploadCsv"
+                  class="csv-form"
+                  enctype="multipart/form-data"
+                  onsubmit="return contactGroup.contacts.csv.save(event)">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="groupId" value="@Model.GroupId" />
+
+                <div class="mb-3">
+                    <label class="form-label required">فایل CSV</label>
+                    <input type="file" name="file" class="form-control zbm-control" accept=".csv" required />
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i>
+                        آپلود
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // بعد از لود مودال، دیتاتیبل مخاطبین را راه‌اندازی کن
+    contactGroup.contacts.list.initial("@Model.GroupId");
+</script>

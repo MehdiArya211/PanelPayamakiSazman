@@ -1,0 +1,59 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-list-check text-secondary"></i>
+        ارسال پیامک به فهرست شماره‌ها
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="AdminSms"
+          asp-action="SendBulk"
+          class="bulk-form"
+          onsubmit="return smsAdmin.bulk.save(event)">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label required">سرشماره</label>
+            <select name="SenderNumberId"
+                    class="form-select zbm-control">
+                <option value="">انتخاب کنید...</option>
+                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.SenderNumberOptions)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">فهرست شماره‌ها (هر شماره در یک خط)</label>
+            <textarea name="NumbersText"
+                      rows="6"
+                      class="form-control zbm-control"
+                      placeholder="مثال:
+09120000001
+09120000002
+..."></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">متن پیام</label>
+            <textarea name="Text"
+                      rows="4"
+                      class="form-control zbm-control"></textarea>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-secondary px-4">
+                <i class="bi bi-check-circle"></i>
+                ارسال گروهی
+            </button>
+        </div>
+    </form>
+</div>

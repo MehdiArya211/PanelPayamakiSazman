@@ -1,0 +1,64 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SenderWallet.SenderWalletTransferViewModel
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-arrow-left-right text-warning"></i>
+        انتقال موجودی بین سرشماره‌ها
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <p class="text-muted small mb-3">
+        سرشماره مبدأ:
+        <span class="fw-bold text-primary">@Model.FromSenderNumberText</span>
+    </p>
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="SenderWallet"
+          asp-action="Transfer"
+          class="transfer-form"
+          onsubmit="return senderWallet.transfer.save(event)">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="TransferModel.FromSenderNumberId" />
+
+        <div class="mb-3">
+            <label class="form-label required">سرشماره مقصد</label>
+            <select asp-for="TransferModel.ToSenderNumberId"
+                    class="form-select zbm-control"
+                    asp-items="Model.SenderNumberOptions">
+                <option value="">انتخاب کنید...</option>
+            </select>
+            <span asp-validation-for="TransferModel.ToSenderNumberId"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">مبلغ</label>
+            <input asp-for="TransferModel.Amount" class="form-control zbm-control" />
+            <span asp-validation-for="TransferModel.Amount"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">توضیحات</label>
+            <textarea asp-for="TransferModel.Description"
+                      rows="3"
+                      class="form-control zbm-control"></textarea>
+            <span asp-validation-for="TransferModel.Description"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-warning px-4">
+                <i class="bi bi-check-circle"></i>
+                انتقال
+            </button>
+        </div>
+    </form>
+</div>

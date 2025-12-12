@@ -2,11 +2,19 @@
 using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
+using BLL.Project.ConsumerSenderNumbers;
+using BLL.Project.ContactGroup;
 using BLL.Project.SecurityQuestion;
+using BLL.Project.SenderChargeRequest;
+using BLL.Project.SenderChargeRequestConsumer;
 using BLL.Project.SenderNumber;
+using BLL.Project.SenderNumberAssignment;
 using BLL.Project.SenderNumberOrganizationLevel;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
+using BLL.Project.SenderWallet;
+using BLL.Project.SmsConsumer;
+using BLL.Project.SmsManager;
 using BLL.Project.SystemMenu;
 using BLL.Project.SystemRole;
 using BLL.Project.Unit;
@@ -170,6 +178,14 @@ services.AddScoped<IUserLogManager, UserLogManager>();
 services.AddScoped<IUnitManager, UnitManager>();
 services.AddScoped<ISenderNumberOrganizationLevelManager, SenderNumberOrganizationLevelManager>();
 services.AddScoped<ISenderNumberManager, SenderNumberManager>();
+services.AddScoped<IChargeRequestManager, ChargeRequestManager>();
+services.AddScoped<ISenderNumberAssignmentManager, SenderNumberAssignmentManager>();
+services.AddScoped<ISenderWalletManager, SenderWalletManager>();
+services.AddScoped<IAdminSmsManager, AdminSmsManager>();
+services.AddScoped<IContactGroupManager, ContactGroupManager>();
+services.AddScoped<ISenderChargeRequestConsumerManager, SenderChargeRequestConsumerManager>();
+services.AddScoped<IConsumerSenderNumberManager, ConsumerSenderNumberManager>();
+services.AddScoped<ISmsConsumerManager, SmsConsumerManager>();
 
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();

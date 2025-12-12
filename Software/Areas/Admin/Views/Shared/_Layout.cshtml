@@ -32,20 +32,15 @@
 
     <!-- TomSelect -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+
+    <!-- Persian Datepicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css" />
+
     <link href="~/admin.css" rel="stylesheet" />
 
 
     <!-- GLOBAL THEME + SIDEBAR + RESPONSIVE + DATATABLE PAGING -->
     <style>
-        /* ============================================================
-                   ZBM ADMIN PANEL – MAIN STYLESHEET
-                   Clean + Organized + Responsive + Dark Mode Supported
-                   ============================================================ */
-
-
-        /* ===========================
-                   GLOBAL VARIABLES
-                   =========================== */
         :root {
             --primary: #0d6efd;
             --primary-soft: rgba(13,110,253,.08);
@@ -71,8 +66,19 @@
             overflow-x: hidden;
         }
 
-    </style>
+        /* ورودی‌های تقویم شمسی */
+        .persian-date-input {
+            direction: ltr;
+            text-align: center;
+            cursor: pointer;
+            background-color: #fff;
+        }
 
+        .persian-datepicker-container {
+            z-index: 9999 !important;
+            font-family: inherit;
+        }
+    </style>
 
     @RenderSection("Styles", required: false)
 </head>
@@ -148,8 +154,6 @@
                 </a>
             </li>
 
-
-
             <li>
                 <a class="sidebar-link @(currentArea == "project" && currentController == "sendernumbersubarea" ? "active" : "")"
                    asp-area="Project" asp-controller="SenderNumberSubArea" asp-action="Index">
@@ -181,6 +185,7 @@
                     کاربران
                 </a>
             </li>
+
             <li>
                 <a class="sidebar-link @(currentArea == "project" && currentController == "SenderNumberOrganizationLevel" ? "active" : "")"
                    asp-area="Project" asp-controller="SenderNumberOrganizationLevel" asp-action="Index">
@@ -195,7 +200,6 @@
                     <i class="bi bi-list-ul"></i>
                     واحد های سازمانی
                 </a>
-
             </li>
 
             <li>
@@ -204,7 +208,70 @@
                     <i class="bi bi-list-ul"></i>
                     سرشماره ها
                 </a>
+            </li>
 
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SenderChargeRequest" ? "active" : "")"
+                   asp-area="Project" asp-controller="SenderChargeRequest" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    درخواست شارژ سرشماره
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SenderNumberAssignment" ? "active" : "")"
+                   asp-area="Project" asp-controller="SenderNumberAssignment" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    تخصیص سرشماره
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SenderWallet" ? "active" : "")"
+                   asp-area="Project" asp-controller="SenderWallet" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    کیف پول سرشماره ها
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "AdminSms" ? "active" : "")"
+                   asp-area="Project" asp-controller="AdminSms" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    مدیریت و ارسال پیامک
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "ContactGroup" ? "active" : "")"
+                   asp-area="Project" asp-controller="ContactGroup" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    مخاطبین و گروه ها - کاربر
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SenderChargeRequestConsumer" ? "active" : "")"
+                   asp-area="Project" asp-controller="SenderChargeRequestConsumer" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    درخواست شارژ سرشماره - کاربر
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "ConsumerSenderNumber" ? "active" : "")"
+                   asp-area="Project" asp-controller="ConsumerSenderNumber" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    سرشماره های ارسال پیامک - کاربر
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SmsConsumer" ? "active" : "")"
+                   asp-area="Project" asp-controller="SmsConsumer" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    ارسال پیامک - کاربر 
+                </a>
             </li>
         </ul>
 
@@ -300,6 +367,7 @@
             </li>
 
         </ul>
+
         <!-- DARK MODE -->
         <div class="p-3 border-top text-center">
             <button id="toggleDark" class="btn btn-sm btn-secondary w-100">
@@ -339,12 +407,15 @@
     <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- ADD THESE -->
+    <!-- Validation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Bootstrap + SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
@@ -357,7 +428,9 @@
     <!-- TomSelect -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
-
+    <!-- Persian Date / Datepicker -->
+    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
 
     <!-- Sidebar + Dark Mode -->
     <script>
@@ -413,12 +486,12 @@
         function initTomSelect() {
             document.querySelectorAll("select").forEach(function (el) {
 
-                // ❶: سلکت‌های دیتاتیبل (تعداد ردیف‌ها) را دست نزن
+                // سلکت‌های دیتاتیبل (تعداد ردیف‌ها) را دست نزن
                 if (el.closest('.dataTables_length')) {
                     return;
                 }
 
-                // ❷: اگر قبلاً تبدیل شده، دوباره تبدیلش نکن
+                // اگر قبلاً تبدیل شده، دوباره تبدیلش نکن
                 if (el.tomselect || el.classList.contains('ts-hidden-accessible')) {
                     return;
                 }
@@ -434,12 +507,12 @@
             });
         }
 
-
         document.addEventListener("DOMContentLoaded", initTomSelect);
         document.addEventListener("shown.bs.modal", initTomSelect);
     </script>
 
     @RenderSection("Scripts", required: false)
+
     <!-- Global Modal -->
     <div class="modal fade" id="base-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">

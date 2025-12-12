@@ -1,0 +1,58 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SmsManager.SmsSingleSendDTO
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-send text-primary"></i>
+        ارسال پیامک تکی
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="AdminSms"
+          asp-action="SendSingle"
+          class="single-form"
+          onsubmit="return smsAdmin.single.save(event)">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label required">سرشماره</label>
+            <select asp-for="SenderNumberId"
+                    class="form-select zbm-control"
+                    asp-items="(IEnumerable<SelectListItem>)ViewBag.SenderNumberOptions">
+                <option value="">انتخاب کنید...</option>
+            </select>
+            <span asp-validation-for="SenderNumberId"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">شماره گیرنده</label>
+            <input asp-for="ReceiverNumber"
+                   class="form-control zbm-control" />
+            <span asp-validation-for="ReceiverNumber"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">متن پیام</label>
+            <textarea asp-for="Text"
+                      rows="4"
+                      class="form-control zbm-control"></textarea>
+            <span asp-validation-for="Text"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-circle"></i>
+                ارسال
+            </button>
+        </div>
+    </form>
+</div>

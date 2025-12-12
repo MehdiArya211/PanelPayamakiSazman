@@ -1,0 +1,53 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.SenderWallet.SenderWalletChargeDTO
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-plus-circle text-success"></i>
+        شارژ کیف پول سرشماره
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4">
+
+    <p class="text-muted small mb-3">
+        سرشماره انتخاب شده:
+        <span class="fw-bold text-primary">@ViewBag.SenderNumberText</span>
+    </p>
+
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Project"
+          asp-controller="SenderWallet"
+          asp-action="Charge"
+          class="charge-form"
+          onsubmit="return senderWallet.charge.save(event)">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="SenderNumberId" />
+
+        <div class="mb-3">
+            <label class="form-label required">مبلغ</label>
+            <input asp-for="Amount" class="form-control zbm-control" />
+            <span asp-validation-for="Amount"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label required">توضیحات</label>
+            <textarea asp-for="Description"
+                      rows="3"
+                      class="form-control zbm-control"></textarea>
+            <span asp-validation-for="Description"
+                  class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-check-circle"></i>
+                شارژ
+            </button>
+        </div>
+    </form>
+</div>

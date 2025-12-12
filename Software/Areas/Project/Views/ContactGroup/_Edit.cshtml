@@ -1,0 +1,43 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.ContactGroup.ContactGroupEditDTO
+
+<form asp-area="Project"
+      asp-controller="ContactGroup"
+      asp-action="Edit"
+      class="edit-form">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="modal-header">
+        <h5 class="modal-title">ویرایش گروه (@Model.Name)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="mb-3">
+            <label class="form-label required">نام گروه</label>
+            <input class="form-control zbm-control"
+                   value="@Model.Name"
+                   name="Name" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">توضیحات</label>
+            <textarea class="form-control zbm-control"
+                      name="Description"
+                      rows="3">@Model.Description</textarea>
+        </div>
+
+        <div class="text-danger error text-center"></div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit" class="btn btn-primary zbm-btn-save" onclick="contactGroup.edit.save(event)">
+            <i class="bi bi-check-lg"></i>
+            ذخیره
+        </button>
+    </div>
+</form>
