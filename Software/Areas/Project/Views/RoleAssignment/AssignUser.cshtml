@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "تخصیص نقش به کاربر";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .search-card {
+            background: var(--bg-sidebar);
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,.06);
+        }
+    </style>
+}
+
+<div class="container-fluid">
+
+    <h4 class="fw-bold mb-3">تخصیص نقش به کاربر</h4>
+
+    <div class="search-card p-3 mb-4">
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label fw-bold">کاربر</label>
+                <select id="userId" class="form-select"></select>
+                <div class="small text-muted mt-1">
+                    بعد از انتخاب کاربر، نقش‌های فعلی نمایش داده می‌شود.
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-bold">نقش</label>
+                <select id="roleId" class="form-select"></select>
+                <div class="small text-muted mt-1">
+                    این انتخاب برای «افزودن نقش تکی» استفاده می‌شود.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-success" onclick="roleAssignment.assignSingle()">
+                <i class="bi bi-plus-circle"></i>
+                افزودن نقش به کاربر
+            </button>
+
+            <button class="btn btn-primary" onclick="roleAssignment.replaceAll()">
+                <i class="bi bi-check-circle"></i>
+                ذخیره نهایی نقش‌های انتخاب‌شده (Replace)
+            </button>
+
+            <button class="btn btn-secondary" onclick="roleAssignment.clearSelected()">
+                <i class="bi bi-x-circle"></i>
+                پاک‌سازی انتخاب‌ها
+            </button>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <h5 class="fw-bold mb-2">نقش‌های کاربر</h5>
+
+        <div class="alert alert-warning">
+            🔸 دکمه «افزودن نقش» فقط یک نقش اضافه می‌کند.
+            🔸 دکمه «Replace» کل نقش‌های کاربر را با لیست انتخابی جایگزین می‌کند (حذف هم انجام می‌دهد).
+        </div>
+
+        <table class="table table-hover table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>نام نقش</th>
+                    <th style="width:140px">عملیات</th>
+                </tr>
+            </thead>
+            <tbody id="user-roles-body"></tbody>
+        </table>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/areas/project/role-assignment.js" asp-append-version="true"></script>
+}

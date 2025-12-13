@@ -179,6 +179,14 @@
             </li>
 
             <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "routedefinition" ? "active" : "")"
+                   asp-area="Project" asp-controller="routedefinition" asp-action="Index">
+                    <i class="bi bi-people"></i>
+                    مجوز‌ها
+                </a>
+            </li>
+
+            <li>
                 <a class="sidebar-link @(currentArea == "project" && currentController == "systemuser" ? "active" : "")"
                    asp-area="Project" asp-controller="SystemUser" asp-action="Index">
                     <i class="bi bi-person-badge"></i>

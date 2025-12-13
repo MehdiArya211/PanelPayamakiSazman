@@ -223,6 +223,11 @@ builder.Services.AddScoped<IRouteDefinitionManager, RouteDefinitionManager>();
 builder.Services.AddScoped<IRolePermissionManager, RolePermissionManager>();
 
 #endregion
+
+#region Route Definition
+builder.Services.AddScoped<IRouteDefinitionManager, RouteDefinitionManager>();
+
+#endregion
 #region menu
 services.AddScoped<ISystemMenuManager, SystemMenuManager>();
 
