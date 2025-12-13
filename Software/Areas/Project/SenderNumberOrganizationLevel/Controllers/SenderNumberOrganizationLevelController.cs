@@ -3,7 +3,7 @@ using DTO.DataTable;
 using DTO.Project.SenderNumberOrganizationLevel;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SenderNumberOrganizationLevel.Controllers
+namespace PanelSMS.Areas.Project.SenderNumberOrganizationLevel.Controllers
 {
     [Area("Project")]
     public class SenderNumberOrganizationLevelController : Controller

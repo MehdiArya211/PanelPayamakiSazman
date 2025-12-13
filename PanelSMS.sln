@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FajrLog", "FajrLog\FajrLog.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsService.FajrLog", "WindowsService.FajrLog\WindowsService.FajrLog.csproj", "{F65D1B8C-0FF6-4A89-9BD1-E42BA78BD10B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Software", "Software\Software.csproj", "{75562BAB-E8AB-43F7-9BF2-DC51221EBEC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PanelSMS", "Software\PanelSMS.csproj", "{75562BAB-E8AB-43F7-9BF2-DC51221EBEC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

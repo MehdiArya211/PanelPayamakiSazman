@@ -4,7 +4,7 @@ using DTO.Project.SenderChargeRequestConsumer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.SenderChargeRequestConsumer.Controllers
+namespace PanelSMS.Areas.Project.SenderChargeRequestConsumer.Controllers
 {
     [Area("Project")]
     public class SenderChargeRequestConsumerController : Controller

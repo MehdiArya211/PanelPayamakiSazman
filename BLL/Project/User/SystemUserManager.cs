@@ -17,14 +17,14 @@ namespace BLL.Project.User
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
-        //  private readonly string _baseUrl;
+        private readonly string _baseUrl;
 
 
         public SystemUserManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            //  _baseUrl = config["ApiBaseUrl"];
+            _baseUrl = config["ApiBaseUrl"];
 
         }
 
@@ -44,7 +44,7 @@ namespace BLL.Project.User
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/users";
+            var url = $"{_baseUrl}/users";
             var res = _client.GetAsync(url).Result;
 
             var json = res.Content.ReadAsStringAsync().Result;
@@ -59,7 +59,8 @@ namespace BLL.Project.User
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/users/search";
+           // var url = "http://87.107.111.44:8010/api/admin/users/search";
+            var url = $"{_baseUrl}/users/search";
 
             var body = new
             {
@@ -108,7 +109,8 @@ namespace BLL.Project.User
             {
                 SetAuth();
 
-                var url = "http://87.107.111.44:8010/api/admin/users";
+               // var url = "http://87.107.111.44:8010/api/admin/users";
+                var url = $"{_baseUrl}/users";
 
                 var json = JsonSerializer.Serialize(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -132,7 +134,8 @@ namespace BLL.Project.User
             {
                 SetAuth();
 
-                var url = "http://87.107.111.44:8010/api/admin/users";
+                //var url = "http://87.107.111.44:8010/api/admin/users";
+                var url = $"{_baseUrl}/users";
 
                 var body = new
                 {
@@ -182,7 +185,8 @@ namespace BLL.Project.User
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/users/{id}";
+                //var url = $"http://87.107.111.44:8010/api/admin/users/{id}";
+                var url = $"{_baseUrl}/users/{id}";
 
                 var res = _client.GetAsync(url).Result;
 
@@ -211,7 +215,8 @@ namespace BLL.Project.User
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/users/{model.Id}";
+                //var url = $"http://87.107.111.44:8010/api/admin/users/{model.Id}";
+                var url = $"{_baseUrl}/users/{model.Id}";
 
                 var json = JsonSerializer.Serialize(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -235,7 +240,8 @@ namespace BLL.Project.User
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/users/{id}";
+               // var url = $"http://87.107.111.44:8010/api/admin/users/{id}";
+                var url = $"{_baseUrl}/users/{id}";
                 var res = _client.DeleteAsync(url).Result;
 
                 if (res.IsSuccessStatusCode)

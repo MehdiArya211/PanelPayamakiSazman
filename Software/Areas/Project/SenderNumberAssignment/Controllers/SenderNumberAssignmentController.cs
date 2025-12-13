@@ -4,7 +4,7 @@ using DTO.Project.SenderNumberAssignment;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.SenderNumberAssignment.Controllers
+namespace PanelSMS.Areas.Project.SenderNumberAssignment.Controllers
 {
     [Area("Project")]
     public class SenderNumberAssignmentController : Controller

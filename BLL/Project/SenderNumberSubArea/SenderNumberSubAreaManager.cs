@@ -15,14 +15,14 @@ namespace BLL.Project.SenderNumberSubArea
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
-      //  private readonly string _baseUrl;
+      private readonly string _baseUrl;
 
 
         public SenderNumberSubAreaManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-          //  _baseUrl = config["ApiBaseUrl"];
+          _baseUrl = config["ApiBaseUrl"];
 
         }
 
@@ -47,7 +47,8 @@ namespace BLL.Project.SenderNumberSubArea
             {
                 SetAuth(); // حالا توکن ست می‌شود
 
-                var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas";
+                //var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas";
+                var url = $"{_baseUrl}/sender-number-sub-areas";
 
                 var json = JsonSerializer.Serialize(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -73,7 +74,8 @@ namespace BLL.Project.SenderNumberSubArea
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas";
+           // var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas";
+            var url = $"{_baseUrl}/sender-number-sub-areas";
             var res = _client.GetAsync(url).Result;
 
             var json = res.Content.ReadAsStringAsync().Result;
@@ -110,7 +112,8 @@ namespace BLL.Project.SenderNumberSubArea
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{model.Id}";
+                //var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{model.Id}";
+                var url = $"{_baseUrl}/sender-number-sub-areas/{model.Id}";
 
                 var body = new
                 {
@@ -142,7 +145,8 @@ namespace BLL.Project.SenderNumberSubArea
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{id}";
+                //var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{id}";
+                var url = $"{_baseUrl}/sender-number-sub-areas/{id}";
 
                 var res = _client.GetAsync(url).Result;
 
@@ -175,7 +179,8 @@ namespace BLL.Project.SenderNumberSubArea
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{code}";
+               // var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{code}";
+                var url = $"{_baseUrl}/sender-number-sub-areas/{code}";
 
                 var res = _client.DeleteAsync(url).Result;
 
@@ -203,7 +208,8 @@ namespace BLL.Project.SenderNumberSubArea
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas/search";
+            //var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas/search";
+            var url = $"{_baseUrl}/sender-number-sub-areas/search";
 
             var body = new
             {

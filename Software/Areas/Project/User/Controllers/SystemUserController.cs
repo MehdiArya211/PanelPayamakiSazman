@@ -4,7 +4,7 @@ using DTO.DataTable;
 using DTO.Project.User;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.User.Controllers
+namespace PanelSMS.Areas.Project.User.Controllers
 {
     [Area("Project")]
 

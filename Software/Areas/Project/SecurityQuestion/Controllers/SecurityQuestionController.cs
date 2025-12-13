@@ -3,7 +3,7 @@ using DTO.DataTable;
 using DTO.Project.SecurityQuestion;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SecurityQuestion.Controllers
+namespace PanelSMS.Areas.Project.SecurityQuestion.Controllers
 {
     [Area("Project")]
     public class SecurityQuestionController : Controller

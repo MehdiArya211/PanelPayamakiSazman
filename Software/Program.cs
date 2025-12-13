@@ -4,6 +4,8 @@ using BLL.Interface;
 using BLL.ManageToken;
 using BLL.Project.ConsumerSenderNumbers;
 using BLL.Project.ContactGroup;
+using BLL.Project.RolePermission;
+using BLL.Project.RouteDefinition;
 using BLL.Project.SecurityQuestion;
 using BLL.Project.SenderChargeRequest;
 using BLL.Project.SenderChargeRequestConsumer;
@@ -208,6 +210,17 @@ services.AddScoped<ISecurityQuestionManager, SecurityQuestionManager>();
 #endregion
 #region Role
 services.AddScoped<ISystemRoleManager, SystemRoleManager>();
+
+#endregion
+
+
+#region Route Definition
+builder.Services.AddScoped<IRouteDefinitionManager, RouteDefinitionManager>();
+
+#endregion
+
+#region Role Permission
+builder.Services.AddScoped<IRolePermissionManager, RolePermissionManager>();
 
 #endregion
 #region menu

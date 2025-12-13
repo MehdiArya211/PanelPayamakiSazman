@@ -27,19 +27,31 @@
                         data: null,
                         render: row => `
 
+        <div class="d-flex gap-1">
 
-                                    <button onclick="systemrole.edit.loadForm('${row.id}')"
-                                            class="btn btn-light action-btn"
-                                            title="ویرایش">
-                                        <i class="bi bi-pencil text-primary"></i>
-                                    </button>
+            <button onclick="systemrole.edit.loadForm('${row.id}')"
+                    class="btn btn-light action-btn"
+                    title="ویرایش">
+                <i class="bi bi-pencil text-primary"></i>
+            </button>
 
-                            <button class="btn btn-light btn-sm"
-                                onclick="systemrole.delete.confirm('${row.id}', '${row.name}')">
-                                <i class="bi bi-trash text-danger"></i>
-                            </button>
-                        `
+            <button class="btn btn-light action-btn"
+                onclick="systemrole.delete.confirm('${row.id}', '${row.name}')"
+                title="حذف">
+                <i class="bi bi-trash text-danger"></i>
+            </button>
+
+            <!-- 🔐 مدیریت مجوزها -->
+            <a class="btn btn-light action-btn"
+               href="/Project/RolePermission?roleName=${encodeURIComponent(row.name)}"
+               title="مدیریت مجوزها">
+                <i class="bi bi-shield-lock text-warning"></i>
+            </a>
+
+        </div>
+    `
                     }
+
                 ],
 
                 serverSide: true,

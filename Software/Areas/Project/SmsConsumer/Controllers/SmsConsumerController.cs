@@ -4,7 +4,7 @@ using DTO.Project.SmsConsumer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.SmsConsumer.Controllers
+namespace PanelSMS.Areas.Project.SmsConsumer.Controllers
 {
     [Area("Project")]
     public class SmsConsumerController : Controller

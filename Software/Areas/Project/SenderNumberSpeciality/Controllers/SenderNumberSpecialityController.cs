@@ -5,7 +5,7 @@ using DTO.Project.SenderNumberSpeciality;
 using DTO.Project.SenderNumberSubAreaList;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SenderNumberSpeciality.Controllers
+namespace PanelSMS.Areas.Project.SenderNumberSpeciality.Controllers
 {
     [Area("Project")]
     public class SenderNumberSpecialityController : Controller

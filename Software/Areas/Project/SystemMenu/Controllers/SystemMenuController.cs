@@ -4,7 +4,7 @@ using DTO.Project.SenderNumberSubAreaList;
 using DTO.Project.SystemMenu;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SystemMenu.Controllers
+namespace PanelSMS.Areas.Project.SystemMenu.Controllers
 {
     [Area("Project")]
     public class SystemMenuController : Controller

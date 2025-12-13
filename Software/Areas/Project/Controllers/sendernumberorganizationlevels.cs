@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.Controllers
+namespace PanelSMS.Areas.Project.Controllers
 {
     [Area("Project")]
     public class sendernumberorganizationlevels : Controller

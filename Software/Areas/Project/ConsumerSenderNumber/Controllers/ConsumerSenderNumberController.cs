@@ -2,7 +2,7 @@
 using DTO.DataTable;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.ConsumerSenderNumber.Controllers
+namespace PanelSMS.Areas.Project.ConsumerSenderNumber.Controllers
 {
     [Area("Project")]
     public class ConsumerSenderNumberController : Controller

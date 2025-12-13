@@ -15,14 +15,14 @@ namespace BLL.Project.SystemRole
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
-        //  private readonly string _baseUrl;
+         private readonly string _baseUrl;
 
 
         public SystemRoleManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            //  _baseUrl = config["ApiBaseUrl"];
+            _baseUrl = config["ApiBaseUrl"];
 
         }
 
@@ -43,7 +43,7 @@ namespace BLL.Project.SystemRole
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/roles";
+            var url = $"{_baseUrl}/roles";
 
             var res = _client.GetAsync(url).Result;
             var json = res.Content.ReadAsStringAsync().Result;
@@ -60,7 +60,7 @@ namespace BLL.Project.SystemRole
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/roles/search";
+            var url = $"{_baseUrl}/roles/search";
 
             var body = new
             {
@@ -112,7 +112,7 @@ namespace BLL.Project.SystemRole
             {
                 SetAuth();
 
-                var url = "http://87.107.111.44:8010/api/admin/roles";
+                var url = $"{_baseUrl}/roles";
 
                 var body = new
                 {
@@ -144,7 +144,8 @@ namespace BLL.Project.SystemRole
         {
             SetAuth();
 
-            var url = $"http://87.107.111.44:8010/api/admin/roles/{id}";
+            var url = $"{_baseUrl}/roles/{id}";
+
 
             var res = _client.GetAsync(url).Result;
 
@@ -169,7 +170,8 @@ namespace BLL.Project.SystemRole
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/roles/{model.Id}";
+                var url = $"{_baseUrl}/roles/{model.Id}";
+
 
                 var body = new
                 {
@@ -203,7 +205,8 @@ namespace BLL.Project.SystemRole
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/roles/{id}";
+                var url = $"{_baseUrl}/roles/{id}";
+
 
                 var res = _client.DeleteAsync(url).Result;
 

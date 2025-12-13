@@ -4,7 +4,7 @@ using DTO.DataTable;
 using DTO.Project.SystemRole;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SystemRole.Controllers
+namespace PanelSMS.Areas.Project.SystemRole.Controllers
 {
     [Area("Project")]
 

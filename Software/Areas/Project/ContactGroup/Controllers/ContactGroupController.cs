@@ -3,7 +3,7 @@ using DTO.DataTable;
 using DTO.Project.ContactGroup;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.ContactGroup.Controllers
+namespace PanelSMS.Areas.Project.ContactGroup.Controllers
 {
     [Area("Project")]
     public class ContactGroupController : Controller

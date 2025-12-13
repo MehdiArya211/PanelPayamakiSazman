@@ -21,14 +21,14 @@ namespace BLL.Project.SenderNumberSpeciality
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
-        //  private readonly string _baseUrl;
+        private readonly string _baseUrl;
 
 
         public SenderNumberSpecialityManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            //  _baseUrl = config["ApiBaseUrl"];
+            _baseUrl = config["ApiBaseUrl"];
 
         }
 
@@ -50,7 +50,8 @@ namespace BLL.Project.SenderNumberSpeciality
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/sender-number-specialties/search";
+           // var url = "http://87.107.111.44:8010/api/admin/sender-number-specialties/search";
+            var url = $"{_baseUrl}/sender-number-specialties/search";
             var body = new
             {
                 page = (search.start / search.length) + 1,
@@ -98,7 +99,8 @@ namespace BLL.Project.SenderNumberSpeciality
             {
                 SetAuth(); // حالا توکن ست می‌شود
 
-                var url = "http://87.107.111.44:8010/api/admin/sender-number-specialties";
+               // var url = "http://87.107.111.44:8010/api/admin/sender-number-specialties";
+                var url = $"{_baseUrl}/sender-number-specialties";
 
                 var json = JsonSerializer.Serialize(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -145,7 +147,8 @@ namespace BLL.Project.SenderNumberSpeciality
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-specialties/{model.Id}";
+               // var url = $"http://87.107.111.44:8010/api/admin/sender-number-specialties/{model.Id}";
+                var url = $"{_baseUrl}/sender-number-specialties/{model.Id}";
 
                 var body = new
                 {
@@ -177,7 +180,8 @@ namespace BLL.Project.SenderNumberSpeciality
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-specialties/{id}";
+               // var url = $"http://87.107.111.44:8010/api/admin/sender-number-specialties/{id}";
+                var url = $"{_baseUrl}/sender-number-specialties/{id}";
 
                 var res = _client.GetAsync(url).Result;
 
@@ -203,7 +207,8 @@ namespace BLL.Project.SenderNumberSpeciality
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas";
+           // var url = "http://87.107.111.44:8010/api/admin/sender-number-sub-areas";
+            var url = $"{_baseUrl}/sender-number-sub-areas";
             var res = _client.GetAsync(url).Result;
 
             var json = res.Content.ReadAsStringAsync().Result;
@@ -222,7 +227,8 @@ namespace BLL.Project.SenderNumberSpeciality
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{code}";
+                //var url = $"http://87.107.111.44:8010/api/admin/sender-number-sub-areas/{code}";
+                var url = $"{_baseUrl}/sender-number-sub-areas/{code}";
 
                 var res = _client.DeleteAsync(url).Result;
 
