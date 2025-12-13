@@ -69,5 +69,24 @@ namespace PanelSMS.Areas.Project.SystemRole.Controllers
         {
             return Json(_systemRoleManager.Delete(id));
         }
+
+        // این همون چیزیه که JS می‌خواد
+        [HttpGet]
+        public IActionResult GetAllForSelect()
+        
+        {
+            var search = new DataTableSearchDTO
+            {
+                start = 0,
+                length = 1000,
+                draw = "1",
+                sortColumnName = "Name",
+                sortDirection = "asc"
+            };
+
+            var result = _systemRoleManager.GetDataTableDTO(search);
+
+            return Json(result.data);
+        }
     }
 }

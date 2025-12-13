@@ -1,8 +1,11 @@
 ﻿using BLL.Project.RoleAssignment;
+using BLL.Project.SystemRole;
+using BLL.Project.User;
 using DTO.Project.RoleAssignment;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace PanelSMS.Areas.Project.RoleAssignment
 {
@@ -10,28 +13,71 @@ namespace PanelSMS.Areas.Project.RoleAssignment
     public class RoleAssignmentController : Controller
     {
         private readonly IRoleAssignmentManager _manager;
+        private readonly ISystemUserManager _systemUserManager;
+        private readonly ISystemRoleManager _systemRoleManager;
 
-        public RoleAssignmentController(IRoleAssignmentManager manager)
+        public RoleAssignmentController(
+            IRoleAssignmentManager manager,
+            ISystemUserManager systemUserManager,
+            ISystemRoleManager systemRoleManager)
         {
             _manager = manager;
+            _systemUserManager = systemUserManager;
+            _systemRoleManager = systemRoleManager;
         }
 
-        // ---------------- VIEWS ----------------
+        /* =====================================================
+         * VIEWS
+         * ===================================================== */
+
         public IActionResult AssignUser()
         {
-            return View();
+            // lookup کاربران
+            var users = _systemUserManager.GetUserLookup();
+
+            // lookup نقش‌ها
+            var roles = _systemRoleManager.GetRoleLookup();
+
+            var vm = new RoleAssignmentUserFormViewModel
+            {
+                CreateModel = new AssignRoleToUserDTO(),
+
+                UserOptions = users
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.Id,
+                        Text = x.Text
+                    })
+                    .ToList(),
+
+                RoleOptions = roles
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.Id,
+                        Text = x.Text
+                    })
+                    .ToList()
+            };
+
+            return View(vm);
         }
 
         public IActionResult AssignUnit()
         {
+            // این ViewModel رو مشابه AssignUser بعداً می‌سازی
             return View();
         }
 
-        // ---------------- AJAX APIs (UI) ----------------
+        /* =====================================================
+         * AJAX APIs (OPERATIONS)
+         * ===================================================== */
 
         [HttpGet]
         public IActionResult GetUserRoleIds(Guid userId)
         {
+            if (userId == Guid.Empty)
+                return Json(new { roleIds = Array.Empty<Guid>() });
+
             var roleIds = _manager.GetUserRoleIds(userId);
             return Json(new { roleIds });
         }
@@ -49,7 +95,9 @@ namespace PanelSMS.Areas.Project.RoleAssignment
 
         [HttpPut]
         [IgnoreAntiforgeryToken]
-        public IActionResult ReplaceUserRoles([FromQuery] Guid userId, [FromBody] ReplaceUserRolesDTO model)
+        public IActionResult ReplaceUserRoles(
+            [FromQuery] Guid userId,
+            [FromBody] ReplaceUserRolesDTO model)
         {
             if (userId == Guid.Empty)
                 return BadRequest("userId نامعتبر است.");
@@ -60,7 +108,9 @@ namespace PanelSMS.Areas.Project.RoleAssignment
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public IActionResult AssignToUnit([FromQuery] Guid unitId, [FromBody] AssignRoleToUnitDTO model)
+        public IActionResult AssignToUnit(
+            [FromQuery] Guid unitId,
+            [FromBody] AssignRoleToUnitDTO model)
         {
             if (unitId == Guid.Empty || model == null || model.RoleId == Guid.Empty)
                 return BadRequest("اطلاعات نامعتبر است.");

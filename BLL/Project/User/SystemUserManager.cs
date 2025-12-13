@@ -1,8 +1,10 @@
-﻿using DTO.Base;
+﻿using BLL.Project.SenderNumberAssignment;
+using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.SecurityQuestion;
 using DTO.Project.SenderNumberSubAreaList;
 using DTO.Project.User;
+using DTO.Project.WebApi;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -40,7 +42,7 @@ namespace BLL.Project.User
                     new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public List<SystemUserListDTO> GetAll()
+        public List<SystemUserListDTO> GetAll0()
         {
             SetAuth();
 
@@ -54,6 +56,58 @@ namespace BLL.Project.User
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             ) ?? new List<SystemUserListDTO>();
         }
+        public List<LookupItemDTO> GetUserLookup()
+        {
+            var result = new List<LookupItemDTO>();
+
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/users/search";
+
+                var body = new
+                {
+                    page = 1,
+                    pageSize = 200,
+                    filters = new List<object>(),
+                    sortBy = "userName",
+                    sortDescending = false
+                };
+
+                var json = JsonSerializer.Serialize(body);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PostAsync(url, content).Result;
+                var jsonResult = res.Content.ReadAsStringAsync().Result;
+
+                if (!res.IsSuccessStatusCode)
+                    return result;
+
+                var api =
+                    JsonSerializer.Deserialize<ApiResponsePagedDTO<UserLookupApiDTO>>(jsonResult,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                foreach (var u in api?.Data ?? new())
+                {
+                    result.Add(new LookupItemDTO
+                    {
+                        Id = u.Id,
+                        Text = string.IsNullOrWhiteSpace(u.FullName)
+                            ? u.UserName
+                            : $"{u.FullName} ({u.UserName})"
+                    });
+                }
+            }
+            catch { }
+
+            return result;
+        }
+
+
+
+
+
 
         public DataTableResponseDTO<SystemUserListDTO> GetDataTable(DataTableSearchDTO search)
         {

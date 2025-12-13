@@ -1,6 +1,7 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.SystemRole;
+using DTO.Project.WebApi;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +40,7 @@ namespace BLL.Project.SystemRole
         /* ---------------------------
          * Get All
          * --------------------------- */
-        public List<SystemRoleListDTO> GetAll()
+        public List<SystemRoleListDTO> GetAll0()
         {
             SetAuth();
 
@@ -52,6 +53,56 @@ namespace BLL.Project.SystemRole
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ?? new List<SystemRoleListDTO>();
         }
+        public List<LookupItemDTO> GetRoleLookup()
+        {
+            var result = new List<LookupItemDTO>();
+
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/roles/search";
+
+                var body = new
+                {
+                    page = 1,
+                    pageSize = 200,
+                    filters = new List<object>(),
+                    sortBy = "name",
+                    sortDescending = false
+                };
+
+                var json = JsonSerializer.Serialize(body);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PostAsync(url, content).Result;
+                var jsonResult = res.Content.ReadAsStringAsync().Result;
+
+                if (!res.IsSuccessStatusCode)
+                    return result;
+
+                var api =
+                    JsonSerializer.Deserialize<ApiResponsePagedDTO<SystemRoleListDTO>>(
+                        jsonResult,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                foreach (var r in api?.Data ?? new())
+                {
+                    result.Add(new LookupItemDTO
+                    {
+                        Id = r.Id,
+                        Text = r.Name
+                    });
+                }
+            }
+            catch { }
+
+            return result;
+        }
+
+
+
+
 
         /* ---------------------------
          * DataTable
@@ -220,5 +271,7 @@ namespace BLL.Project.SystemRole
                 return new BaseResult(false, ex.Message);
             }
         }
+
+
     }
 }

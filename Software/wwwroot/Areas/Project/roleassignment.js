@@ -20,42 +20,41 @@
     /* =========================
        LOAD USERS
     ========================= */
-    loadUsers: function () {
-        if ($("#userId").length === 0) return;
 
-        $.get("/Project/SystemUser/GetAll", function (res) {
-            roleAssignment.users = res || [];
 
-            let options = `<option value="">انتخاب کاربر...</option>`;
-            roleAssignment.users.forEach(u => {
-                options += `<option value="${u.id}">${u.fullName} (${u.userName})</option>`;
+    loadUsers0: function () {
+        $.get("/Project/RoleAssignment/GetUserLookup", function (res) {
+
+            let html = `<option value="">انتخاب کاربر...</option>`;
+
+            (res || []).forEach(x => {
+                const id = x.id || x.Id;
+                const text = x.text || x.Text;
+                html += `<option value="${id}">${text}</option>`;
             });
 
-            $("#userId").html(options);
+            $("#userId").html(html);
         });
     },
 
-    /* =========================
-       LOAD ROLES
-    ========================= */
-    loadRoles: function () {
-        // نقش در صفحه کاربر و صفحه واحد هر دو نیاز است
-        $.get("/Project/SystemRole/GetAll", function (res) {
-            roleAssignment.roles = res || [];
 
-            if ($("#roleId").length) {
-                let options = `<option value="">انتخاب نقش...</option>`;
-                roleAssignment.roles.forEach(r => options += `<option value="${r.id}">${r.name}</option>`);
-                $("#roleId").html(options);
-            }
+    loadRoles0: function () {
+        $.get("/Project/RoleAssignment/GetRoleLookup", function (res) {
 
-            if ($("#unitRoleId").length) {
-                let options2 = `<option value="">انتخاب نقش...</option>`;
-                roleAssignment.roles.forEach(r => options2 += `<option value="${r.id}">${r.name}</option>`);
-                $("#unitRoleId").html(options2);
-            }
+            let html = `<option value="">انتخاب نقش...</option>`;
+
+            (res || []).forEach(x => {
+                const id = x.id || x.Id;
+                const text = x.text || x.Text;
+                html += `<option value="${id}">${text}</option>`;
+            });
+
+            $("#roleId").length && $("#roleId").html(html);
+            $("#unitRoleId").length && $("#unitRoleId").html(html);
         });
     },
+
+    
 
     /* =========================
        LOAD UNITS (OPTIONAL)

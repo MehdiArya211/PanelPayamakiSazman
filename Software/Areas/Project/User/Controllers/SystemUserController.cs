@@ -91,5 +91,25 @@ namespace PanelSMS.Areas.Project.User.Controllers
             var res = _userManager.Delete(id);
             return Json(res);
         }
+
+        [HttpGet]
+        public IActionResult GetAllForSelect()
+        {
+            var search = new DataTableSearchDTO
+            {
+                start = 0,
+                length = 1000,
+                draw = "1",
+                sortColumnName = "UserName",
+                sortDirection = "asc"
+            };
+
+            var result = _userManager.GetDataTable(search);
+
+            // فقط دیتا برای select
+            return Json(result.data);
+        }
+
+
     }
 }
