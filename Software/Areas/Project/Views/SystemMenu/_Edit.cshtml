@@ -6,65 +6,75 @@
 </div>
 
 <div class="modal-body">
-<form class="edit-form"
-      asp-area="Project"
-      asp-controller="SystemMenu"
-      asp-action="Edit"
-      onsubmit="return systemmenu.edit.save(event)">
+    <form class="edit-form"
+          asp-area="Project"
+          asp-controller="SystemMenu"
+          asp-action="Edit"
+          onsubmit="return systemmenu.edit.save(event)">
 
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Id" />
 
-    <div class="error text-danger text-center mb-2"></div>
+        <div class="error text-danger text-center mb-2"></div>
 
-    <div class="row g-3">
+        <div class="row g-3">
 
-        <div class="col-md-6">
-            <label class="form-label">کلید</label>
-            <input asp-for="Key" class="form-control" required />
+            <div class="col-md-4">
+                <label class="form-label">کلید</label>
+                <input asp-for="Key" class="form-control" required />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">عنوان</label>
+                <input asp-for="Title" class="form-control" required />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">آیکون</label>
+                <input asp-for="Icon" class="form-control" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">‌Route Key</label>
+                <select asp-for="RouteKey"
+                        asp-items="ViewBag.routeDefinitions"
+                        class="form-select">
+                    <option value="">انتخاب کنید</option>
+
+                </select>
+            </div>
+
+
+
+            <div class="col-md-3">
+                <label class="form-label">والد</label>
+                <select asp-for="ParentId"
+                        asp-items="ViewBag.ParentMenus"
+                        class="form-select">
+                    <option value="">انتخاب کنید</option>
+
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">وضعیت</label>
+                <select asp-for="IsActive" class="form-control">
+                    <option value="true">فعال</option>
+                    <option value="false">غیرفعال</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">ترتیب</label>
+                <input asp-for="Order" type="number" class="form-control" required />
+            </div>
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label">عنوان</label>
-            <input asp-for="Title" class="form-control" required />
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                ذخیره تغییرات
+            </button>
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label">آیکون</label>
-            <input asp-for="Icon" class="form-control" />
-        </div>
-
-        <div class="col-md-6">
-            <label class="form-label">Route Key</label>
-            <input asp-for="RouteKey" class="form-control" />
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">ترتیب</label>
-            <input asp-for="Order" type="number" class="form-control" required />
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">والد</label>
-            <input asp-for="ParentId" class="form-control" />
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">وضعیت</label>
-            <select asp-for="IsActive" class="form-control">
-                <option value="true">فعال</option>
-                <option value="false">غیرفعال</option>
-            </select>
-        </div>
-
-    </div>
-
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary px-4">
-            ذخیره تغییرات
-        </button>
-    </div>
-
-</form>
+    </form>
 </div>

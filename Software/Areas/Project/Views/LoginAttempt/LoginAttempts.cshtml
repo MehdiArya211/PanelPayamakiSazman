@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "گزارش تلاش‌های ورود";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <h4 class="fw-bold mb-3">گزارش تلاش‌های ورود کاربران</h4>
+
+    <div class="card">
+        <div class="card-body">
+
+            <table id="tblLoginAttempts"
+                   class="table table-bordered table-striped w-100">
+                <thead>
+                    <tr>
+                        <th data-data="username">نام کاربری</th>
+                        <th data-data="isSuccessful">وضعیت</th>
+                        <th data-data="ipAddress">IP</th>
+                        <th data-data="attemptDate">تاریخ</th>
+                        <th data-data="failureReason">دلیل خطا</th>
+                    </tr>
+                </thead>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/areas/project/loginattempt/loginattempts.js"></script>
+}

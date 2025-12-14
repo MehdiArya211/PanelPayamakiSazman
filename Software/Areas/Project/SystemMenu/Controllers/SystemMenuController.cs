@@ -46,14 +46,23 @@ namespace PanelSMS.Areas.Project.SystemMenu.Controllers
         public IActionResult LoadCreateForm()
         {
             var model = new SystemMenuCreateDTO();
+            var ParentMenuList = _systemMenuManager.GetParentMenusForDropdown();
+            ViewBag.ParentMenus = ParentMenuList
+                        .Select(x => new SelectListItem
+                        {
+                            Value = x.Value,
+                            Text = x.Text
+                        })
+                            .ToList();
+
             var routeDefinitionList = _routeDefinitionManager.GetAll();
             ViewBag.routeDefinitions = routeDefinitionList
-    .Select(x => new SelectListItem
-    {
-        Value = x.RouteKey,
-        Text = x.RouteKey
-    })
-    .ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.RouteKey,
+                    Text = x.RouteKey
+                })
+                    .ToList();
             return PartialView("_Create", model);
         }
 

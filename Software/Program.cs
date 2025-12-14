@@ -4,9 +4,11 @@ using BLL.Interface;
 using BLL.ManageToken;
 using BLL.Project.ConsumerSenderNumbers;
 using BLL.Project.ContactGroup;
+using BLL.Project.LoginAttempt;
 using BLL.Project.RoleAssignment;
 using BLL.Project.RolePermission;
 using BLL.Project.RouteDefinition;
+using BLL.Project.SecurityPolicy;
 using BLL.Project.SecurityQuestion;
 using BLL.Project.SenderChargeRequest;
 using BLL.Project.SenderChargeRequestConsumer;
@@ -209,6 +211,7 @@ services.AddScoped<ISystemUserManager, SystemUserManager>();
 services.AddScoped<ISecurityQuestionManager, SecurityQuestionManager>();
 
 #endregion
+
 #region Role
 services.AddScoped<ISystemRoleManager, SystemRoleManager>();
 
@@ -229,8 +232,19 @@ builder.Services.AddScoped<IRolePermissionManager, RolePermissionManager>();
 builder.Services.AddScoped<IRoleAssignmentManager, RoleAssignmentManager>();
 
 #endregion
+
 #region menu
 services.AddScoped<ISystemMenuManager, SystemMenuManager>();
+
+#endregion
+
+#region SecurityPolicy
+services.AddScoped<ISecurityPolicyManager, SecurityPolicyManager>();
+
+#endregion
+
+#region Login Attempt
+services.AddScoped<ILoginAttemptManager, LoginAttemptManager>();
 
 #endregion
 

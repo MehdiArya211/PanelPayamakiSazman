@@ -3,6 +3,7 @@ using DTO.DataTable;
 using DTO.Project.SystemMenu;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Http.Headers;
@@ -198,6 +199,50 @@ namespace BLL.Project.SystemMenu
                 return new BaseResult(false, ex.Message);
             }
         }
+
+
+        public List<SelectListItem> GetParentMenusForDropdown()
+        {
+            SetAuth();
+
+            var url = $"{_baseUrl}/Menu/search";
+
+            var body = new
+            {
+                page = 1,
+                pageSize = 500,
+                filters = new List<object>(),
+                sortBy = "Order",
+                sortDescending = false
+            };
+
+            var json = JsonSerializer.Serialize(body);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var res = _client.PostAsync(url, content).Result;
+            var responseJson = res.Content.ReadAsStringAsync().Result;
+
+            if (!res.IsSuccessStatusCode)
+                return new List<SelectListItem>();
+
+            var api = JsonSerializer.Deserialize<ApiResponsePagedDTO<SystemMenuListDTO>>(
+                responseJson,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
+
+            // ⭐ فقط منوهای بدون والد
+            return api?.Data?
+                .Where(x => string.IsNullOrWhiteSpace(x.ParentId))
+                .OrderBy(x => x.Order)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id,
+                    Text = x.Title
+                })
+                .ToList()
+                ?? new List<SelectListItem>();
+        }
+
     }
 }
 
