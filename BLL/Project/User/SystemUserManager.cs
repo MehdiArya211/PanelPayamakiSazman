@@ -8,6 +8,7 @@ using DTO.Project.WebApi;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -182,7 +183,7 @@ namespace BLL.Project.User
             }
         }
 
-        public BaseResult Create(SystemUserCreateDTO model)
+        public BaseResult Create1(SystemUserCreateDTO model)
         {
             try
             {
@@ -229,6 +230,89 @@ namespace BLL.Project.User
             catch (Exception ex)
             {
                 return new BaseResult(false, ex.Message);
+            }
+        }
+
+        public BaseResult Create(SystemUserCreateDTO model)
+        {
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/users";
+
+                var body = new
+                {
+                    unitId = model.UnitId,
+                    userName = model.UserName,
+                    initialPassword = model.InitialPassword,
+                    firstName = model.FirstName,
+                    lastName = model.LastName,
+                    nationalCode = model.NationalCode,
+                    mobileNumber = model.MobileNumber,
+                    securityQuestions = new[]
+    {
+        new
+        {
+            questionId = Guid.Parse("019afce7-ae51-78e4-98c5-6244237a9e5b"),
+            answer = "پاسخ تست"
+        }
+    },
+                    roleIds = model.RoleIds != null && model.RoleIds.Any()
+                        ? model.RoleIds
+                        : new List<Guid>()
+                };
+
+                var json = JsonSerializer.Serialize(body);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PostAsync(url, content).Result;
+                var responseBody = res.Content.ReadAsStringAsync().Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult(true, "کاربر با موفقیت ثبت شد.");
+
+                // 👇 Decode حرفه‌ای خطا
+                var message = ParseApiError(res.StatusCode, responseBody);
+                return new BaseResult(false, message);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult(false, $"خطای داخلی: {ex.Message}");
+            }
+        }
+
+        private string ParseApiError(HttpStatusCode statusCode, string responseBody)
+        {
+            try
+            {
+                // Validation Error (ProblemDetails)
+                if (responseBody.StartsWith("{") && responseBody.Contains("\"errors\""))
+                {
+                    using var doc = JsonDocument.Parse(responseBody);
+
+                    if (doc.RootElement.TryGetProperty("errors", out var errors))
+                    {
+                        var messages = new List<string>();
+
+                        foreach (var field in errors.EnumerateObject())
+                        {
+                            foreach (var err in field.Value.EnumerateArray())
+                            {
+                                messages.Add(err.GetString());
+                            }
+                        }
+
+                        return string.Join("<br/>", messages);
+                    }
+                }
+
+                // fallback
+                return $"خطای API ({(int)statusCode}): {responseBody}";
+            }
+            catch
+            {
+                return $"خطای API ({(int)statusCode})";
             }
         }
 

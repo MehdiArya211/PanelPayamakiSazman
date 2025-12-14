@@ -220,6 +220,80 @@
                 }));
         }
     }
+    ,
+    password: {
+
+        toggle: function (inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        },
+
+        checkStrength: function (password) {
+
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            const bar = document.getElementById('passwordStrengthBar');
+            const text = document.getElementById('passwordStrengthText');
+
+            if (!bar || !text) return;
+
+            let percent = 0;
+            let color = '';
+            let message = '';
+
+            switch (strength) {
+                case 0:
+                case 1:
+                    percent = 20;
+                    color = 'bg-danger';
+                    message = 'بسیار ضعیف';
+                    break;
+                case 2:
+                    percent = 40;
+                    color = 'bg-warning';
+                    message = 'ضعیف';
+                    break;
+                case 3:
+                    percent = 60;
+                    color = 'bg-info';
+                    message = 'متوسط';
+                    break;
+                case 4:
+                    percent = 80;
+                    color = 'bg-primary';
+                    message = 'خوب';
+                    break;
+                case 5:
+                    percent = 100;
+                    color = 'bg-success';
+                    message = 'قوی';
+                    break;
+            }
+
+            bar.style.width = percent + '%';
+            bar.className = 'progress-bar ' + color;
+            text.textContent = message;
+        }
+    },
+
 };
 
 $(document).ready(function () {

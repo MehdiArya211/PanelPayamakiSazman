@@ -1,5 +1,6 @@
 ﻿using DTO.Base;
 using DTO.Project.RouteDefinition;
+using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
@@ -54,16 +55,20 @@ namespace BLL.Project.RouteDefinition
 
                 var json = res.Content.ReadAsStringAsync().Result;
 
-                return JsonSerializer.Deserialize<List<RouteDefinitionListDTO>>(
+                var result = JsonSerializer.Deserialize<ApiResponsePagedDTO<RouteDefinitionListDTO>>(
                     json,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                ) ?? new List<RouteDefinitionListDTO>();
+                );
+
+                return result?.Data ?? new List<RouteDefinitionListDTO>();
             }
             catch
             {
                 return new List<RouteDefinitionListDTO>();
             }
         }
+
+
 
         public BaseResult Update(string routeKey, RouteDefinitionUpdateDTO model)
         {

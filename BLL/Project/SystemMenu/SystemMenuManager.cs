@@ -4,6 +4,7 @@ using DTO.Project.SystemMenu;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -106,7 +107,7 @@ namespace BLL.Project.SystemMenu
                 SetAuth();
 
                 //var url = "http://87.107.111.44:8010/api/admin/Menu";
-                var url = " $\"{_baseUrl}/Menu";
+                 var url = $"{_baseUrl}/Menu";
 
                 var json = JsonSerializer.Serialize(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -169,7 +170,6 @@ namespace BLL.Project.SystemMenu
 
                 if (res.IsSuccessStatusCode)
                     return new BaseResult(true, "ویرایش با موفقیت انجام شد.");
-
                 return new BaseResult(false, res.Content.ReadAsStringAsync().Result);
             }
             catch (Exception ex)
