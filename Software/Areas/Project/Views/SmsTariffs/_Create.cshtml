@@ -1,0 +1,34 @@
+﻿@model DTO.Project.SmsTariffs.SmsTariffCreateDTO
+
+<form id="smsTariffCreateForm">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">اپراتور</label>
+        <input asp-for="Operator" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">هزینه هر پیام فارسی</label>
+        <input asp-for="PersianPricePerSegment"
+               type="number"
+               step="0.01"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">هزینه هر پیام انگلیسی</label>
+        <input asp-for="EnglishPricePerSegment"
+               type="number"
+               step="0.01"
+               class="form-control" />
+    </div>
+
+    <div class="text-end">
+        <button type="button"
+                class="btn btn-primary"
+                onclick="smsTariff.create()">
+            ذخیره
+        </button>
+    </div>
+</form>

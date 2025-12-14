@@ -20,6 +20,7 @@ using BLL.Project.SenderNumberSubArea;
 using BLL.Project.SenderWallet;
 using BLL.Project.SmsConsumer;
 using BLL.Project.SmsManager;
+using BLL.Project.SmsTariff;
 using BLL.Project.SystemMenu;
 using BLL.Project.SystemRole;
 using BLL.Project.Unit;
@@ -245,6 +246,11 @@ services.AddScoped<ISecurityPolicyManager, SecurityPolicyManager>();
 
 #region Login Attempt
 services.AddScoped<ILoginAttemptManager, LoginAttemptManager>();
+
+#endregion
+
+#region sms tariff
+services.AddScoped<ISmsTariffManager, SmsTariffManager>();
 
 #endregion
 

@@ -1,31 +1,22 @@
-﻿using BLL.Project.SenderNumberSubArea;
-using BLL.Project.SystemRole;
-using BLL.Project.Unit;
-using BLL.Project.User;
+﻿using BLL.Project.SmsTariff;
 using DTO.DataTable;
-using DTO.Project.User;
+using DTO.Project.SmsTariffs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace PanelSMS.Areas.Project.User.Controllers
+namespace PanelSMS.Areas.Project.SmsTariff.Controllers
 {
     [Area("Project")]
-
-    public class SystemUserController : Controller
+    public class SmsTariffsController : Controller
     {
-        private readonly ISystemUserManager _userManager;
-        private readonly IUnitManager _unitManager;
-        private readonly ISystemRoleManager _systemRoleManager;
+        private readonly ISmsTariffManager _manager;
 
-
-        public SystemUserController(ISystemUserManager userManager, IUnitManager unitManager,
-            ISystemRoleManager systemRoleManager)
+        public SmsTariffsController(ISmsTariffManager smsTariffManager)
         {
-            _userManager = userManager;
-            _unitManager = unitManager;
-            _systemRoleManager = systemRoleManager;
+            _manager = smsTariffManager;
         }
+
         #region نمایش
+
         public IActionResult Index()
         {
             return View();
@@ -44,40 +35,24 @@ namespace PanelSMS.Areas.Project.User.Controllers
             search.sortDirection = Request.Form["order[0][dir]"];
             search.sortColumnName = Request.Form[$"columns[{colIndex}][data]"];
 
-            var result = _userManager.GetDataTable(search);
+            var result = _manager.GetDataTableDTO(search);
 
             return Json(result);
         }
+
         #endregion
 
+
         #region ایجاد
+
         public IActionResult LoadCreateForm()
         {
-            var unitList = _unitManager.GetUnitsForDropdown();
-            var roleList = _systemRoleManager.GetRoleLookup();
-
-            ViewBag.Units = unitList
-                .Select(x => new SelectListItem
-                {
-                    Value = x.Value,
-                    Text = x.Text
-                })
-                .ToList();
-
-            ViewBag.Roles = roleList
-                .Select(x => new SelectListItem
-                {
-                    Value = x.Id,
-                    Text = x.Text
-                })
-                .ToList();
-            return PartialView("_Create", new SystemUserCreateDTO());
+            return PartialView("_Create", new SmsTariffCreateDTO());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public IActionResult Create(SystemUserCreateDTO model)
+        public IActionResult Create(SmsTariffCreateDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -87,22 +62,25 @@ namespace PanelSMS.Areas.Project.User.Controllers
                     message = "اطلاعات ارسال‌شده معتبر نیست!"
                 });
             }
-            var res = _userManager.Create(model);
+
+            var res = _manager.Create(model);
             return Json(res);
         }
+
         #endregion
 
 
+        #region ویرایش
+
         public IActionResult LoadEditForm(string id)
         {
-            var model = _userManager.GetById(id);
+            var model = _manager.GetById(id);
             return PartialView("_Edit", model);
         }
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-
-        public IActionResult Edit(SystemUserEditDTO model)
+        public IActionResult Edit(SmsTariffEditDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -112,35 +90,23 @@ namespace PanelSMS.Areas.Project.User.Controllers
                     message = "اطلاعات ارسال‌شده معتبر نیست!"
                 });
             }
-            var res = _userManager.Update(model);
+
+            var res = _manager.Update(model);
             return Json(res);
         }
+
+        #endregion
+
+
+        #region حذف
 
         [HttpPost]
         public IActionResult Delete(string id)
         {
-            var res = _userManager.Delete(id);
+            var res = _manager.Delete(id);
             return Json(res);
         }
 
-        [HttpGet]
-        public IActionResult GetAllForSelect()
-        {
-            var search = new DataTableSearchDTO
-            {
-                start = 0,
-                length = 1000,
-                draw = "1",
-                sortColumnName = "UserName",
-                sortDirection = "asc"
-            };
-
-            var result = _userManager.GetDataTable(search);
-
-            // فقط دیتا برای select
-            return Json(result.data);
-        }
-
-
+        #endregion
     }
 }
