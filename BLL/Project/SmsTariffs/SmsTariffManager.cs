@@ -148,7 +148,7 @@ namespace BLL.Project.SmsTariff
         /* ---------------------------
          * Update
          * --------------------------- */
-        public BaseResult Update(SmsTariffEditDTO model)
+        public BaseResult Update0(SmsTariffEditDTO model)
         {
             try
             {
@@ -180,6 +180,39 @@ namespace BLL.Project.SmsTariff
                 return new BaseResult(false, ex.Message);
             }
         }
+
+        public BaseResult Update(SmsTariffEditDTO model)
+        {
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/sms-tariffs/{model.Id}";
+
+                var body = new Dictionary<string, object>
+                {
+                    ["operator"] = model.Operator.ToString(),
+                    ["persianPricePerSegment"] = model.PersianPricePerSegment,
+                    ["englishPricePerSegment"] = model.EnglishPricePerSegment
+                };
+
+                var json = JsonSerializer.Serialize(body);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PutAsync(url, content).Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult(true, "تعرفه پیامک با موفقیت ویرایش شد.");
+
+                var error = res.Content.ReadAsStringAsync().Result;
+                return new BaseResult(false, error);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult(false, ex.Message);
+            }
+        }
+
 
         /* ---------------------------
          * Delete

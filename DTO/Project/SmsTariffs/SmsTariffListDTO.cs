@@ -1,4 +1,6 @@
-﻿namespace DTO.Project.SmsTariffs
+﻿using Domain.Enums.Project;
+
+namespace DTO.Project.SmsTariffs
 {
     public class SmsTariffListDTO
     {
@@ -10,7 +12,7 @@
 
     public class SmsTariffCreateDTO
     {
-        public string Operator { get; set; }
+        public SmsOperatorType Operator { get; set; }
         public decimal PersianPricePerSegment { get; set; }
         public decimal EnglishPricePerSegment { get; set; }
     }
