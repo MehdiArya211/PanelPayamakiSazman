@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewData["Title"] = "مدیریت منوها";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .menu-list-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        margin-bottom: 5px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        cursor: pointer;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+        .menu-item:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .menu-item.active {
+            background: #e7f1ff;
+            border-color: #0d6efd;
+        }
+
+    .menu-item-level-1 {
+        margin-left: 0px;
+    }
+
+    .menu-item-level-2 {
+        margin-left: 30px;
+    }
+
+    .menu-item-level-3 {
+        margin-left: 60px;
+    }
+
+    .menu-item-level-4 {
+        margin-left: 90px;
+    }
+
+    .menu-item-level-5 {
+        margin-left: 120px;
+    }
+
+    .menu-icon {
+        margin-right: 10px;
+        font-size: 1.1rem;
+        width: 24px;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .menu-title {
+        flex-grow: 1;
+        font-weight: 500;
+    }
+
+    .menu-badge {
+        margin-right: 10px;
+        font-size: 0.8rem;
+        padding: 2px 8px;
+    }
+
+    .menu-toggle {
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+        .menu-toggle:hover {
+            color: #495057;
+        }
+
+    .actions-toolbar {
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+        display: none;
+    }
+
+    .selected-menu-info {
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .selected-menu-title {
+        font-weight: 600;
+        color: #0d6efd;
+        margin-bottom: 5px;
+    }
+
+    .selected-menu-details {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+
+    .loading-spinner {
+        text-align: center;
+        padding: 40px;
+    }
+
+    .menu-status-active {
+        color: #198754;
+    }
+
+    .menu-status-inactive {
+        color: #dc3545;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-menu-button-wide"></i> مدیریت منوها
+        </h5>
+        <button class="btn btn-primary btn-sm" onclick="menu.addRoot()">
+            <i class="bi bi-plus-circle"></i> افزودن منوی اصلی
+        </button>
+    </div>
+
+    <div class="card-body">
+        <!-- نوار ابزار عملیات (پس از انتخاب منو نمایش داده می‌شود) -->
+        <div id="actions-toolbar" class="actions-toolbar">
+            <div class="selected-menu-info">
+                <div class="selected-menu-title" id="selected-menu-title">
+                    <!-- عنوان منوی انتخاب شده -->
+                </div>
+                <div class="selected-menu-details" id="selected-menu-details">
+                    <!-- جزئیات منوی انتخاب شده -->
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-success btn-sm" onclick="menu.addChild()">
+                    <i class="bi bi-plus-lg"></i> افزودن زیرمنو
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="menu.edit()">
+                    <i class="bi bi-pencil"></i> ویرایش منو
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="menu.delete()">
+                    <i class="bi bi-trash"></i> حذف منو
+                </button>
+                <button class="btn btn-outline-secondary btn-sm ms-auto" onclick="menu.clearSelection()">
+                    <i class="bi bi-x-circle"></i> لغو انتخاب
+                </button>
+            </div>
+        </div>
+
+        <!-- لیست منوها -->
+        <div id="loading" class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">در حال بارگذاری...</span>
+            </div>
+            <p class="mt-2 text-muted">در حال بارگذاری منوها</p>
+        </div>
+
+        <div id="menu-list-container" class="menu-list-container" style="display: none;">
+            <!-- لیست منوها اینجا رندر می‌شود -->
+        </div>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="bi bi-menu-button-wide"></i>
+            <h4>هنوز منویی ایجاد نشده است</h4>
+            <p class="text-muted mb-4">برای شروع، اولین منو را ایجاد کنید.</p>
+            <button class="btn btn-primary" onclick="menu.addRoot()">
+                <i class="bi bi-plus-circle"></i> ایجاد منوی اصلی
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/areas/Project/menus.js"></script>
+}

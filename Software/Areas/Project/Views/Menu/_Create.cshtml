@@ -1,0 +1,87 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.Menus.MenuFormViewModel
+
+<div class="modal-header border-0 pb-0 zbm-modal">
+    <h5 class="modal-title fw-bold">
+        <i class="bi bi-menu-button-wide text-primary"></i> افزودن منوی جدید
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body px-4 zbm-modal">
+    <p class="text-muted small text-center mb-3">
+        لطفاً فیلدهای ضروری را تکمیل کنید.
+    </p>
+    <div class="error text-danger text-center mb-2"></div>
+
+    <form asp-area="Admin" asp-controller="Menu" asp-action="Create"
+          class="create-form" onsubmit="return menu.create.save(event)">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+            <!-- کلید -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label required">کلید منو (Key)</label>
+                <input asp-for="CreateModel.Key" class="form-control zbm-control" required />
+                <span asp-validation-for="CreateModel.Key" class="text-danger small d-block mt-1"></span>
+                <small class="text-muted">کلید یکتا برای شناسایی منو</small>
+            </div>
+
+            <!-- عنوان -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label required">عنوان منو</label>
+                <input asp-for="CreateModel.Title" class="form-control zbm-control" required />
+                <span asp-validation-for="CreateModel.Title" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- آیکون -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label">آیکون</label>
+                <input asp-for="CreateModel.Icon" class="form-control zbm-control"
+                       placeholder="مثال: bi-house" />
+                <span asp-validation-for="CreateModel.Icon" class="text-danger small d-block mt-1"></span>
+                <small class="text-muted">نام کلاس آیکون (Bootstrap Icons)</small>
+            </div>
+
+            <!-- مسیر -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label">مسیر (Route Key)</label>
+                <input asp-for="CreateModel.RouteKey" class="form-control zbm-control"
+                       placeholder="مثال: /admin/users" />
+                <span asp-validation-for="CreateModel.RouteKey" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- ترتیب -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label required">ترتیب نمایش</label>
+                <input asp-for="CreateModel.Order" type="number" min="1"
+                       class="form-control zbm-control" required value="1" />
+                <span asp-validation-for="CreateModel.Order" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- والد -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label">منوی والد</label>
+                <select asp-for="CreateModel.ParentId" class="form-select zbm-control"
+                        asp-items="Model.ParentOptions">
+                </select>
+                <span asp-validation-for="CreateModel.ParentId" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- وضعیت -->
+            <div class="col-12 col-sm-6">
+                <label class="zbm-label">وضعیت</label>
+                <select asp-for="CreateModel.IsActive" class="form-select zbm-control"
+                        asp-items="Model.ActiveOptions">
+                </select>
+                <span asp-validation-for="CreateModel.IsActive" class="text-danger small d-block mt-1"></span>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4 zbm-btn-save">
+                <i class="bi bi-check-circle"></i> ذخیره منو
+            </button>
+        </div>
+    </form>
+</div>

@@ -4,6 +4,7 @@ using BLL.Interface;
 using BLL.ManageToken;
 using BLL.Project.ConsumerSenderNumbers;
 using BLL.Project.ContactGroup;
+using BLL.Project.Menus;
 using BLL.Project.SecurityQuestion;
 using BLL.Project.SenderChargeRequest;
 using BLL.Project.SenderChargeRequestConsumer;
@@ -186,6 +187,7 @@ services.AddScoped<IContactGroupManager, ContactGroupManager>();
 services.AddScoped<ISenderChargeRequestConsumerManager, SenderChargeRequestConsumerManager>();
 services.AddScoped<IConsumerSenderNumberManager, ConsumerSenderNumberManager>();
 services.AddScoped<ISmsConsumerManager, SmsConsumerManager>();
+services.AddScoped<IAdminMenuManager, AdminMenuManager>();
 
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();

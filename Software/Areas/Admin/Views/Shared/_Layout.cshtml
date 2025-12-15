@@ -273,6 +273,14 @@
                     ارسال پیامک - کاربر 
                 </a>
             </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "Menu" ? "active" : "")"
+                   asp-area="Project" asp-controller="Menu" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    منو ها 
+                </a>
+            </li>
         </ul>
 
         <ul class="list-unstyled px-2 mt-3 accordion" id="mainMenu">
