@@ -14,6 +14,8 @@ namespace BLL.Project.SystemRole
         public BaseResult Delete(string id);
 
         public List<LookupItemDTO> GetRoleLookup();
+        public BaseResult UpdateRoles(string clientId, List<string> roleIds);
+
 
 
 

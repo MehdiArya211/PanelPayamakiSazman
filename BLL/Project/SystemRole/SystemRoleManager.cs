@@ -273,5 +273,41 @@ namespace BLL.Project.SystemRole
         }
 
 
+        /* ---------------------------
+ * Update Roles
+ * --------------------------- */
+        public BaseResult UpdateRoles(string clientId, List<string> roleIds)
+        {
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/service-clients/{clientId}/roles";
+
+                var body = new
+                {
+                    roleIds = roleIds
+                };
+
+                var content = new StringContent(
+                    JsonSerializer.Serialize(body),
+                    Encoding.UTF8,
+                    "application/json");
+
+                var res = _client.PutAsync(url, content).Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult(true, "نقش‌های سرویس‌گیرنده بروزرسانی شد.");
+
+                return new BaseResult(false, res.Content.ReadAsStringAsync().Result);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult(false, ex.Message);
+            }
+        }
+
+
+
     }
 }

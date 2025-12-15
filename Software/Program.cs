@@ -18,6 +18,7 @@ using BLL.Project.SenderNumberOrganizationLevel;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
 using BLL.Project.SenderWallet;
+using BLL.Project.ServiceClients;
 using BLL.Project.SmsConsumer;
 using BLL.Project.SmsManager;
 using BLL.Project.SmsTariff;
@@ -251,6 +252,11 @@ services.AddScoped<ILoginAttemptManager, LoginAttemptManager>();
 
 #region sms tariff
 services.AddScoped<ISmsTariffManager, SmsTariffManager>();
+
+#endregion
+
+#region Service Client
+services.AddScoped<IServiceClientsManager, ServiceClientsManager>();
 
 #endregion
 

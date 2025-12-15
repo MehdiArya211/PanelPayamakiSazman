@@ -1,0 +1,57 @@
+﻿@model DTO.Project.ServiceClients.ServiceClientDetailDTO
+
+<form id="serviceClientEditForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="clientId" value="@Model.ClientId" />
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">نام نمایشی</label>
+        <input class="form-control" value="@Model.DisplayName" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">توضیحات</label>
+        <textarea class="form-control" disabled>@Model.Description</textarea>
+    </div>
+
+    <!-- واحد سازمانی -->
+    <div class="col-md-3">
+        <label class="form-label required">واحد سازمانی</label>
+        <select asp-for="UnitId"
+                asp-items="ViewBag.Units"
+                class="form-select"
+                required>
+            <option value="">انتخاب واحد</option>
+        </select>
+    </div>
+
+    <!-- نقش‌ها -->
+    <div class="col-md-3">
+        <label class="form-label">نقش‌ها</label>
+        <select asp-for="RoleIds"
+                asp-items="ViewBag.Roles"
+                class="form-select"
+                multiple>
+        </select>
+        <small class="text-muted">می‌توانید چند نقش انتخاب کنید</small>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Role Ids</label>
+        <input type="text"
+               class="form-control"
+               id="editRoleIdsInput"
+               value="@string.Join(",", Model.RoleIds)" />
+        <small class="text-muted">
+            roleId ها را با کاما جدا کنید
+        </small>
+    </div>
+
+    <div class="text-end">
+        <button type="button"
+                class="btn btn-primary"
+                onclick="serviceClient.updateRoles()">
+            ذخیره تغییرات
+        </button>
+    </div>
+</form>

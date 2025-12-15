@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "دسترسی سرویس گیرنده‌ها";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h4 class="fw-bold">دسترسی سرویس گیرنده‌ها</h4>
+
+        <button class="btn btn-success"
+                onclick="serviceClient.loadCreateForm()">
+            <i class="bi bi-plus-circle"></i>
+            ایجاد سرویس گیرنده
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="tblServiceClients"
+                   class="table table-bordered table-striped w-100">
+                <thead>
+                    <tr>
+                        <th data-data="displayName">نام نمایشی</th>
+                        <th data-data="unitName">واحد</th>
+                        <th data-data="isActive">وضعیت</th>
+                        <th data-data="clientId">عملیات</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="serviceClientModal" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">سرویس گیرنده</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="serviceClientModalBody"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/areas/project/serviceclient.js"></script>
+}
