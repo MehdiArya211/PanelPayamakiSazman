@@ -81,7 +81,8 @@ namespace PanelSMS.Areas.Project.ServiceClients.Controllers
             if (!ModelState.IsValid)
                 return Json(new { status = false, message = "اطلاعات نامعتبر است" });
 
-            return Json(_manager.Create(model));
+            var res = _manager.Create(model);
+            return Json(res);
         }
 
         #endregion

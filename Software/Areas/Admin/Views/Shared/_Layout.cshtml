@@ -260,6 +260,22 @@
             </li>
 
             <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SecurityPolicy" ? "active" : "")"
+                   asp-area="Project" asp-controller="SecurityPolicy" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    سیاست های امنیتی
+                </a>
+            </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "SmsTariff" ? "active" : "")"
+                   asp-area="Project" asp-controller="SmsTariff" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                تعرفه ارسال پیامک‌ها ​
+                </a>
+            </li>
+
+            <li>
                 <a class="sidebar-link @(currentArea == "project" && currentController == "SenderChargeRequestConsumer" ? "active" : "")"
                    asp-area="Project" asp-controller="SenderChargeRequestConsumer" asp-action="Index">
                     <i class="bi bi-list-ul"></i>

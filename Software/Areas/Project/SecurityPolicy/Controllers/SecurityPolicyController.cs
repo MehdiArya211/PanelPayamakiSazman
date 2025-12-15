@@ -9,7 +9,7 @@ namespace PanelSMS.Areas.Project.SecurityPolicy.Controllers
     {
         private readonly ISecurityPolicyManager _manager;
 
-        public SecurityPolicyController(ISecurityPolicyManager manager)
+        public SecurityPolicyController(ISecurityPolicyManager manager)     
         {
             _manager = manager;
         }

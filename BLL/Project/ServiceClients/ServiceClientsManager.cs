@@ -113,7 +113,7 @@ namespace BLL.Project.ServiceClients
         /* ---------------------------
          * Create
          * --------------------------- */
-        public BaseResult Create(ServiceClientCreateDTO model)
+        public BaseResult Create0(ServiceClientCreateDTO model)
         {
             try
             {
@@ -146,6 +146,50 @@ namespace BLL.Project.ServiceClients
                 return new BaseResult(false, ex.Message);
             }
         }
+
+        public BaseResult Create(ServiceClientCreateDTO model)
+        {
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/service-clients";
+
+                // بدنه دقیقاً مطابق انتظار API
+                var body = new
+                {
+                    unitId = model.UnitId,               // string uuid
+                    displayName = model.DisplayName,
+                    description = string.IsNullOrWhiteSpace(model.Description)
+                        ? null
+                        : model.Description,
+
+                    roleIds = model.RoleIds ?? new List<string>()  // حتماً array
+                };
+
+                var json = JsonSerializer.Serialize(body, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PostAsync(url, content).Result;
+                var responseBody = res.Content.ReadAsStringAsync().Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult(true, "سرویس‌گیرنده با موفقیت ایجاد شد.");
+
+                // 👇 نمایش دقیق خطای API
+                return new BaseResult(false,
+                    $"API Error ({(int)res.StatusCode}): {responseBody}");
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult(false, $"Exception: {ex.Message}");
+            }
+        }
+
 
         /* ---------------------------
          * Rotate Secret

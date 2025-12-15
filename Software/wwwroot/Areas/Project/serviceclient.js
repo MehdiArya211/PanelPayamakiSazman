@@ -80,16 +80,10 @@
 
         var form = $('#serviceClientCreateForm');
 
-        var roles = $('#roleIdsInput').val()
-            .split(',')
-            .map(x => x.trim())
-            .filter(x => x);
+
 
         var data = form.serializeArray();
 
-        roles.forEach(r => {
-            data.push({ name: 'RoleIds', value: r });
-        });
 
         $.post('/Project/ServiceClients/Create', $.param(data))
             .done(res => {
