@@ -141,6 +141,14 @@ namespace PanelSMS.Areas.Project.User.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new
+                {
+                    status = false,
+                    message = "اطلاعات ارسال‌شده معتبر نیست!"
+                });
+            }
             var res = _userManager.Delete(id);
             return Json(res);
         }

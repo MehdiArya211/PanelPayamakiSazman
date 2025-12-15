@@ -1,5 +1,6 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
+using DTO.Menu;
 using DTO.Project.SystemMenu;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -43,6 +44,9 @@ namespace BLL.Project.SystemMenu
         BaseResult Delete(string id);
 
         public List<SelectListItem> GetParentMenusForDropdown();
+
+        public Task<List<SystemMenuSessionDTO>> GetMenusForCurrentUser();
+
 
     }
 }

@@ -1,10 +1,10 @@
-﻿@using DTO.Menu
+﻿@using DTO.Project.SystemMenu
 @using Services.SessionServices
 @using Domain.Resources
 
 @{
-    var User = Context.Session.GetUser();
-    var Menus = User?.Menus ?? new List<MenuSessionDTO>();
+    var User = Context.Session.GetSystemUser();
+    var Menus = User?.Menus ?? new List<SystemMenuSessionDTO>();
 
     string currentArea = ViewContext.RouteData.Values["Area"]?.ToString()?.ToLower() ?? "";
     string currentController = ViewContext.RouteData.Values["Controller"]?.ToString()?.ToLower() ?? "";

@@ -1,4 +1,5 @@
-﻿using DTO.User;
+﻿using DTO.Project.User;
+using DTO.User;
 using Microsoft.AspNetCore.Http;
 
 namespace Services.SessionServices
@@ -15,11 +16,15 @@ namespace Services.SessionServices
         {
             return session.Get<UserSessionDTO>(Key);
         }
-
-
-        public static void SetUser(this ISession session, UserSessionDTO value)
+        public static SystemUserSessionDTO GetSystemUser(this ISession session)
         {
-            session.Set<UserSessionDTO>(Key, value);
+            return session.Get<SystemUserSessionDTO>(Key);
+        }
+
+
+        public static void SetUser(this ISession session, SystemUserSessionDTO value)
+        {
+            session.Set<SystemUserSessionDTO>(Key, value);
         }
 
 

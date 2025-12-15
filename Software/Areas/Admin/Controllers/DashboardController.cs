@@ -29,7 +29,7 @@ namespace Momayezi.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var User = HttpContext.Session.GetUser();
+            var User = HttpContext.Session.GetSystemUser();
             var lastLoginLog = new UserLog();
             return View(lastLoginLog);
         }

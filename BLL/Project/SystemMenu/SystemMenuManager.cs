@@ -1,5 +1,6 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
+using DTO.Menu;
 using DTO.Project.SystemMenu;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
@@ -242,6 +243,45 @@ namespace BLL.Project.SystemMenu
                 .ToList()
                 ?? new List<SelectListItem>();
         }
+
+
+
+
+        public async Task<List<SystemMenuSessionDTO>> GetMenusForCurrentUser()
+        {
+            SetAuth();
+
+            var url = $"{_baseUrl}/Menu/search";
+
+            var body = new
+            {
+                page = 1,
+                pageSize = 200,
+                filters = new List<object>(),
+                sortBy = "Order",
+                sortDescending = false
+            };
+
+            var json = JsonSerializer.Serialize(body);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var res = await _client.PostAsync(url, content);
+
+            if (!res.IsSuccessStatusCode)
+                return new List<SystemMenuSessionDTO>();
+
+            var responseJson = await res.Content.ReadAsStringAsync();
+
+            var apiResponse =
+                JsonSerializer.Deserialize<ApiResponsePagedDTO<SystemMenuSessionDTO>>(
+                    responseJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+            return apiResponse?.Data ?? new List<SystemMenuSessionDTO>();
+        }
+
+
 
     }
 }

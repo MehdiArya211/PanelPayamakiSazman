@@ -7,7 +7,7 @@
     ViewData["Title"] = "داشبورد";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 
-    var User = Context.Session.GetUser();
+    var User = Context.Session.GetSystemUser();
 
     // --- این مقادیر را بعداً از دیتابیس پر کن ---
     int TotalSms = ViewBag.TotalSms ?? 1200;

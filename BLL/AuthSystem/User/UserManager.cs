@@ -278,7 +278,7 @@ namespace BLL
             var res = base.Update(user);
             if(res.Status)
             {
-                var sessionUser = Session.GetUser();
+                var sessionUser = Session.GetSystemUser();
                 res.Model = sessionUser.PasswordIsChanged == false;
                 sessionUser.PasswordIsChanged = true;
                 Session.RemoveUser();

@@ -18,8 +18,8 @@ namespace DTO.Project.User
         public string NationalCode { get; set; }       // nationalCode
         public string MobileNumber { get; set; }       // mobileNumber
 
-        public List<SecurityQuestionCreateDTO> SecurityQuestions { get; set; }
-            = new List<SecurityQuestionCreateDTO>();  // securityQuestions
+        //public List<SecurityQuestionCreateDTO> SecurityQuestions { get; set; }
+        //    = new List<SecurityQuestionCreateDTO>();  // securityQuestions
 
         public List<Guid> RoleIds { get; set; } = new(); // roleIds
     }

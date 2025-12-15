@@ -8,6 +8,7 @@ namespace DTO.Project.RouteDefinition
 {
     public class RouteDefinitionListDTO
     {
+
         public string RouteKey { get; set; }
         public List<string> Actions { get; set; }
         public bool RequiresFreshAuth { get; set; }

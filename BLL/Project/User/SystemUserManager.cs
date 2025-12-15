@@ -346,7 +346,6 @@ namespace BLL.Project.User
             {
                 SetAuth();
 
-                //var url = $"http://87.107.111.44:8010/api/admin/users/{model.Id}";
                 var url = $"{_baseUrl}/users/{model.Id}";
 
                 var json = JsonSerializer.Serialize(model);
