@@ -1,22 +1,31 @@
 ﻿using BLL.Project.SenderNumberSubArea;
+using BLL.Project.SystemRole;
+using BLL.Project.Unit;
 using BLL.Project.User;
 using DTO.DataTable;
 using DTO.Project.User;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.User.Controllers
+namespace PanelSMS.Areas.Project.User.Controllers
 {
     [Area("Project")]
 
     public class SystemUserController : Controller
     {
         private readonly ISystemUserManager _userManager;
+        private readonly IUnitManager _unitManager;
+        private readonly ISystemRoleManager _systemRoleManager;
 
-        public SystemUserController(ISystemUserManager userManager)
+
+        public SystemUserController(ISystemUserManager userManager, IUnitManager unitManager,
+            ISystemRoleManager systemRoleManager)
         {
             _userManager = userManager;
+            _unitManager = unitManager;
+            _systemRoleManager = systemRoleManager;
         }
-
+        #region نمایش
         public IActionResult Index()
         {
             return View();
@@ -39,9 +48,29 @@ namespace Software.Areas.Project.User.Controllers
 
             return Json(result);
         }
+        #endregion
 
+        #region ایجاد
         public IActionResult LoadCreateForm()
         {
+            var unitList = _unitManager.GetUnitsForDropdown();
+            var roleList = _systemRoleManager.GetRoleLookup();
+
+            ViewBag.Units = unitList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Value,
+                    Text = x.Text
+                })
+                .ToList();
+
+            ViewBag.Roles = roleList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id,
+                    Text = x.Text
+                })
+                .ToList();
             return PartialView("_Create", new SystemUserCreateDTO());
         }
 
@@ -61,10 +90,34 @@ namespace Software.Areas.Project.User.Controllers
             var res = _userManager.Create(model);
             return Json(res);
         }
+        #endregion
+
 
         public IActionResult LoadEditForm(string id)
         {
             var model = _userManager.GetById(id);
+            var unitList = _unitManager.GetUnitsForDropdown();
+            var roleList = _systemRoleManager.GetRoleLookup();
+
+            ViewBag.Units = unitList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Value,
+                    Text = x.Text,
+                    Selected = x.Value == model.UnitId   // ✅
+                })
+                .ToList();
+
+            // ⭐⭐⭐ راه‌حل قطعی Role ⭐⭐⭐
+            ViewBag.Roles = roleList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id,                         // string
+                    Text = x.Text,
+                    Selected = model.RoleIds != null &&
+                       model.RoleIds.Any(r => r.ToString() == x.Id)
+                })
+                .ToList();
             return PartialView("_Edit", model);
         }
 
@@ -88,8 +141,36 @@ namespace Software.Areas.Project.User.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new
+                {
+                    status = false,
+                    message = "اطلاعات ارسال‌شده معتبر نیست!"
+                });
+            }
             var res = _userManager.Delete(id);
             return Json(res);
         }
+
+        [HttpGet]
+        public IActionResult GetAllForSelect()
+        {
+            var search = new DataTableSearchDTO
+            {
+                start = 0,
+                length = 1000,
+                draw = "1",
+                sortColumnName = "UserName",
+                sortDirection = "asc"
+            };
+
+            var result = _userManager.GetDataTable(search);
+
+            // فقط دیتا برای select
+            return Json(result.data);
+        }
+
+
     }
 }

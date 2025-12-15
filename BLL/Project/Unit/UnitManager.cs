@@ -3,6 +3,7 @@ using DTO.DataTable;
 using DTO.Project.Unit;
 using DTO.Project.WebApi;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -276,5 +277,42 @@ namespace BLL.Project.Unit
                 return new BaseResult { Status = false, Message = ex.Message };
             }
         }
+
+        public List<SelectListItem> GetUnitsForDropdown()
+        {
+            SetAuth();
+
+            var url = $"{_baseUrl}/api/admin/units/search";
+
+            var request = new PagedFilterRequestDTO
+            {
+                Page = 1,
+                PageSize = 200,
+                Filters = new List<FilterRuleDTO>(),
+                SortBy = "Name",
+                SortDescending = false
+            };
+
+            var json = JsonSerializer.Serialize(request, JsonOptions);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var res = _client.PostAsync(url, content).Result;
+            if (!res.IsSuccessStatusCode)
+                return new List<SelectListItem>();
+
+            var jsonResult = res.Content.ReadAsStringAsync().Result;
+            var apiResponse =
+                JsonSerializer.Deserialize<UnitListApiResponseDTO>(jsonResult, JsonOptions);
+
+            return apiResponse?.Data?
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),   // Guid → string
+                    Text = $"{x.Name} ({x.Code})"
+                })
+                .ToList()
+                ?? new List<SelectListItem>();
+        }
+
     }
 }

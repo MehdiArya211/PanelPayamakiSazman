@@ -1,6 +1,7 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.SystemRole;
+using DTO.Project.WebApi;
 
 namespace BLL.Project.SystemRole
 {
@@ -11,6 +12,11 @@ namespace BLL.Project.SystemRole
         public SystemRoleEditDTO GetById(string id);
         public BaseResult Update(SystemRoleEditDTO model);
         public BaseResult Delete(string id);
+
+        public List<LookupItemDTO> GetRoleLookup();
+        public BaseResult UpdateRoles(string clientId, List<string> roleIds);
+
+
 
 
     }

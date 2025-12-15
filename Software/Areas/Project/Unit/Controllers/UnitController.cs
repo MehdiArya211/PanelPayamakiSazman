@@ -3,7 +3,7 @@ using DTO.DataTable;
 using DTO.Project.Unit;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.Unit.Controllers
+namespace PanelSMS.Areas.Project.Unit.Controllers
 {
     [Area("Project")]
     public class UnitController : Controller

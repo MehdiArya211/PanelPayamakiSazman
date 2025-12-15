@@ -1,19 +1,24 @@
-﻿using BLL.Project.SystemMenu;
+﻿using BLL.Project.RouteDefinition;
+using BLL.Project.SystemMenu;
 using DTO.DataTable;
 using DTO.Project.SenderNumberSubAreaList;
 using DTO.Project.SystemMenu;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.SystemMenu.Controllers
+namespace PanelSMS.Areas.Project.SystemMenu.Controllers
 {
     [Area("Project")]
     public class SystemMenuController : Controller
     {
         private readonly ISystemMenuManager _systemMenuManager;
+        private readonly IRouteDefinitionManager _routeDefinitionManager;
 
-        public SystemMenuController(ISystemMenuManager systemMenuManager)
+        public SystemMenuController(ISystemMenuManager systemMenuManager,
+            IRouteDefinitionManager routeDefinitionManager)
         {
             _systemMenuManager = systemMenuManager;
+            _routeDefinitionManager = routeDefinitionManager;
         }
         public IActionResult Index()
         {
@@ -41,6 +46,23 @@ namespace Software.Areas.Project.SystemMenu.Controllers
         public IActionResult LoadCreateForm()
         {
             var model = new SystemMenuCreateDTO();
+            var ParentMenuList = _systemMenuManager.GetParentMenusForDropdown();
+            ViewBag.ParentMenus = ParentMenuList
+                        .Select(x => new SelectListItem
+                        {
+                            Value = x.Value,
+                            Text = x.Text
+                        })
+                            .ToList();
+
+            var routeDefinitionList = _routeDefinitionManager.GetAll();
+            ViewBag.routeDefinitions = routeDefinitionList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.RouteKey,
+                    Text = x.RouteKey
+                })
+                    .ToList();
             return PartialView("_Create", model);
         }
 

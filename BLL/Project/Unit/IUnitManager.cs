@@ -1,6 +1,7 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.Unit;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,5 +37,8 @@ namespace BLL.Project.Unit
         /// ویرایش واحد
         /// </summary>
         BaseResult Update(UnitEditDTO model);
+
+        public List<SelectListItem> GetUnitsForDropdown();
+
     }
 }

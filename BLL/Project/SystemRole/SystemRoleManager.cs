@@ -1,6 +1,7 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.SystemRole;
+using DTO.Project.WebApi;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -15,14 +16,14 @@ namespace BLL.Project.SystemRole
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
-        //  private readonly string _baseUrl;
+         private readonly string _baseUrl;
 
 
         public SystemRoleManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            //  _baseUrl = config["ApiBaseUrl"];
+            _baseUrl = config["ApiBaseUrl"];
 
         }
 
@@ -39,11 +40,11 @@ namespace BLL.Project.SystemRole
         /* ---------------------------
          * Get All
          * --------------------------- */
-        public List<SystemRoleListDTO> GetAll()
+        public List<SystemRoleListDTO> GetAll0()
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/roles";
+            var url = $"{_baseUrl}/roles";
 
             var res = _client.GetAsync(url).Result;
             var json = res.Content.ReadAsStringAsync().Result;
@@ -52,6 +53,56 @@ namespace BLL.Project.SystemRole
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ?? new List<SystemRoleListDTO>();
         }
+        public List<LookupItemDTO> GetRoleLookup()
+        {
+            var result = new List<LookupItemDTO>();
+
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/roles/search";
+
+                var body = new
+                {
+                    page = 1,
+                    pageSize = 200,
+                    filters = new List<object>(),
+                    sortBy = "name",
+                    sortDescending = false
+                };
+
+                var json = JsonSerializer.Serialize(body);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _client.PostAsync(url, content).Result;
+                var jsonResult = res.Content.ReadAsStringAsync().Result;
+
+                if (!res.IsSuccessStatusCode)
+                    return result;
+
+                var api =
+                    JsonSerializer.Deserialize<ApiResponsePagedDTO<SystemRoleListDTO>>(
+                        jsonResult,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                foreach (var r in api?.Data ?? new())
+                {
+                    result.Add(new LookupItemDTO
+                    {
+                        Id = r.Id,
+                        Text = r.Name
+                    });
+                }
+            }
+            catch { }
+
+            return result;
+        }
+
+
+
+
 
         /* ---------------------------
          * DataTable
@@ -60,7 +111,7 @@ namespace BLL.Project.SystemRole
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/roles/search";
+            var url = $"{_baseUrl}/roles/search";
 
             var body = new
             {
@@ -112,7 +163,7 @@ namespace BLL.Project.SystemRole
             {
                 SetAuth();
 
-                var url = "http://87.107.111.44:8010/api/admin/roles";
+                var url = $"{_baseUrl}/roles";
 
                 var body = new
                 {
@@ -144,7 +195,8 @@ namespace BLL.Project.SystemRole
         {
             SetAuth();
 
-            var url = $"http://87.107.111.44:8010/api/admin/roles/{id}";
+            var url = $"{_baseUrl}/roles/{id}";
+
 
             var res = _client.GetAsync(url).Result;
 
@@ -169,7 +221,8 @@ namespace BLL.Project.SystemRole
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/roles/{model.Id}";
+                var url = $"{_baseUrl}/roles/{model.Id}";
+
 
                 var body = new
                 {
@@ -203,7 +256,8 @@ namespace BLL.Project.SystemRole
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/roles/{id}";
+                var url = $"{_baseUrl}/roles/{id}";
+
 
                 var res = _client.DeleteAsync(url).Result;
 
@@ -217,5 +271,43 @@ namespace BLL.Project.SystemRole
                 return new BaseResult(false, ex.Message);
             }
         }
+
+
+        /* ---------------------------
+ * Update Roles
+ * --------------------------- */
+        public BaseResult UpdateRoles(string clientId, List<string> roleIds)
+        {
+            try
+            {
+                SetAuth();
+
+                var url = $"{_baseUrl}/service-clients/{clientId}/roles";
+
+                var body = new
+                {
+                    roleIds = roleIds
+                };
+
+                var content = new StringContent(
+                    JsonSerializer.Serialize(body),
+                    Encoding.UTF8,
+                    "application/json");
+
+                var res = _client.PutAsync(url, content).Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult(true, "نقش‌های سرویس‌گیرنده بروزرسانی شد.");
+
+                return new BaseResult(false, res.Content.ReadAsStringAsync().Result);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult(false, ex.Message);
+            }
+        }
+
+
+
     }
 }

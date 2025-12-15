@@ -4,7 +4,7 @@ using DTO.Project.SenderWallet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.SenderWallet.Controllers
+namespace PanelSMS.Areas.Project.SenderWallet.Controllers
 {
     [Area("Project")]
     public class SenderWalletController : Controller

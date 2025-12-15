@@ -4,7 +4,7 @@ using DTO.DataTable;
 using DTO.Project.SystemRole;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SystemRole.Controllers
+namespace PanelSMS.Areas.Project.SystemRole.Controllers
 {
     [Area("Project")]
 
@@ -68,6 +68,25 @@ namespace Software.Areas.Project.SystemRole.Controllers
         public IActionResult Delete(string id)
         {
             return Json(_systemRoleManager.Delete(id));
+        }
+
+        // این همون چیزیه که JS می‌خواد
+        [HttpGet]
+        public IActionResult GetAllForSelect()
+        
+        {
+            var search = new DataTableSearchDTO
+            {
+                start = 0,
+                length = 1000,
+                draw = "1",
+                sortColumnName = "Name",
+                sortDirection = "asc"
+            };
+
+            var result = _systemRoleManager.GetDataTableDTO(search);
+
+            return Json(result.data);
         }
     }
 }

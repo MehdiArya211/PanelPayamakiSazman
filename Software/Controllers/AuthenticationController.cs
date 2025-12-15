@@ -1,5 +1,7 @@
 ﻿using BLL.Interface;
+using BLL.Project.SystemMenu;
 using DocumentFormat.OpenXml.Math;
+using DTO.Project.User;
 using DTO.User;
 using FajrLog.Enum;
 using Microsoft.AspNetCore.Mvc;
@@ -20,18 +22,20 @@ namespace Momayezi.Controllers
     public class AuthenticationController : Controller
     {
         private readonly IAuthManager AuthManager;
+        private readonly ISystemMenuManager SystemMenuManager;
         private readonly IUserLogManager UserLogManager;
         private readonly IConstantManager ConstantManager;
         private readonly IRedisManager Redis;
         private readonly ISession Session;
 
-        public AuthenticationController(IAuthManager _AuthManager, IUserLogManager _UserLogManager, IRedisManager _Redis, IConstantManager constantManager) : base()
+        public AuthenticationController(IAuthManager _AuthManager, IUserLogManager _UserLogManager, IRedisManager _Redis, IConstantManager constantManager, ISystemMenuManager _systemMenuManager) : base()
         {
             AuthManager = _AuthManager;
             UserLogManager = _UserLogManager;
             Redis = _Redis;
             Session = Redis.ContextAccessor.HttpContext.Session;
             ConstantManager = constantManager;
+            SystemMenuManager = _systemMenuManager;
         }
 
 
@@ -69,12 +73,14 @@ namespace Momayezi.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Index(string Mobile, string Password, string Captcha, string RetUrl, int? MenuId)
+        public async Task<IActionResult> Index0(string Mobile, string Password, string Captcha, string RetUrl, int? MenuId)
         {
             FajrActionType fajrActionType = MenuId == null ? FajrActionType.logIn : FajrActionType.logInSecurePage;
 
             var res = await AuthManager.Login(Mobile, Password);
-            var user = res.Model as UserSessionDTO;
+            var menus =  SystemMenuManager.GetMenusForCurrentUser();
+
+            var user = res.Model as SystemUserSessionDTO;
 
             // ❗ اگر رمز منقضی یا نیاز به تغییر دارد
             if (user != null && (user.PasswordExpired || user.PasswordIsChanged))
@@ -98,6 +104,57 @@ namespace Momayezi.Controllers
             HttpContext.Session.SetUser(user);
             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(
+    string Mobile,
+    string Password,
+    string Captcha,
+    string RetUrl,
+    int? MenuId)
+        {
+            FajrActionType fajrActionType =
+                MenuId == null ? FajrActionType.logIn : FajrActionType.logInSecurePage;
+
+            // 1️⃣ لاگین
+            var res = await AuthManager.Login(Mobile, Password);
+            var user = res.Model as SystemUserSessionDTO;
+
+            // 2️⃣ بررسی خطا
+            if (!res.Status || user == null)
+            {
+                ViewBag.Error = res.Message;
+                ViewBag.InvalidLogin = true;
+                return View();
+            }
+
+            // 3️⃣ بررسی تغییر رمز
+            if (user.PasswordExpired || user.PasswordIsChanged)
+            {
+                HttpContext.Session.SetString("ChangePass_Username", Mobile);
+                HttpContext.Session.SetString("ChangePass_CurrentPassword", Password);
+                HttpContext.Session.SetString("ChangePass_Token", user.AccessToken);
+
+                return RedirectToAction("ForceChangePassword");
+            }
+
+            // 4️⃣ ذخیره Token در Session (خیلی مهم)
+            HttpContext.Session.SetString("AccessToken", user.AccessToken);
+            HttpContext.Session.SetString("RefreshToken", user.RefreshToken);
+
+            // 5️⃣ گرفتن منو با Token
+            var menus = await SystemMenuManager.GetMenusForCurrentUser();
+
+            // 6️⃣ اتصال منو به کاربر
+            user.Menus = menus;
+
+            // 7️⃣ ذخیره کاربر کامل در Session
+            HttpContext.Session.SetUser(user);
+
+            // 8️⃣ رفتن به داشبورد
+            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+        }
+
 
 
         public IActionResult ForceChangePassword()
@@ -158,7 +215,7 @@ namespace Momayezi.Controllers
                 return RedirectToAction("Index");
             }
 
-            HttpContext.Session.SetUser(login.Model as UserSessionDTO);
+            HttpContext.Session.SetUser(login.Model as SystemUserSessionDTO);
 
             // پاک‌کردن سشن‌ها
             HttpContext.Session.Remove("ChangePass_Username");

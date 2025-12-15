@@ -1,0 +1,51 @@
+﻿@model DTO.Project.ServiceClients.ServiceClientCreateDTO
+
+<form id="serviceClientCreateForm">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">نام نمایشی</label>
+        <input asp-for="DisplayName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">توضیحات</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+@*     <div class="mb-3">
+        <label class="form-label fw-bold">شناسه واحد (UnitId)</label>
+        <input asp-for="UnitId" class="form-control" />
+    </div> *@
+
+    <!-- واحد سازمانی -->
+    <div class="col-md-3">
+        <label class="form-label required">واحد سازمانی</label>
+        <select asp-for="UnitId"
+                asp-items="ViewBag.Units"
+                class="form-select"
+                required>
+            <option value="">انتخاب واحد</option>
+        </select>
+    </div>
+
+    <!-- نقش‌ها -->
+    <div class="col-md-3">
+        <label class="form-label">نقش‌ها</label>
+        <select asp-for="RoleIds"
+                asp-items="ViewBag.Roles"
+                class="form-select"
+                multiple>
+        </select>
+        <small class="text-muted">می‌توانید چند نقش انتخاب کنید</small>
+    </div>
+
+
+    <div class="text-end">
+        <button type="button"
+                class="btn btn-primary"
+                onclick="serviceClient.create()">
+            ذخیره
+        </button>
+    </div>
+</form>

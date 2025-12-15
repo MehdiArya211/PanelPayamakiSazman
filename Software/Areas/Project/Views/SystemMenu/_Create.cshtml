@@ -5,69 +5,84 @@
 </div>
 
 <div class="modal-body">
-<form 
-      asp-area="Project"
-      asp-controller="SystemMenu"
-      asp-action="Create"
-      class="create-form"
-      onsubmit="return systemmenu.create.save(event)">
+    <form asp-area="Project"
+          asp-controller="SystemMenu"
+          asp-action="Create"
+          class="create-form"
+          onsubmit="return systemmenu.create.save(event)">
 
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    <div class="error text-danger text-center mb-2"></div>
+        <div class="error text-danger text-center mb-2"></div>
 
-    <div class="row g-3">
+        <div class="row g-3">
 
-        <div class="col-md-4">
-            <label class="form-label required">کلید</label>
-            <input asp-for="Key" class="form-control" required />
+            <div class="col-md-4">
+                <label class="form-label required">کلید</label>
+                <input asp-for="Key" class="form-control" required />
+            </div>
+
+
+
+
+            <div class="col-md-4">
+                <label class="form-label required">عنوان</label>
+                <input asp-for="Title" class="form-control" required />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">آیکون</label>
+                <input asp-for="Icon" class="form-control" />
+            </div>
+        </div>
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label">‌Route Key</label>
+                <select asp-for="RouteKey"
+                        asp-items="ViewBag.routeDefinitions"
+                        class="form-select"
+                        >
+                    <option value="">انتخاب کنید</option>
+
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">ترتیب</label>
+                <input asp-for="Order" type="number" class="form-control" required />
+            </div>
+
+
+            <div class="col-md-4">
+                <label class="form-label">والد</label>
+                <select asp-for="ParentId"
+                        asp-items="ViewBag.ParentMenus"
+                        class="form-select"
+                        >
+                    <option value="">انتخاب کنید</option>
+
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label">وضعیت</label>
+                <select asp-for="IsActive" class="form-control">
+                    <option value="true">فعال</option>
+                    <option value="false">غیرفعال</option>
+                </select>
+            </div>
+
         </div>
 
-        <div class="col-md-4">
-            <label class="form-label required">عنوان</label>
-            <input asp-for="Title" class="form-control" required />
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                ذخیره
+            </button>
         </div>
 
-        <div class="col-md-4">
-            <label class="form-label">آیکون</label>
-            <input asp-for="Icon" class="form-control" />
-        </div>
-        </div>
-    <div class="row g-3">
-
-        <div class="col-md-4">
-            <label class="form-label">Route Key</label>
-            <input asp-for="RouteKey" class="form-control" />
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">ترتیب</label>
-            <input asp-for="Order" type="number" class="form-control" required />
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">والد</label>
-            <input asp-for="ParentId" type="number" class="form-control" />
-        </div>
-        </div>
-    <div class="row g-3">
-
-        <div class="col-md-4">
-            <label class="form-label">وضعیت</label>
-            <select asp-for="IsActive" class="form-control">
-                <option value="true">فعال</option>
-                <option value="false">غیرفعال</option>
-            </select>
-        </div>
-
-    </div>
-
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary px-4">
-            ذخیره
-        </button>
-    </div>
-
-</form>
+    </form>
 
 </div>

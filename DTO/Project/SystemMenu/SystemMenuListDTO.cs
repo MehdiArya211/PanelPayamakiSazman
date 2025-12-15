@@ -12,6 +12,7 @@ namespace DTO.Project.SystemMenu
         public string Key { get; set; }
         public string Title { get; set; }
         public int Order { get; set; }
+        public string ParentId { get; set; }
         public string ParentTitle { get; set; }
         public bool IsActive { get; set; }
     }

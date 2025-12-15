@@ -2,7 +2,7 @@
 using DTO.DataTable;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SenderChargeRequest.Controllers
+namespace PanelSMS.Areas.Project.SenderChargeRequest.Controllers
 {
     [Area("Project")]
     public class SenderChargeRequestController : Controller

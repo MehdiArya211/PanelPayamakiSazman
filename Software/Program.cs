@@ -5,6 +5,11 @@ using BLL.ManageToken;
 using BLL.Project.ConsumerSenderNumbers;
 using BLL.Project.ContactGroup;
 using BLL.Project.Menus;
+using BLL.Project.LoginAttempt;
+using BLL.Project.RoleAssignment;
+using BLL.Project.RolePermission;
+using BLL.Project.RouteDefinition;
+using BLL.Project.SecurityPolicy;
 using BLL.Project.SecurityQuestion;
 using BLL.Project.SenderChargeRequest;
 using BLL.Project.SenderChargeRequestConsumer;
@@ -14,8 +19,10 @@ using BLL.Project.SenderNumberOrganizationLevel;
 using BLL.Project.SenderNumberSpeciality;
 using BLL.Project.SenderNumberSubArea;
 using BLL.Project.SenderWallet;
+using BLL.Project.ServiceClients;
 using BLL.Project.SmsConsumer;
 using BLL.Project.SmsManager;
+using BLL.Project.SmsTariff;
 using BLL.Project.SystemMenu;
 using BLL.Project.SystemRole;
 using BLL.Project.Unit;
@@ -208,12 +215,50 @@ services.AddScoped<ISystemUserManager, SystemUserManager>();
 services.AddScoped<ISecurityQuestionManager, SecurityQuestionManager>();
 
 #endregion
+
 #region Role
 services.AddScoped<ISystemRoleManager, SystemRoleManager>();
 
 #endregion
+
+
+#region Route Definition
+builder.Services.AddScoped<IRouteDefinitionManager, RouteDefinitionManager>();
+
+#endregion
+
+#region Role Permission
+builder.Services.AddScoped<IRolePermissionManager, RolePermissionManager>();
+
+#endregion
+
+#region Route Definition
+builder.Services.AddScoped<IRoleAssignmentManager, RoleAssignmentManager>();
+
+#endregion
+
 #region menu
 services.AddScoped<ISystemMenuManager, SystemMenuManager>();
+
+#endregion
+
+#region SecurityPolicy
+services.AddScoped<ISecurityPolicyManager, SecurityPolicyManager>();
+
+#endregion
+
+#region Login Attempt
+services.AddScoped<ILoginAttemptManager, LoginAttemptManager>();
+
+#endregion
+
+#region sms tariff
+services.AddScoped<ISmsTariffManager, SmsTariffManager>();
+
+#endregion
+
+#region Service Client
+services.AddScoped<IServiceClientsManager, ServiceClientsManager>();
 
 #endregion
 

@@ -4,7 +4,7 @@ using DTO.Project.SmsManager;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Software.Areas.Project.SmsManager.Controllers
+namespace PanelSMS.Areas.Project.SmsManager.Controllers
 {
     [Area("Project")]
     public class AdminSmsController : Controller

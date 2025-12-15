@@ -1,0 +1,44 @@
+﻿@model DTO.Project.SmsTariffs.SmsTariffEditDTO
+@using DTO.Project.SmsTariffs
+@using Domain.Enums.Project
+
+<form id="smsTariffEditForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Operator -->
+    <div class="mb-3">
+        <label class="form-label fw-bold">اپراتور مقصد پیامک</label>
+        <select asp-for="Operator"
+                class="form-select"
+                asp-items="Html.GetEnumSelectList<SmsOperatorType>()">
+            <option value="">-- انتخاب اپراتور --</option>
+        </select>
+    </div>
+
+    <!-- Persian price -->
+    <div class="mb-3">
+        <label class="form-label fw-bold">هزینه هر پیام فارسی</label>
+        <input asp-for="PersianPricePerSegment"
+               type="number"
+               step="0.01"
+               class="form-control" />
+    </div>
+
+    <!-- English price -->
+    <div class="mb-3">
+        <label class="form-label fw-bold">هزینه هر پیام انگلیسی</label>
+        <input asp-for="EnglishPricePerSegment"
+               type="number"
+               step="0.01"
+               class="form-control" />
+    </div>
+
+    <div class="text-end">
+        <button type="button"
+                class="btn btn-primary"
+                onclick="smsTariff.edit()">
+            ذخیره تغییرات
+        </button>
+    </div>
+</form>

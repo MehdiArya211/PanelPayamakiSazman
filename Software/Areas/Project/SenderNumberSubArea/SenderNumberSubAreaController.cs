@@ -3,7 +3,7 @@ using DTO.DataTable;
 using DTO.Project.SenderNumberSubAreaList;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Software.Areas.Project.SenderNumberSubArea
+namespace PanelSMS.Areas.Project.SenderNumberSubArea
 {
     [Area("Project")]
     public class SenderNumberSubAreaController : Controller

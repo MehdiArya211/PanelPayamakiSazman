@@ -1,6 +1,7 @@
 ﻿using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.User;
+using DTO.Project.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace BLL.Project.User
         /// <summary>
         /// دریافت همه کاربران
         /// </summary>
-        List<SystemUserListDTO> GetAll();
+        public List<LookupItemDTO> GetUserLookup();
 
         /// <summary>
         /// ایجاد کاربر جدید

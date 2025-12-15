@@ -1,0 +1,122 @@
+﻿@model DTO.Project.SecurityPolicy.SecurityPolicyDTO
+@{
+    ViewData["Title"] = "سیاست‌های امنیتی";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .policy-card {
+            background: var(--bg-sidebar);
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,.06);
+        }
+    </style>
+}
+
+<div class="container-fluid">
+
+    <h4 class="fw-bold mb-3">تنظیمات سیاست‌های امنیتی سیستم</h4>
+
+    <div class="policy-card p-4">
+
+
+        <form class="security-policy-form"
+              asp-area="Project"
+              asp-controller="SecurityPolicy"
+              asp-action="Save"
+              onsubmit="return securitypolicy.save(event)">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3">
+
+                <!-- Password rules -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">حداقل طول رمز عبور</label>
+                    <input asp-for="PasswordMinLength" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">حداقل کاراکتر متفاوت</label>
+                    <input asp-for="MinimumDifferentCharacters" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">محدودیت تاریخچه رمز</label>
+                    <input asp-for="PasswordHistoryLimit" class="form-control" />
+                </div>
+
+                <!-- Checkboxes -->
+                <div class="col-md-3 form-check mt-4">
+                    <input asp-for="RequireUppercase" class="form-check-input" />
+                    <label class="form-check-label fw-bold">حروف بزرگ</label>
+                </div>
+
+                <div class="col-md-3 form-check mt-4">
+                    <input asp-for="RequireLowercase" class="form-check-input" />
+                    <label class="form-check-label fw-bold">حروف کوچک</label>
+                </div>
+
+                <div class="col-md-3 form-check mt-4">
+                    <input asp-for="RequireDigit" class="form-check-input" />
+                    <label class="form-check-label fw-bold">عدد</label>
+                </div>
+
+                <div class="col-md-3 form-check mt-4">
+                    <input asp-for="RequireSpecial" class="form-check-input" />
+                    <label class="form-check-label fw-bold">کاراکتر خاص</label>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- Lockout / token -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">حداکثر تلاش ناموفق</label>
+                    <input asp-for="MaxFailedAttempts" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">بازه قفل شدن (دقیقه)</label>
+                    <input asp-for="LockoutWindowMinutes" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">مدت قفل حساب (دقیقه)</label>
+                    <input asp-for="LockoutDurationMinutes" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">عمر Access Token (دقیقه)</label>
+                    <input asp-for="AccessTokenMinutes" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">عمر Refresh Token (روز)</label>
+                    <input asp-for="RefreshTokenDays" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">نیاز به احراز مجدد (دقیقه)</label>
+                    <input asp-for="ReAuthenticationMinutes" class="form-control" />
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-5">
+                    <i class="bi bi-check-circle"></i> ذخیره تنظیمات
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/areas/project/securitypolicy.js"></script>
+}

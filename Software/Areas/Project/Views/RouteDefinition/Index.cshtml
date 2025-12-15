@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "مدیریت مجوز ها";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <h4 class="fw-bold mb-3">مدیریت مجوز ها</h4>
+
+    <div class="table-card">
+
+        <table id="datatables"
+               class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Route Key</th>
+                    <th>Actions</th>
+                    <th>نیاز به احراز مجدد</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/areas/project/routedefinition.js"></script>
+}

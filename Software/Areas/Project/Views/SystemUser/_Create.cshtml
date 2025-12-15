@@ -1,52 +1,114 @@
 ﻿@model DTO.Project.User.SystemUserCreateDTO
 
-<form asp-area="Project"
-      asp-controller="SystemUser"
-      asp-action="Create"
-      class="create-form"
-      onsubmit="return users.create.save(event)">
+<div class="modal-header">
+    <h5 class="modal-title">ایجاد کاربر جدید</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
 
-    @Html.AntiForgeryToken()
+<div class="modal-body">
 
-    <div class="row g-3">
+    <div class="error text-danger text-center mb-2"></div>
 
-        <div class="col-md-6">
-            <label class="form-label required">نام کاربری</label>
-            <input asp-for="UserName" class="form-control" required />
+    <form class="create-form"
+          asp-area="Project"
+          asp-controller="SystemUser"
+          asp-action="Create"
+          onsubmit="return systemuser.create.save(event)">
+
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+
+            <!-- نام کاربری -->
+            <div class="col-md-6">
+                <label class="form-label required">نام کاربری</label>
+                <input asp-for="UserName" class="form-control" required />
+            </div>
+
+            <!-- رمز عبور -->
+            <div class="col-md-6">
+                <label class="form-label required">رمز اولیه</label>
+
+                <div class="input-group">
+                    <input asp-for="InitialPassword"
+                           type="password"
+                           class="form-control"
+                           id="InitialPassword"
+                           oninput="systemuser.password.checkStrength(this.value)"
+                           required />
+
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            onclick="systemuser.password.toggle('InitialPassword', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+
+                <div class="progress mt-2" style="height:6px;">
+                    <div id="passwordStrengthBar"
+                         class="progress-bar"
+                         role="progressbar"
+                         style="width:0%;">
+                    </div>
+                </div>
+
+                <small id="passwordStrengthText" class="text-muted"></small>
+            </div>
+
+            <!-- نام -->
+            <div class="col-md-6">
+                <label class="form-label required">نام</label>
+                <input asp-for="FirstName" class="form-control" required />
+            </div>
+
+            <!-- نام خانوادگی -->
+            <div class="col-md-6">
+                <label class="form-label required">نام خانوادگی</label>
+                <input asp-for="LastName" class="form-control" required />
+            </div>
+
+            <!-- کد ملی -->
+            <div class="col-md-6">
+                <label class="form-label">کد ملی</label>
+                <input asp-for="NationalCode" class="form-control" />
+            </div>
+
+            <!-- موبایل -->
+            <div class="col-md-6">
+                <label class="form-label required">موبایل</label>
+                <input asp-for="MobileNumber" class="form-control" required />
+            </div>
+
+            <!-- واحد سازمانی -->
+            <div class="col-md-6">
+                <label class="form-label required">واحد سازمانی</label>
+                <select asp-for="UnitId"
+                        asp-items="ViewBag.Units"
+                        class="form-select"
+                        required>
+                    <option value="">انتخاب واحد</option>
+                </select>
+            </div>
+
+            <!-- نقش‌ها -->
+            <div class="col-md-6">
+                <label class="form-label">نقش‌ها</label>
+                <select asp-for="RoleIds"
+                        asp-items="ViewBag.Roles"
+                        class="form-select"
+                        multiple>
+                </select>
+                <small class="text-muted">می‌توانید چند نقش انتخاب کنید</small>
+            </div>
+
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label required">رمز اولیه</label>
-            <input asp-for="InitialPassword" class="form-control" required />
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                ذخیره
+            </button>
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label required">نام</label>
-            <input asp-for="FirstName" class="form-control" required />
-        </div>
+    </form>
 
-        <div class="col-md-6">
-            <label class="form-label required">نام خانوادگی</label>
-            <input asp-for="LastName" class="form-control" required />
-        </div>
-
-        <div class="col-md-6">
-            <label class="form-label">کد ملی</label>
-            <input asp-for="NationalCode" class="form-control" />
-        </div>
-
-        <div class="col-md-6">
-            <label class="form-label required">موبایل</label>
-            <input asp-for="MobileNumber" class="form-control" required />
-        </div>
-
-        <!-- فعلاً ساده: بدون انتخاب نقش و سوال امنیتی -->
-    </div>
-
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary px-4">
-            <i class="bi bi-check-circle"></i> ذخیره
-        </button>
-    </div>
-
-</form>
+</div>

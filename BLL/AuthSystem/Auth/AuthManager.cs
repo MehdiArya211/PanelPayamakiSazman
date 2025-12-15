@@ -4,6 +4,7 @@ using Domain.Enums;
 using DTO;
 using DTO.Base;
 using DTO.Menu;
+using DTO.Project.User;
 using DTO.User;
 using DTO.WebApi;
 using Infrastructure.Data;
@@ -105,7 +106,7 @@ namespace BLL
 
                 var apiResult = apiResponse.Data;
 
-                var user = new UserSessionDTO
+                var user = new SystemUserSessionDTO
                 {
                     AccessToken = apiResult.AccessToken,
                     RefreshToken = apiResult.RefreshToken,

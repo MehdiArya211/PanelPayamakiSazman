@@ -3,7 +3,7 @@ using DTO;
 using Microsoft.AspNetCore.Mvc;
 using Services.SessionServices;
 
-namespace Software.Areas.Project.Controllers
+namespace PanelSMS.Areas.Project.Controllers
 {
     [Area("Project")]
     public class UnitsController : Controller
