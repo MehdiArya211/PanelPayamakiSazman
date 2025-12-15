@@ -244,20 +244,13 @@ namespace BLL.Project.User
                 var body = new
                 {
                     unitId = model.UnitId,
+                   // unitId = "019b20ba-70a6-772b-8a8b-eca9f1b17768",
                     userName = model.UserName,
                     initialPassword = model.InitialPassword,
                     firstName = model.FirstName,
                     lastName = model.LastName,
                     nationalCode = model.NationalCode,
                     mobileNumber = model.MobileNumber,
-                    securityQuestions = new[]
-    {
-        new
-        {
-            questionId = Guid.Parse("019afce7-ae51-78e4-98c5-6244237a9e5b"),
-            answer = "پاسخ تست"
-        }
-    },
                     roleIds = model.RoleIds != null && model.RoleIds.Any()
                         ? model.RoleIds
                         : new List<Guid>()

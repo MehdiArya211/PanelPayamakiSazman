@@ -96,6 +96,28 @@ namespace PanelSMS.Areas.Project.User.Controllers
         public IActionResult LoadEditForm(string id)
         {
             var model = _userManager.GetById(id);
+            var unitList = _unitManager.GetUnitsForDropdown();
+            var roleList = _systemRoleManager.GetRoleLookup();
+
+            ViewBag.Units = unitList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Value,
+                    Text = x.Text,
+                    Selected = x.Value == model.UnitId   // ✅
+                })
+                .ToList();
+
+            // ⭐⭐⭐ راه‌حل قطعی Role ⭐⭐⭐
+            ViewBag.Roles = roleList
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id,                         // string
+                    Text = x.Text,
+                    Selected = model.RoleIds != null &&
+                       model.RoleIds.Any(r => r.ToString() == x.Id)
+                })
+                .ToList();
             return PartialView("_Edit", model);
         }
 

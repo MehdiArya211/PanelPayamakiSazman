@@ -17,39 +17,93 @@
           asp-action="Edit"
           class="edit-form"
           method="post"
-          onsubmit="return users.edit.save(event)">
+          onsubmit="return systemuser.edit.save(event)">
 
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
 
         <div class="row g-3">
 
+            <!-- نام کاربری -->
             <div class="col-md-6">
                 <label class="form-label required">نام کاربری</label>
                 <input asp-for="UserName" class="form-control" required />
             </div>
 
+            <!-- رمز عبور -->
             <div class="col-md-6">
-                <label class="form-label required">نام کامل</label>
-                <input asp-for="FullName" class="form-control" required />
+                <label class="form-label required">رمز اولیه</label>
+
+                <div class="input-group">
+                    <input asp-for="InitialPassword"
+                           type="password"
+                           class="form-control"
+                           id="InitialPassword"
+                           oninput="systemuser.password.checkStrength(this.value)"
+                           required />
+
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            onclick="systemuser.password.toggle('InitialPassword', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+
+                <div class="progress mt-2" style="height:6px;">
+                    <div id="passwordStrengthBar"
+                         class="progress-bar"
+                         role="progressbar"
+                         style="width:0%;">
+                    </div>
+                </div>
+
+                <small id="passwordStrengthText" class="text-muted"></small>
             </div>
 
+            <!-- نام -->
             <div class="col-md-6">
-                <label class="form-label required">موبایل</label>
-                <input asp-for="MobileNumber" class="form-control" required />
+                <label class="form-label required">نام</label>
+                <input asp-for="FirstName" class="form-control" required />
             </div>
 
+            <!-- نام خانوادگی -->
+            <div class="col-md-6">
+                <label class="form-label required">نام خانوادگی</label>
+                <input asp-for="LastName" class="form-control" required />
+            </div>
+
+            <!-- کد ملی -->
             <div class="col-md-6">
                 <label class="form-label">کد ملی</label>
                 <input asp-for="NationalCode" class="form-control" />
             </div>
 
+            <!-- موبایل -->
             <div class="col-md-6">
-                <label class="form-label">وضعیت</label>
-                <select asp-for="IsActive" class="form-select">
-                    <option value="true">فعال</option>
-                    <option value="false">غیرفعال</option>
+                <label class="form-label required">موبایل</label>
+                <input asp-for="MobileNumber" class="form-control" required />
+            </div>
+
+            <!-- واحد سازمانی -->
+            <div class="col-md-6">
+                <label class="form-label required">واحد سازمانی</label>
+                <select asp-for="UnitId"
+                        asp-items="ViewBag.Units"
+                        class="form-select"
+                        required>
+                    <option value="">انتخاب واحد</option>
                 </select>
+            </div>
+
+            <!-- نقش‌ها -->
+            <div class="col-md-6">
+                <label class="form-label">نقش‌ها</label>
+                <select asp-for="RoleIds"
+                        asp-items="ViewBag.Roles"
+                        class="form-select"
+                        multiple>
+                </select>
+                <small class="text-muted">می‌توانید چند نقش انتخاب کنید</small>
             </div>
 
         </div>
