@@ -1,0 +1,113 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.AdminRole.AdminRoleFormViewModel
+
+<div class="modal-header bg-warning text-dark">
+    <h5 class="modal-title">
+        <i class="bi bi-pencil-square"></i>
+        ویرایش نقش: @Model.EditModel.Name
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<form asp-area="Project"
+      asp-controller="AdminRole"
+      asp-action="Edit"
+      id="editRoleForm"
+      class="needs-validation"
+      novalidate>
+
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="EditModel.Id" />
+
+    <div class="modal-body">
+        <div class="alert alert-danger d-none" id="editErrorAlert"></div>
+
+        <!-- اطلاعات سیستمی -->
+        <div class="card bg-light mb-3">
+            <div class="card-body py-2">
+                <div class="row small text-muted">
+                    <div class="col-md-6">
+                        <i class="bi bi-calendar"></i> ایجاد: @Model.EditModel.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                    </div>
+                    <div class="col-md-6">
+                        <i class="bi bi-person"></i> ایجاد کننده: @Model.EditModel.CreatedBy
+                    </div>
+                    @if (Model.EditModel.UpdatedAt.HasValue)
+                    {
+                        <div class="col-md-6 mt-1">
+                            <i class="bi bi-calendar-check"></i> آخرین ویرایش: @Model.EditModel.UpdatedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                        </div>
+                        <div class="col-md-6 mt-1">
+                            <i class="bi bi-person-check"></i> ویرایش کننده: @Model.EditModel.UpdatedBy
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- نام نقش -->
+            <div class="col-md-12">
+                <label asp-for="EditModel.Name" class="form-label required"></label>
+                <input asp-for="EditModel.Name"
+                       class="form-control"
+                       required
+                       maxlength="100"
+                       data-val="true"
+                       data-val-required="نام نقش الزامی است"
+                       data-val-length="نام نقش باید بین ۲ تا ۱۰۰ کاراکتر باشد"
+                       data-val-length-min="2"
+                       data-val-length-max="100"
+                       onblur="adminRole.checkNameUnique(this.value, '@Model.EditModel.Id')" />
+                <span asp-validation-for="EditModel.Name" class="text-danger small d-block mt-1"></span>
+                <div class="invalid-feedback d-none" id="editNameUniqueError">
+                    این نام نقش قبلاً ثبت شده است.
+                </div>
+            </div>
+
+            <!-- توضیحات -->
+            <div class="col-md-12">
+                <label asp-for="EditModel.Description" class="form-label"></label>
+                <textarea asp-for="EditModel.Description"
+                          class="form-control"
+                          rows="3"
+                          maxlength="500"
+                          data-val="true"
+                          data-val-length="توضیحات نمی‌تواند بیش از ۵۰۰ کاراکتر باشد"
+                          data-val-length-max="500"></textarea>
+                <span asp-validation-for="EditModel.Description" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- وضعیت -->
+            <div class="col-md-6">
+                <label asp-for="EditModel.IsActive" class="form-label"></label>
+                <div class="form-check form-switch">
+                    <input asp-for="EditModel.IsActive"
+                           class="form-check-input"
+                           type="checkbox"
+                           role="switch"
+                           id="flexSwitchCheckActive" />
+                    <label class="form-check-label" for="flexSwitchCheckActive">
+                        @(Model.EditModel.IsActive ? "فعال" : "غیرفعال")
+                    </label>
+                </div>
+                <span asp-validation-for="EditModel.IsActive" class="text-danger small d-block mt-1"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit" class="btn btn-warning" id="btnEdit">
+            <i class="bi bi-save"></i> ذخیره تغییرات
+        </button>
+    </div>
+</form>
+
+<script>
+    // فعال/غیرفعال کردن سوئیچ
+    document.getElementById('flexSwitchCheckActive').addEventListener('change', function() {
+        document.querySelector('label[for="flexSwitchCheckActive"]').textContent =
+            this.checked ? 'فعال' : 'غیرفعال';
+    });
+</script>

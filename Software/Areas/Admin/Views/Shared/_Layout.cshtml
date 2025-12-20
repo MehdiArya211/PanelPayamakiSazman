@@ -306,6 +306,14 @@
                     منو ها 
                 </a>
             </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "AdminRole" ? "active" : "")"
+                   asp-area="Project" asp-controller="AdminRole" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    نقش ها
+                </a>
+            </li>
         </ul>
 
         <ul class="list-unstyled px-2 mt-3 accordion" id="mainMenu">

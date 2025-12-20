@@ -2,10 +2,11 @@
 using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
+using BLL.Project.AdminRole;
 using BLL.Project.ConsumerSenderNumbers;
 using BLL.Project.ContactGroup;
-using BLL.Project.Menus;
 using BLL.Project.LoginAttempt;
+using BLL.Project.Menus;
 using BLL.Project.RoleAssignment;
 using BLL.Project.RolePermission;
 using BLL.Project.RouteDefinition;
@@ -195,6 +196,7 @@ services.AddScoped<ISenderChargeRequestConsumerManager, SenderChargeRequestConsu
 services.AddScoped<IConsumerSenderNumberManager, ConsumerSenderNumberManager>();
 services.AddScoped<ISmsConsumerManager, SmsConsumerManager>();
 services.AddScoped<IAdminMenuManager, AdminMenuManager>();
+builder.Services.AddScoped<IAdminRoleManager, AdminRoleManager>();
 
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();

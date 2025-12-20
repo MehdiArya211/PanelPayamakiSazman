@@ -1,0 +1,106 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.AdminRole.AdminRoleFormViewModel
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-person-badge"></i>
+        افزودن نقش جدید
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form asp-area="Project"
+      asp-controller="AdminRole"
+      asp-action="Create"
+      id="createRoleForm"
+      class="needs-validation"
+      novalidate>
+
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div class="alert alert-danger d-none" id="createErrorAlert"></div>
+
+        <div class="row g-3">
+            <!-- نام نقش -->
+            <div class="col-md-12">
+                <label asp-for="CreateModel.Name" class="form-label required"></label>
+                <input asp-for="CreateModel.Name"
+                       class="form-control"
+                       required
+                       maxlength="100"
+                       data-val="true"
+                       data-val-required="نام نقش الزامی است"
+                       data-val-length="نام نقش باید بین ۲ تا ۱۰۰ کاراکتر باشد"
+                       data-val-length-min="2"
+                       data-val-length-max="100"
+                       onblur="adminRole.checkNameUnique(this.value)" />
+                <span asp-validation-for="CreateModel.Name" class="text-danger small d-block mt-1"></span>
+                <div class="form-text text-muted">
+                    نام نقش باید منحصربفرد باشد و بین ۲ تا ۱۰۰ کاراکتر باشد
+                </div>
+                <div class="invalid-feedback d-none" id="nameUniqueError">
+                    این نام نقش قبلاً ثبت شده است.
+                </div>
+            </div>
+
+            <!-- توضیحات -->
+            <div class="col-md-12">
+                <label asp-for="CreateModel.Description" class="form-label"></label>
+                <textarea asp-for="CreateModel.Description"
+                          class="form-control"
+                          rows="3"
+                          maxlength="500"
+                          data-val="true"
+                          data-val-length="توضیحات نمی‌تواند بیش از ۵۰۰ کاراکتر باشد"
+                          data-val-length-max="500"></textarea>
+                <span asp-validation-for="CreateModel.Description" class="text-danger small d-block mt-1"></span>
+                <div class="form-text text-muted">
+                    توضیحات اختیاری - حداکثر ۵۰۰ کاراکتر
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit" class="btn btn-primary" id="btnCreate">
+            <i class="bi bi-check-circle"></i> ایجاد نقش
+        </button>
+    </div>
+</form>
+
+<script>
+    // اضافه کردن validation به فرم
+    $(document).ready(function() {
+        $('#createRoleForm').validate({
+            rules: {
+                CreateModel_Name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 100
+                },
+                CreateModel_Description: {
+                    maxlength: 500
+                }
+            },
+            messages: {
+                CreateModel_Name: {
+                    required: "نام نقش الزامی است",
+                    minlength: "نام نقش باید حداقل ۲ کاراکتر باشد",
+                    maxlength: "نام نقش نمی‌تواند بیش از ۱۰۰ کاراکتر باشد"
+                },
+                CreateModel_Description: {
+                    maxlength: "توضیحات نمی‌تواند بیش از ۵۰۰ کاراکتر باشد"
+                }
+            },
+            errorClass: "is-invalid",
+            validClass: "is-valid",
+            errorElement: "div",
+            errorPlacement: function(error, element) {
+                error.addClass("invalid-feedback");
+                element.closest('.form-group').append(error);
+            }
+        });
+    });
+</script>
