@@ -196,7 +196,8 @@ services.AddScoped<ISenderChargeRequestConsumerManager, SenderChargeRequestConsu
 services.AddScoped<IConsumerSenderNumberManager, ConsumerSenderNumberManager>();
 services.AddScoped<ISmsConsumerManager, SmsConsumerManager>();
 services.AddScoped<IAdminMenuManager, AdminMenuManager>();
-builder.Services.AddScoped<IAdminRoleManager, AdminRoleManager>();
+services.AddScoped<IAdminRoleManager, AdminRoleManager>();
+services.AddScoped<IRoutePermissionManager, RoutePermissionManager>();
 
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();

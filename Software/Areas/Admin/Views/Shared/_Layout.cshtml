@@ -314,6 +314,14 @@
                     نقش ها
                 </a>
             </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "RoutePermission" ? "active" : "")"
+                   asp-area="Project" asp-controller="RoutePermission" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    مجوز ها
+                </a>
+            </li>
         </ul>
 
         <ul class="list-unstyled px-2 mt-3 accordion" id="mainMenu">
