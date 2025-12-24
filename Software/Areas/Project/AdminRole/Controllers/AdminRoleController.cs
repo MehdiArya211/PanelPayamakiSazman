@@ -1,4 +1,5 @@
 ﻿using BLL.Project.AdminRole;
+using BLL.Project.RolePermission;
 using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.AdminRole;
@@ -11,10 +12,12 @@ namespace PanelSMS.Areas.Project.AdminRole.Controllers
     public class AdminRoleController : Controller
     {
         private readonly IAdminRoleManager _roleManager;
+        private readonly IRolePermissionManager _rolePermissionManager;
 
-        public AdminRoleController(IAdminRoleManager roleManager)
+        public AdminRoleController(IAdminRoleManager roleManager, IRolePermissionManager rolePermissionManager)
         {
             _roleManager = roleManager;
+            _rolePermissionManager = rolePermissionManager;
         }
 
         public IActionResult Index()
@@ -199,5 +202,29 @@ namespace PanelSMS.Areas.Project.AdminRole.Controllers
                 new SelectListItem { Value = "false", Text = "غیرفعال" }
             };
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetRolePermissionsSummary(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return Json(new { hasPermissions = false, count = 0 });
+
+            try
+            {
+                var permissions = await _rolePermissionManager.GetRolePermissionsAsync(null, roleName);
+                return Json(new
+                {
+                    hasPermissions = permissions.TotalAssignedActions > 0,
+                    count = permissions.TotalAssignedActions
+                });
+            }
+            catch
+            {
+                return Json(new { hasPermissions = false, count = 0 });
+            }
+        }
+
+
     }
 }

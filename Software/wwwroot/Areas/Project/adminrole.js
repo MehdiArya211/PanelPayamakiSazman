@@ -83,6 +83,16 @@ var adminRole = {
                                         title="ویرایش">
                                     <i class="bi bi-pencil"></i>
                                 </button>
+
+                                 <!-- دکمه جدید برای مدیریت مجوزها -->
+                                <button type="button" class="btn btn-outline-success permission-btn"
+                                        onclick="adminRole.permissions.open('${row.id}', '${row.name}')"
+                                        title="مدیریت مجوزها"
+                                        data-role-id="${row.id}"
+                                        data-role-name="${row.name}">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span class="badge bg-danger permission-badge d-none">0</span>
+                                </button>
                                 
                                 <button type="button" class="btn btn-outline-success" 
                                         onclick="adminRole.toggleActive('${row.id}', ${!row.isActive})"
@@ -101,6 +111,10 @@ var adminRole = {
                 }
             ],
             order: [[1, 'asc']], // مرتب‌سازی بر اساس نام
+            drawCallback: function () {
+                // Update permission badges after table is drawn
+                adminRole.permissions.updateAllBadges();
+            },
             initComplete: function () {
                 // اضافه کردن جستجو به صورت داینامیک
                 $('#adminRoleTable_filter input').unbind();
@@ -248,6 +262,64 @@ var adminRole = {
                 });
         }
     },
+
+
+    /* ============================
+       PERMISSIONS MANAGEMENT
+    ============================ */
+    permissions: {
+        open: function (roleId, roleName) {
+            $.get('/Project/RolePermission/LoadPermissionsModal', {
+                roleId: roleId,
+                roleName: roleName
+            }, function (response) {
+                $('#adminRoleModalContent').html(response);
+                $('#adminRoleModal').modal('show');
+
+                // Load permission count badge
+                adminRole.permissions.updateBadge(roleName, roleId);
+            }).fail(function () {
+                adminRole.showError('خطا در بارگذاری مجوزها');
+            });
+        },
+
+        updateBadge: function (roleName, roleId) {
+            // Update badge on the button in main table
+            $.get('/Project/RolePermission/GetPermissionsSummary', { roleName: roleName })
+                .done(function (data) {
+                    var badge = $(`button[data-role-id="${roleId}"] .permission-badge`);
+                    if (data.totalActions > 0) {
+                        badge.text(data.totalActions).removeClass('d-none');
+                    } else {
+                        badge.addClass('d-none');
+                    }
+                });
+        },
+
+        updateAllBadges: function () {
+            $('.permission-btn').each(function () {
+                var roleId = $(this).data('role-id');
+                var roleName = $(this).data('role-name');
+                if (roleId && roleName) {
+                    adminRole.permissions.updateBadge(roleName, roleId);
+                }
+            });
+        }
+    },
+
+    /* ============================
+       UPDATE PERMISSION BADGE (برای استفاده خارجی)
+    ============================ */
+    updatePermissionBadge: function (roleName) {
+        // Find the button for this role and update its badge
+        var button = $(`button[data-role-name="${roleName}"]`);
+        if (button.length) {
+            var roleId = button.data('role-id');
+            adminRole.permissions.updateBadge(roleName, roleId);
+        }
+    },
+
+
 
     /* ============================
        TOGGLE ACTIVE/INACTIVE

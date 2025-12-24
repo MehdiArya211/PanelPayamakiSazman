@@ -192,9 +192,43 @@ var routePermission = {
         loadForm: function (routeKey) {
             $.get('/Project/RoutePermission/LoadEditForm', { routeKey: routeKey }, function (response) {
                 $('#routePermissionModalContent').html(response);
+
+                // قبل از نشان دادن modal، Select2 را initialize نکنید
+                // این کار در ready خود partial view انجام می‌شود
+
+                // Event handler برای زمانی که modal کاملاً show شد
+                $('#routePermissionModal').on('shown.bs.modal', function () {
+                    // مطمئن شویم Select2 قبلاً initialize نشده
+                    $('.select2-multiple').select2('destroy');
+
+                    // مجدداً initialize کنید
+                    routePermission.initializeSelect2();
+                });
+
                 $('#routePermissionModal').modal('show');
             }).fail(function () {
                 routePermission.showError('خطا در بارگذاری فرم');
+            });
+        },
+
+        initializeSelect2: function () {
+            // اگر element وجود داشت، اول destroy کنید
+            if ($('.select2-multiple').hasClass('select2-hidden-accessible')) {
+                $('.select2-multiple').select2('destroy');
+            }
+
+            // Initialize Select2
+            $('.select2-multiple').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Actionها را انتخاب کنید...',
+                allowClear: true,
+                dropdownParent: $('#routePermissionModal') // مهم: برای کار در modal
+            });
+
+            // Update preview when selection changes
+            $('.select2-multiple').on('change', function () {
+                routePermission.updateSelectedActionsPreview();
             });
         },
 
@@ -215,6 +249,9 @@ var routePermission = {
                 data: form.serialize(),
                 success: function (response) {
                     if (response.status) {
+                        // قبل از بستن modal، Select2 را destroy کنید
+                        $('.select2-multiple').select2('destroy');
+
                         $('#routePermissionModal').modal('hide');
                         routePermission.showSuccess(response.message);
                         routePermission.loadPermissions(routePermission.currentPage);
