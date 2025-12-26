@@ -1,0 +1,119 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.RolePermission.RolePermissionFormViewModel
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-shield-lock"></i>
+        مدیریت مجوزهای نقش:  <strong>@Model.RoleName</strong>
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+    <p class="text-muted small mb-3">
+        <i class="bi bi-info-circle"></i>
+        لطفاً مجوزهای مورد نیاز برای این نقش را انتخاب کنید. 
+    </p>
+
+    <form id="permissionsForm"
+          class="permissions-form"
+          onsubmit="return rolePermission.save(event, '@Model.RoleId', '@Model.RoleName')">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" id="roleId" value="@Model.RoleId" />
+        <input type="hidden" id="roleName" value="@Model.RoleName" />
+
+        <div class="accordion accordion-flush" id="permissionsAccordion">
+
+            @if (Model.Permissions != null && Model.Permissions.Count > 0)
+            {
+                @foreach (var permission in Model.Permissions)
+                {
+                    var accordionId = $"accordion_{permission.RouteKey.Replace("/", "_").Replace("-", "_")}";
+                    // محاسبه تعداد مجوزها
+                    int assignedCount = permission.AssignedActions?.Count ?? 0;
+                    int availableCount = permission.AvailableActions?.Count ?? 0;
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@accordionId">
+                                <strong class="text-primary">@permission.RouteKey</strong>
+                                <span class="badge bg-info ms-auto">
+                                    @assignedCount / @availableCount
+                                </span>
+                            </button>
+                        </h2>
+                        <div id="@accordionId" class="accordion-collapse collapse" data-bs-parent="#permissionsAccordion">
+                            <div class="accordion-body">
+                                <input type="hidden" name="routeKey" value="@permission.RouteKey" />
+
+                                @if (permission.AvailableActions != null && permission.AvailableActions.Count > 0)
+                                {
+                                    <div class="row">
+                                        @foreach (var action in permission.AvailableActions)
+                                        {
+                                            var isChecked = permission.AssignedActions?.Contains(action) ?? false;
+                                            var checkboxId = $"action_{permission.RouteKey}_{action}".Replace("/", "_").Replace("-", "_").Replace("{", "").Replace("}", "");
+
+                                            <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input action-checkbox"
+                                                           type="checkbox"
+                                                           id="@checkboxId"
+                                                           name="action_@permission.RouteKey"
+                                                           value="@action"
+                                                           data-route="@permission.RouteKey"
+                                                           @(isChecked ? "checked" : "") />
+                                                    <label class="form-check-label" for="@checkboxId">
+                                                        <span class="badge bg-secondary">@action</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted small">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        هیچ مجوزی برای این مسیر موجود نیست. 
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    هیچ مجوزی برای نمایش موجود نیست.
+                </div>
+            }
+
+        </div>
+
+        <div class="text-danger error mt-3"></div>
+
+    </form>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-light" data-bs-dismiss="modal">بستن</button>
+    <button type="button" class="btn btn-info" onclick="rolePermission.selectAll()">
+        <i class="bi bi-check-all"></i> انتخاب همه
+    </button>
+    <button type="button" class="btn btn-warning" onclick="rolePermission.clearAll()">
+        <i class="bi bi-x-circle"></i> لغو انتخاب همه
+    </button>
+    <button type="submit"
+            class="btn btn-primary"
+            form="permissionsForm"
+            onclick="return rolePermission.save(event, document.getElementById('roleId').value, document.getElementById('roleName').value)">
+        <i class="bi bi-check-lg"></i>
+        ذخیره مجوزهای نقش
+    </button>
+</div>

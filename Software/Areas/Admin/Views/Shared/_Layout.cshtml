@@ -322,6 +322,14 @@
                     مجوز ها
                 </a>
             </li>
+
+            <li>
+                <a class="sidebar-link @(currentArea == "project" && currentController == "AdminUser" ? "active" : "")"
+                   asp-area="Project" asp-controller="AdminUser" asp-action="Index">
+                    <i class="bi bi-list-ul"></i>
+                    مدیریت کاربران
+                </a>
+            </li>
         </ul>
 
         <ul class="list-unstyled px-2 mt-3 accordion" id="mainMenu">

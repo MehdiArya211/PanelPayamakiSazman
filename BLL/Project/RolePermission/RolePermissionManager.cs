@@ -65,22 +65,35 @@ namespace BLL.Project.RolePermission
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonSerializer.Deserialize<ApiResponseListDTO<PermissionDto>>(content, _jsonOptions);
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+                    };
+
+                    var apiResponse = JsonSerializer.Deserialize<ApiResponseListDTO<PermissionDto>>(content, options);
 
                     var permissions = apiResponse?.Data ?? new List<PermissionDto>();
-                    var allActions = await GetAllSystemActionsAsync();
+                    var actionItems = await GetAllSystemActionsAsync();
 
                     return new RolePermissionViewModel
                     {
                         RoleId = roleId,
                         RoleName = roleName,
-                        Permissions = permissions.OrderBy(p => p.RouteKey).ToList(),
-                        AllActions = allActions
+                        Permissions = permissions.OrderBy(p => p.PersianRouteName).ToList(), // مرتب بر اساس نام فارسی
+                        ActionItems = actionItems
                     };
                 }
 
                 _logger.LogWarning("Failed to get permissions for role {RoleName}. Status: {StatusCode}",
                     roleName, response.StatusCode);
+                return new RolePermissionViewModel { RoleId = roleId, RoleName = roleName };
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "JSON deserialization error in GetRolePermissionsAsync for role {RoleName}", roleName);
                 return new RolePermissionViewModel { RoleId = roleId, RoleName = roleName };
             }
             catch (Exception ex)
@@ -89,7 +102,6 @@ namespace BLL.Project.RolePermission
                 return new RolePermissionViewModel { RoleId = roleId, RoleName = roleName };
             }
         }
-
         public async Task<BaseResult> SaveRolePermissionsAsync(RolePermissionBulkUpdateDto model)
         {
             try
@@ -150,18 +162,51 @@ namespace BLL.Project.RolePermission
             }
         }
 
-        public async Task<List<string>> GetAllSystemActionsAsync()
+        public async Task<List<ActionItem>> GetAllSystemActionsAsync()
         {
-            // در واقعیت باید از API خاصی دریافت شود
-            // فعلاً لیست ثابتی برمی‌گردانیم
-            return new List<string>
+            // لیست Actionها با نام فارسی
+            return new List<ActionItem>
             {
-                "GET", "POST", "PUT", "DELETE", "PATCH",
-                "VIEW", "CREATE", "EDIT", "EXPORT", "IMPORT",
-                "APPROVE", "REJECT", "ASSIGN", "UNASSIGN",
-                "ACTIVATE", "DEACTIVATE", "AUDIT", "CONFIGURE"
+                new ActionItem { Code = "GET", PersianName = "مشاهده" },
+                new ActionItem { Code = "POST", PersianName = "ایجاد" },
+                new ActionItem { Code = "PUT", PersianName = "ویرایش" },
+                new ActionItem { Code = "DELETE", PersianName = "حذف" },
+                new ActionItem { Code = "PATCH", PersianName = "به‌روزرسانی جزئی" },
+
+                new ActionItem { Code = "VIEW", PersianName = "نمایش" },
+                new ActionItem { Code = "CREATE", PersianName = "ساخت" },
+                new ActionItem { Code = "EDIT", PersianName = "ویرایش" },
+                new ActionItem { Code = "EXPORT", PersianName = "خروجی گرفتن" },
+                new ActionItem { Code = "IMPORT", PersianName = "ورود اطلاعات" },
+
+                new ActionItem { Code = "APPROVE", PersianName = "تایید" },
+                new ActionItem { Code = "REJECT", PersianName = "رد" },
+                new ActionItem { Code = "ASSIGN", PersianName = "اختصاص" },
+                new ActionItem { Code = "UNASSIGN", PersianName = "لغو اختصاص" },
+
+                new ActionItem { Code = "ACTIVATE", PersianName = "فعال‌سازی" },
+                new ActionItem { Code = "DEACTIVATE", PersianName = "غیرفعال‌سازی" },
+                new ActionItem { Code = "AUDIT", PersianName = "بازرسی" },
+                new ActionItem { Code = "CONFIGURE", PersianName = "پیکربندی" },
+
+                new ActionItem { Code = "DOWNLOAD", PersianName = "دانلود" },
+                new ActionItem { Code = "UPLOAD", PersianName = "آپلود" },
+                new ActionItem { Code = "PRINT", PersianName = "چاپ" },
+                new ActionItem { Code = "SHARE", PersianName = "اشتراک‌گذاری" },
+
+                new ActionItem { Code = "ENABLE", PersianName = "فعال کردن" },
+                new ActionItem { Code = "DISABLE", PersianName = "غیرفعال کردن" },
+                new ActionItem { Code = "RESET", PersianName = "بازنشانی" },
+                new ActionItem { Code = "BACKUP", PersianName = "پشتیبان‌گیری" },
+
+                new ActionItem { Code = "SEND", PersianName = "ارسال" },
+                new ActionItem { Code = "RECEIVE", PersianName = "دریافت" },
+                new ActionItem { Code = "VALIDATE", PersianName = "اعتبارسنجی" },
+                new ActionItem { Code = "VERIFY", PersianName = "تایید اعتبار" }
             };
         }
+       
+        
 
         public async Task<BaseResult> CopyPermissionsAsync(string sourceRoleName, string targetRoleName)
         {
@@ -243,6 +288,105 @@ namespace BLL.Project.RolePermission
                 };
             }
         }
+
+
+
+        #region New
+        private void SetAuth()
+        {
+            var token = _httpContext.HttpContext.Session.GetString("AdminToken");
+
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+
+        private JsonSerializerOptions JsonOptions =>
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        public RolePermissionFormViewModel GetRolePermissions(string roleName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(roleName))
+                    return null;
+
+                SetAuth();
+
+                var url = $"{_baseUrl}/api/admin/roles/{roleName}/permissions";
+
+                var res = _httpClient.GetAsync(url).Result;
+                if (!res.IsSuccessStatusCode)
+                    return null;
+
+                var jsonResult = res.Content.ReadAsStringAsync().Result;
+                if (string.IsNullOrWhiteSpace(jsonResult))
+                    return null;
+
+                var apiResponse =
+                    JsonSerializer.Deserialize<ApiResponsePagedDTO<PermissionDTO>>(
+                        jsonResult, JsonOptions);
+
+                var permissions = apiResponse?.Data ?? new List<PermissionDTO>();
+
+                return new RolePermissionFormViewModel
+                {
+                    RoleName = roleName,
+                    Permissions = permissions
+                };
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public BaseResult SaveRolePermissions(string roleName, List<RoutePermissionInputDTO> permissions)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(roleName) || permissions == null || permissions.Count == 0)
+                    return new BaseResult
+                    {
+                        Status = false,
+                        Message = "نام نقش یا مجوزهای نامعتبر هستند."
+                    };
+
+                SetAuth();
+
+                var url = $"{_baseUrl}/api/admin/roles/{roleName}/permissions";
+
+                var json = JsonSerializer.Serialize(permissions, JsonOptions);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var res = _httpClient.PostAsync(url, content).Result;
+
+                if (res.IsSuccessStatusCode)
+                    return new BaseResult
+                    {
+                        Status = true,
+                        Message = "مجوزهای نقش با موفقیت ذخیره شد."
+                    };
+
+                var msg = res.Content.ReadAsStringAsync().Result;
+                return new BaseResult
+                {
+                    Status = false,
+                    Message = string.IsNullOrWhiteSpace(msg) ? "خطا در ذخیره مجوزهای نقش." : msg
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult { Status = false, Message = ex.Message };
+            }
+        }
+        #endregion
+
+
     }
 
     // DTO های داخلی
@@ -258,4 +402,8 @@ namespace BLL.Project.RolePermission
         public string Message { get; set; }
         public List<string> Errors { get; set; }
     }
+
+
+
+   
 }

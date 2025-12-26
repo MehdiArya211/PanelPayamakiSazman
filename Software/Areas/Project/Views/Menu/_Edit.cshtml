@@ -1,7 +1,7 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model DTO.Project.Menus.MenuFormViewModel
 
-<form asp-area="Admin" asp-controller="Menu" asp-action="Edit" class="edit-form">
+<form asp-area="Project" asp-controller="Menu" asp-action="Edit" class="edit-form">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="EditModel.Id" />
 
@@ -74,7 +74,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
         <button type="submit" class="btn btn-primary zbm-btn-save"
-                onclick="menu.edit.save(event)">
+                onclick="menu.saveEditForm(event)">
             <i class="bi bi-check-lg"></i> ذخیره تغییرات
         </button>
     </div>

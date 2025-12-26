@@ -46,30 +46,30 @@ var adminRole = {
                         }
                     }
                 },
-                {
-                    data: "userCount",
-                    title: "کاربران",
-                    className: "text-center",
-                    render: function (data) {
-                        return `<span class="badge bg-info">${data || 0}</span>`;
-                    }
-                },
-                {
-                    data: "createdAt",
-                    title: "تاریخ ایجاد",
-                    render: function (data) {
-                        if (!data) return '---';
-                        var date = new Date(data);
-                        return date;
-                    }
-                },
-                {
-                    data: "createdBy",
-                    title: "ایجاد کننده",
-                    render: function (data) {
-                        return data || '<span class="">---</span>';
-                    }
-                },
+                //{
+                //    data: "userCount",
+                //    title: "کاربران",
+                //    className: "text-center",
+                //    render: function (data) {
+                //        return `<span class="badge bg-info">${data || 0}</span>`;
+                //    }
+                //},
+                //{
+                //    data: "createdAt",
+                //    title: "تاریخ ایجاد",
+                //    render: function (data) {
+                //        if (!data) return '---';
+                //        var date = new Date(data);
+                //        return date;
+                //    }
+                //},
+                //{
+                //    data: "createdBy",
+                //    title: "ایجاد کننده",
+                //    render: function (data) {
+                //        return data || '<span class="">---</span>';
+                //    }
+                //},
                 {
                     data: null,
                     title: "عملیات",
@@ -84,15 +84,10 @@ var adminRole = {
                                     <i class="bi bi-pencil"></i>
                                 </button>
 
-                                 <!-- دکمه جدید برای مدیریت مجوزها -->
-                                <button type="button" class="btn btn-outline-success permission-btn"
-                                        onclick="adminRole.permissions.open('${row.id}', '${row.name}')"
-                                        title="مدیریت مجوزها"
-                                        data-role-id="${row.id}"
-                                        data-role-name="${row.name}">
-                                    <i class="bi bi-shield-check"></i>
-                                    <span class="badge bg-danger permission-badge d-none">0</span>
-                                </button>
+
+                                 <button class="btn btn-sm btn-info" onclick="rolePermission.loadForm('${row.id}')">
+                                    <i class="bi bi-shield-lock"></i> مجوزها
+                                 </button>
                                 
                                 <button type="button" class="btn btn-outline-success" 
                                         onclick="adminRole.toggleActive('${row.id}', ${!row.isActive})"
@@ -394,7 +389,7 @@ var adminRole = {
         Swal.fire({
             icon: 'success',
             title: 'موفقیت',
-            text: message,
+            text: message,  
             timer: 3000,
             showConfirmButton: false
         });

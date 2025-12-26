@@ -1,0 +1,143 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.AdminUser.AdminUserFormViewModel
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-person-plus"></i>
+        افزودن کاربر مدیر جدید
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form asp-area="Project"
+      asp-controller="AdminUser"
+      asp-action="Create"
+      id="createAdminUserForm"
+      class="needs-validation"
+      novalidate>
+
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div class="alert alert-danger d-none" id="createErrorAlert"></div>
+
+        <div class="row g-3">
+            <!-- نام کاربری -->
+            <div class="col-md-6">
+                <label asp-for="CreateModel.UserName" class="form-label required"></label>
+                <input asp-for="CreateModel.UserName"
+                       class="form-control"
+                       required
+                       data-val="true"
+                       data-val-required="نام کاربری الزامی است" />
+                <span asp-validation-for="CreateModel.UserName" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- رمز عبور اولیه -->
+            <div class="col-md-6">
+                <label asp-for="CreateModel.InitialPassword" class="form-label required"></label>
+                <input asp-for="CreateModel.InitialPassword"
+                       type="password"
+                       class="form-control"
+                       required
+                       data-val="true"
+                       data-val-required="رمز عبور الزامی است" />
+                <span asp-validation-for="CreateModel.InitialPassword" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نام -->
+            <div class="col-md-6">
+                <label asp-for="CreateModel.FirstName" class="form-label required"></label>
+                <input asp-for="CreateModel.FirstName"
+                       class="form-control"
+                       required
+                       data-val="true"
+                       data-val-required="نام الزامی است" />
+                <span asp-validation-for="CreateModel.FirstName" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نام خانوادگی -->
+            <div class="col-md-6">
+                <label asp-for="CreateModel.LastName" class="form-label required"></label>
+                <input asp-for="CreateModel.LastName"
+                       class="form-control"
+                       required
+                       data-val="true"
+                       data-val-required="نام خانوادگی الزامی است" />
+                <span asp-validation-for="CreateModel.LastName" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- کد ملی -->
+            <div class="col-md-6">
+                <label asp-for="CreateModel.NationalCode" class="form-label required"></label>
+                <input asp-for="CreateModel.NationalCode"
+                       class="form-control"
+                       required
+                       maxlength="10"
+                       data-val="true"
+                       data-val-required="کد ملی الزامی است" />
+                <span asp-validation-for="CreateModel.NationalCode" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- شماره موبایل -->
+            <div class="col-md-6">
+                <label asp-for="CreateModel.MobileNumber" class="form-label required"></label>
+                <input asp-for="CreateModel.MobileNumber"
+                       class="form-control"
+                       required
+                       placeholder="09xxxxxxxxx"
+                       maxlength="11"
+                       data-val="true"
+                       data-val-required="شماره موبایل الزامی است" />
+                <span asp-validation-for="CreateModel.MobileNumber" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- واحد سازمانی -->
+            <div class="col-md-12">
+                <label asp-for="CreateModel.UnitId" class="form-label required"></label>
+                <select asp-for="CreateModel.UnitId"
+                        class="form-select"
+                        asp-items="Model.UnitOptions"
+                        required>
+                    <option value="">انتخاب کنید... </option>
+                </select>
+                <span asp-validation-for="CreateModel.UnitId" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نقش‌ها -->
+            <div class="col-md-12">
+                <label class="form-label">نقش‌های کاربر</label>
+                <div id="rolesContainer">
+                    @foreach (var role in Model.RoleOptions)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input role-checkbox"
+                                   type="checkbox"
+                                   id="role_@role.Value"
+                                   name="CreateModel.RoleIds"
+                                   value="@role.Value" />
+                            <label class="form-check-label" for="role_@role.Value">
+                                @role.Text
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit" class="btn btn-primary" id="btnCreate">
+            <i class="bi bi-check-circle"></i> ایجاد کاربر
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        $('#createAdminUserForm').on('submit', function(e) {
+            return adminUser.create.save(e);
+        });
+    });
+</script>

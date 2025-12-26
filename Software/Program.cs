@@ -3,6 +3,7 @@ using BLL;
 using BLL.Interface;
 using BLL.ManageToken;
 using BLL.Project.AdminRole;
+using BLL.Project.AdminUser;
 using BLL.Project.ConsumerSenderNumbers;
 using BLL.Project.ContactGroup;
 using BLL.Project.LoginAttempt;
@@ -199,6 +200,7 @@ services.AddScoped<IAdminMenuManager, AdminMenuManager>();
 services.AddScoped<IAdminRoleManager, AdminRoleManager>();
 services.AddScoped<IRoutePermissionManager, RoutePermissionManager>();
 services.AddScoped<IRolePermissionManager, RolePermissionManager>();
+services.AddScoped<IAdminUserManager, AdminUserManager>();
 
 #region SenderNumberSubArea
 services.AddScoped<ISenderNumberSubAreaManager, SenderNumberSubAreaManager>();

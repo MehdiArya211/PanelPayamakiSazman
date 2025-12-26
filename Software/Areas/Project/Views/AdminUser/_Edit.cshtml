@@ -1,0 +1,151 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DTO.Project.AdminUser.AdminUserFormViewModel
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-pencil"></i>
+        ویرایش کاربر مدیر:   <strong>@Model.EditModel.UserName</strong>
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form asp-area="Project"
+      asp-controller="AdminUser"
+      asp-action="Edit"
+      id="editAdminUserForm"
+      class="needs-validation"
+      novalidate>
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="EditModel.Id" />
+
+    <div class="modal-body">
+        <div class="row g-3">
+            <!-- نام کاربری (فقط خواندنی) -->
+            <div class="col-md-6">
+                <label class="form-label">نام کاربری</label>
+                <input type="text"
+                       class="form-control"
+                       value="@Model.EditModel.UserName"
+                       disabled />
+                <small class="text-muted">نام کاربری قابل تغییر نیست</small>
+            </div>
+
+            <!-- وضعیت -->
+            <div class="col-md-6">
+                <label asp-for="EditModel.IsActive" class="form-label required"></label>
+                <select asp-for="EditModel.IsActive"
+                        class="form-select">
+                    <option value="true">فعال</option>
+                    <option value="false">غیرفعال</option>
+                </select>
+            </div>
+
+            <!-- نام -->
+            <div class="col-md-6">
+                <label asp-for="EditModel.FirstName" class="form-label required"></label>
+                <input asp-for="EditModel.FirstName"
+                       class="form-control"
+                       required />
+                <span asp-validation-for="EditModel.FirstName" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نام خانوادگی -->
+            <div class="col-md-6">
+                <label asp-for="EditModel.LastName" class="form-label required"></label>
+                <input asp-for="EditModel.LastName"
+                       class="form-control"
+                       required />
+                <span asp-validation-for="EditModel.LastName" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- کد ملی -->
+            <div class="col-md-6">
+                <label asp-for="EditModel.NationalCode" class="form-label required"></label>
+                <input asp-for="EditModel.NationalCode"
+                       class="form-control"
+                       required
+                       maxlength="10" />
+                <span asp-validation-for="EditModel.NationalCode" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- شماره موبایل -->
+            <div class="col-md-6">
+                <label asp-for="EditModel.MobileNumber" class="form-label required"></label>
+                <input asp-for="EditModel.MobileNumber"
+                       class="form-control"
+                       required
+                       maxlength="11" />
+                <span asp-validation-for="EditModel.MobileNumber" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- واحد سازمانی -->
+            <div class="col-md-12">
+                <label asp-for="EditModel.UnitId" class="form-label required"></label>
+                <select asp-for="EditModel.UnitId"
+                        class="form-select"
+                        asp-items="Model.UnitOptions"
+                        required>
+                    <option value="">انتخاب کنید...</option>
+                </select>
+                <span asp-validation-for="EditModel.UnitId" class="text-danger small d-block mt-1"></span>
+            </div>
+
+            <!-- نقش‌های کنونی -->
+            <div class="col-md-12">
+                <label class="form-label">نقش‌های کنونی</label>
+                <div class="alert alert-info small">
+                    @if (Model.EditModel.CurrentRoles?.Count > 0)
+                    {
+                        @foreach (var role in Model.EditModel.CurrentRoles)
+                        {
+                            <span class="badge bg-primary me-2">@role.RoleName</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">هیچ نقشی تخصیص‌ داده نشده</span>
+                    }
+                </div>
+            </div>
+
+            <!-- نقش‌های جدید -->
+            <div class="col-md-12">
+                <label class="form-label">نقش‌های جدید</label>
+                <div id="rolesContainer">
+                    @foreach (var role in Model.RoleOptions)
+                    {
+                        var isChecked = Model.EditModel.CurrentRoles?.Any(r => r.RoleId == role.Value) ?? false;
+                        <div class="form-check">
+                            <input class="form-check-input role-checkbox"
+                                   type="checkbox"
+                                   id="role_@role.Value"
+                                   name="EditModel.RoleIds"
+                                   value="@role.Value"
+                                   @(isChecked ? "checked" :   "") />
+                            <label class="form-check-label" for="role_@role.Value">
+                                @role.Text
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+        <button type="submit" class="btn btn-primary" id="btnEdit">
+            <i class="bi bi-check-circle"></i> ذخیره تغییرات
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        $('#editAdminUserForm').on('submit', function(e) {
+            return adminUser.edit.save(e);
+        });
+    });
+</script>

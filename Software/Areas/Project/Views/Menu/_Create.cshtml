@@ -14,8 +14,8 @@
     </p>
     <div class="error text-danger text-center mb-2"></div>
 
-    <form asp-area="Admin" asp-controller="Menu" asp-action="Create"
-          class="create-form" onsubmit="return menu.create.save(event)">
+    <form asp-area="Project" asp-controller="Menu" asp-action="Create"
+          class="create-form" onsubmit="return menu.saveCreateForm(event)">
         @Html.AntiForgeryToken()
 
         <div class="row g-3">

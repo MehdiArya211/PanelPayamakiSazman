@@ -23,7 +23,7 @@ namespace BLL.Project.RolePermission
         /// <summary>
         /// دریافت لیست تمام Actionهای موجود در سیستم (Async)
         /// </summary>
-        Task<List<string>> GetAllSystemActionsAsync();
+        Task<List<ActionItem>> GetAllSystemActionsAsync();
 
         /// <summary>
         /// کپی مجوزها از یک نقش به نقش دیگر (Async)
@@ -34,5 +34,20 @@ namespace BLL.Project.RolePermission
         /// ریست کردن مجوزهای یک نقش (Async)
         /// </summary>
         Task<BaseResult> ResetPermissionsAsync(string roleName);
+
+
+
+
+        #region new
+        /// <summary>
+        /// دریافت مجوزهای یک نقش
+        /// </summary>
+        RolePermissionFormViewModel GetRolePermissions(string roleName);
+
+        /// <summary>
+        /// ذخیره مجوزهای نقش
+        /// </summary>
+        BaseResult SaveRolePermissions(string roleName, List<RoutePermissionInputDTO> permissions);
+        #endregion
     }
 }

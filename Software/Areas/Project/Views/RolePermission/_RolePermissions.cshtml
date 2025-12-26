@@ -1,139 +1,242 @@
 ﻿@model DTO.Project.RolePermission.RolePermissionViewModel
+@using System.Text.Json
+@using DTO.Project.RolePermission
+
+@{
+    var permissionsJson = JsonSerializer.Serialize(Model.Permissions ?? new List<PermissionDto>());
+    var actionItemsJson = JsonSerializer.Serialize(Model.ActionItems ?? new List<ActionItem>());
+}
 
 <div class="modal-header bg-success text-white">
     <h5 class="modal-title">
-        <i class="bi bi-shield-check"></i>
-        مدیریت مجوزهای نقش: <strong>@Model.RoleName</strong>
+        <i class="bi bi-shield-check me-2"></i>
+        مدیریت مجوزهای نقش: <strong class="text-warning">@Model.RoleName</strong>
     </h5>
-    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 
 <div class="modal-body p-0">
     <!-- Statistics Header -->
-    <div class="bg-light p-3 border-bottom">
-        <div class="row text-center">
+    <div class="bg-gradient bg-light p-3 border-bottom">
+        <div class="row text-center g-3">
             <div class="col-md-4">
-                <div class="display-6 fw-bold text-primary">@Model.TotalRoutes</div>
-                <div class="text-muted small">تعداد Routeها</div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="display-5 fw-bold text-primary" id="totalRoutes">@Model.TotalRoutes</div>
+                        <div class="text-muted small mt-1">تعداد Routeها</div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                <div class="display-6 fw-bold text-success">@Model.TotalAssignedActions</div>
-                <div class="text-muted small">مجوزهای اختصاص یافته</div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="display-5 fw-bold text-success" id="totalAssigned">@Model.TotalAssignedActions</div>
+                        <div class="text-muted small mt-1">مجوزهای فعال</div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                <div class="display-6 fw-bold text-info">@Model.TotalAvailableActions</div>
-                <div class="text-muted small">مجوزهای موجود</div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="display-5 fw-bold text-info" id="totalAvailable">@Model.TotalAvailableActions</div>
+                        <div class="text-muted small mt-1">مجوزهای موجود</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions Toolbar -->
-    <div class="p-3 border-bottom bg-light">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <button type="button" class="btn btn-sm btn-outline-primary" onclick="rolePermissions.selectAll()">
-                    <i class="bi bi-check-square"></i> انتخاب همه
+    <div class="p-3 border-bottom bg-white">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-sm btn-outline-primary shadow-sm" onclick="rolePermissions.selectAll()">
+                    <i class="bi bi-check-square me-1"></i> انتخاب همه
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="rolePermissions.deselectAll()">
-                    <i class="bi bi-square"></i> لغو همه
+                <button type="button" class="btn btn-sm btn-outline-secondary shadow-sm" onclick="rolePermissions.deselectAll()">
+                    <i class="bi bi-square me-1"></i> لغو همه
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-info shadow-sm" onclick="rolePermissions.selectAllActions()">
+                    <i class="bi bi-check-all me-1"></i> انتخاب همه Actionها
                 </button>
             </div>
-            <div>
-                <button type="button" class="btn btn-sm btn-warning" onclick="rolePermissions.showCopyDialog()">
-                    <i class="bi bi-files"></i> کپی از نقش دیگر
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-sm btn-warning shadow-sm" onclick="rolePermissions.showCopyDialog()">
+                    <i class="bi bi-files me-1"></i> کپی از نقش دیگر
                 </button>
-                <button type="button" class="btn btn-sm btn-danger" onclick="rolePermissions.resetConfirm()">
-                    <i class="bi bi-arrow-clockwise"></i> ریست مجوزها
+                <button type="button" class="btn btn-sm btn-danger shadow-sm" onclick="rolePermissions.resetConfirm()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> ریست مجوزها
                 </button>
             </div>
         </div>
 
-        <!-- Search Box -->
-        <div class="mt-2">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text">
-                    <i class="bi bi-search"></i>
+        <!-- Search and Filter -->
+        <div class="row g-2 mt-3">
+            <div class="col-md-8">
+                <div class="input-group input-group-sm shadow-sm">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0"
+                           id="permissionSearch"
+                           placeholder="جستجوی Route یا نام فارسی...">
+                    <button class="btn btn-outline-primary" type="button" onclick="rolePermissions.search()">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select form-select-sm shadow-sm" id="actionFilter" onchange="rolePermissions.filterByAction()">
+                    <option value="">همه Actionها</option>
+                    @foreach (var action in Model.ActionItems ?? new List<ActionItem>())
+                    {
+                        <option value="@action.Code">@action.DisplayName</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mt-3">
+            <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="text-muted">پیشرفت اختصاص مجوز:</span>
+                <span class="fw-bold text-success" id="progressText">
+                    @Model.TotalAssignedActions از @Model.TotalAvailableActions
                 </span>
-                <input type="text" class="form-control"
-                       id="permissionSearch"
-                       placeholder="جستجوی Route...">
-                <button class="btn btn-outline-secondary" type="button" onclick="rolePermissions.search()">
-                    جستجو
-                </button>
+            </div>
+            <div class="progress shadow-sm" style="height: 8px; border-radius: 4px;">
+                @{
+                    var progressPercentage = Model.TotalAvailableActions > 0
+                    ? (Model.TotalAssignedActions * 100 / Model.TotalAvailableActions)
+                    : 0;
+                }
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                     id="progressBar"
+                     role="progressbar"
+                     style="width: @progressPercentage%; border-radius: 4px;"
+                     aria-valuenow="@progressPercentage"
+                     aria-valuemin="0"
+                     aria-valuemax="100"></div>
             </div>
         </div>
     </div>
 
     <!-- Permissions Table -->
-    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+    <div class="table-responsive position-relative" style="max-height: 500px; overflow-y: auto;">
         <table class="table table-hover table-sm mb-0" id="permissionsTable">
-            <thead class="sticky-top bg-white" style="top: 0;">
+            <thead class="sticky-top bg-white" style="top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <tr>
                     <th width="40%">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="selectAllRoutes">
-                            <label class="form-check-label fw-bold" for="selectAllRoutes">
-                                Route
-                            </label>
+                        <div class="d-flex align-items-center">
+                            <div class="form-check me-2">
+                                <input class="form-check-input" type="checkbox" id="selectAllRoutes">
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Route / نام فارسی</div>
+                                <div class="text-muted small">روت سیستم و معادل فارسی آن</div>
+                            </div>
                         </div>
                     </th>
-                    <th width="60%" class="fw-bold">Actions</th>
+                    <th width="60%" class="text-dark">
+                        <div class="fw-bold">مجوزها (Actions)</div>
+                        <div class="text-muted small">هر Action را می‌توانید جداگانه انتخاب یا لغو کنید</div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var permission in Model.Permissions)
+                @if (Model.Permissions != null && Model.Permissions.Any())
                 {
-                    <tr class="permission-row" data-route="@permission.RouteKey">
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input route-checkbox"
-                                       type="checkbox"
-                                       value="@permission.RouteKey"
-                                       onclick="rolePermissions.toggleRoute('@permission.RouteKey', this.checked)">
-                                <label class="form-check-label">
-                                    <code class="route-key">@permission.DisplayRouteKey</code>
-                                    <small class="text-muted d-block">
-                                        @permission.AssignedCount از @permission.AvailableCount Action
-                                    </small>
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex flex-wrap gap-1">
-                                @foreach (var action in Model.AllActions)
-                                {
-                                    var isAvailable = permission.AvailableActions?.Contains(action) ?? false;
-                                    var isAssigned = permission.AssignedActions?.Contains(action) ?? false;
-
-                                    if (isAvailable)
-                                    {
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input action-checkbox"
-                                                   type="checkbox"
-                                                   id="action_@(permission.RouteKey)_@action"
-                                                   value="@action"
-                                                   data-route="@permission.RouteKey"
-                                                   @(isAssigned ? "checked" : "")
-                                                   onchange="rolePermissions.toggleAction('@permission.RouteKey', '@action', this.checked)">
-                                            <label class="form-check-label" for="action_@(permission.RouteKey)_@action">
-                                                <span class="badge @(isAssigned ? "bg-success" : "bg-outline-success")">
-                                                    @action
-                                                </span>
-                                            </label>
+                    foreach (var permission in Model.Permissions)
+                    {
+                        var routeKeyId = permission.RouteKey?.Replace('.', '_') ?? "";
+                        <tr class="permission-row"
+                            data-route="@permission.RouteKey"
+                            data-persian="@permission.PersianRouteName">
+                            <td>
+                                <div class="d-flex align-items-start">
+                                    <div class="form-check mt-1 me-2">
+                                        <input class="form-check-input route-checkbox"
+                                               type="checkbox"
+                                               value="@permission.RouteKey"
+                                               id="route_@routeKeyId"
+                                               data-assigned="@permission.AssignedCount"
+                                               data-total="@permission.AvailableCount"
+                                               @(permission.AvailableCount == permission.AssignedCount ? "checked" : "")>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-primary mb-1">
+                                            @Html.Raw(permission.PersianRouteName)
                                         </div>
-                                    }
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                }
+                                        <div class="mb-2">
+                                            <code class="route-key bg-light px-2 py-1 rounded">
+                                                @permission.DisplayRouteKey
+                                            </code>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-info px-3 py-1 rounded-pill"
+                                                  id="count_@routeKeyId"
+                                                  style="font-size: 0.8rem;">
+                                                <i class="bi bi-check2-circle me-1"></i>
+                                                <span class="assigned-count">@permission.AssignedCount</span> از
+                                                <span class="total-count">@permission.AvailableCount</span> مجوز
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var actionItem in Model.ActionItems ?? new List<ActionItem>())
+                                    {
+                                        var actionCode = actionItem.Code;
+                                        var isAvailable = permission.AvailableActions?.Contains(actionCode) ?? false;
+                                        var isAssigned = permission.AssignedActions?.Contains(actionCode) ?? false;
 
-                @if (!Model.Permissions.Any())
+                                        if (isAvailable)
+                                        {
+                                            <div class="action-item mb-1">
+                                                <input class="form-check-input action-checkbox d-none"
+                                                       type="checkbox"
+                                                       id="action_@(routeKeyId)_@actionCode"
+                                                       value="@actionCode"
+                                                       data-route="@permission.RouteKey"
+                                                       data-persian="@actionItem.PersianName"
+                                                       @(isAssigned ? "checked" : "")>
+                                                <label class="btn btn-sm m-0 p-0 border-0"
+                                                       for="action_@(routeKeyId)_@actionCode"
+                                                       style="cursor: pointer;">
+                                                    <span class="badge @(isAssigned ? "bg-success text-white shadow" : "bg-light text-dark border") px-3 py-2 rounded-pill action-badge"
+                                                          style="transition: all 0.3s ease; font-size: 0.85rem;"
+                                                          title="@actionItem.PersianName (@actionCode)">
+                                                        @if (isAssigned)
+                                                        {
+                                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-circle me-1"></i>
+                                                        }
+                                                        @actionItem.PersianName
+                                                        <small class="opacity-75 ms-1">(@actionCode)</small>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td colspan="2" class="text-center text-muted py-4">
-                            <i class="bi bi-inbox display-6 d-block mb-2"></i>
-                            هیچ مجوزی یافت نشد
+                        <td colspan="2" class="text-center text-muted py-5">
+                            <div class="py-4">
+                                <i class="bi bi-inbox display-4 d-block mb-3 text-muted"></i>
+                                <h5 class="text-muted mb-2">هیچ مجوزی یافت نشد</h5>
+                                <p class="small">برای این نقش هنوز مجوزی تعریف نشده است.</p>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -142,16 +245,30 @@
     </div>
 </div>
 
-<div class="modal-footer">
+<div class="modal-footer bg-light border-top">
     <div class="me-auto">
-        <div class="form-text">
-            <span id="selectedCount">0</span> Route انتخاب شده |
-            <span id="actionCount">@Model.TotalAssignedActions</span> Action فعال
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="bi bi-info-circle-fill text-primary"></i>
+            </div>
+            <div>
+                <small class="text-muted d-block">
+                    <span class="fw-bold" id="selectedRoutesCount">0</span> Route انتخاب شده
+                </small>
+                <small class="text-muted d-block">
+                    <span class="fw-bold" id="selectedActionsCount">@Model.TotalAssignedActions</span> Action فعال
+                </small>
+                <small class="text-muted">
+                    <span class="fw-bold text-success" id="completionRate">0%</span> تکمیل
+                </small>
+            </div>
         </div>
     </div>
-    <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
-    <button type="button" class="btn btn-success" onclick="rolePermissions.save()">
-        <i class="bi bi-save"></i> ذخیره تغییرات
+    <button type="button" class="btn btn-light border shadow-sm" data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i> انصراف
+    </button>
+    <button type="button" class="btn btn-success shadow-sm" onclick="rolePermissions.save()">
+        <i class="bi bi-save me-1"></i> ذخیره تغییرات
     </button>
 </div>
 
@@ -164,295 +281,313 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="bi bi-files text-warning"></i>
+                    <i class="bi bi-files text-warning me-2"></i>
                     کپی مجوزها
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">از نقش:</label>
-                    <select class="form-select" id="sourceRoleSelect">
+                    <label class="form-label fw-bold">از نقش:</label>
+                    <select class="form-select shadow-sm" id="sourceRoleSelect">
                         <option value="">انتخاب کنید...</option>
-                        <!-- با JavaScript پر می‌شود -->
                     </select>
                 </div>
-                <div class="alert alert-info small">
-                    <i class="bi bi-info-circle"></i>
+                <div class="alert alert-warning small border-warning">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     تمام مجوزهای نقش انتخاب شده به نقش فعلی کپی می‌شوند.
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
                 <button type="button" class="btn btn-warning" onclick="rolePermissions.copyPermissions()">
-                    <i class="bi bi-copy"></i> کپی
+                    <i class="bi bi-copy me-1"></i> کپی
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .route-key {
-        font-family: 'Consolas', 'Monaco', monospace;
-        font-size: 0.85rem;
-        background-color: #f8f9fa;
-        padding: 2px 6px;
-        border-radius: 3px;
-    }
-
-    .bg-outline-success {
-        background-color: transparent;
-        border: 1px solid #198754;
-        color: #198754;
-    }
-
-    .action-checkbox:checked + label .badge {
-        background-color: #198754 !important;
-        color: white !important;
-    }
-
-    .permission-row:hover {
-        background-color: #f8f9fa;
-    }
-
-    .sticky-top {
-        position: sticky;
-        z-index: 1;
-    }
-</style>
-
 <script>
-    // Global permissions state
-    window.rolePermissions = {
-        permissions: @Html.Raw(Json.Serialize(Model.Permissions)),
-        allActions: @Html.Raw(Json.Serialize(Model.AllActions)),
-        selectedRoutes: new Set(),
-        changes: {},
+    <text>
+     window.rolePermissions = {
+            permissions: @Html.Raw(permissionsJson),
+            actionItems: @Html.Raw(actionItemsJson),
+            selectedRoutes: new Set(),
+            searchTimeout: null,
 
-        init: function() {
-            this.updateCounts();
-            this.setupEventListeners();
-        },
+            init: function() {
+                var self = this;
 
-        setupEventListeners: function() {
-            // Select all routes checkbox
-            $('#selectAllRoutes').change(function() {
-                var isChecked = $(this).prop('checked');
-                $('.route-checkbox').prop('checked', isChecked).trigger('click');
-            });
+                // Wait for DOM to be fully ready
+                $(document).ready(function() {
+                    console.log('Initializing rolePermissions with', self.permissions.length, 'permissions');
 
-            // Search functionality
-            $('#permissionSearch').keyup(function(e) {
-                if (e.keyCode === 13) {
-                    rolePermissions.search();
-                }
-            });
+                    // Check if required elements exist
+                    if ($('#permissionsTable').length === 0) {
+                        console.warn('Permissions table not found');
+                        return;
+                    }
 
-            // Load roles for copy modal
-            this.loadRolesForCopy();
-        },
+                    self.setupEventListeners();
+                    self.initializeRouteCheckboxes();
+                    self.updateAllCounts();
+                    self.updateProgress();
+                });
+            },
 
-        toggleRoute: function(routeKey, isChecked) {
-            if (isChecked) {
-                this.selectedRoutes.add(routeKey);
-                // Select all available actions for this route
-                var permission = this.permissions.find(p => p.routeKey === routeKey);
-                if (permission && permission.availableActions) {
-                    permission.availableActions.forEach(action => {
-                        this.toggleAction(routeKey, action, true);
-                    });
-                }
-            } else {
-                this.selectedRoutes.delete(routeKey);
-                // Deselect all actions for this route
-                $('.action-checkbox[data-route="' + routeKey + '"]').prop('checked', false).trigger('change');
-            }
+            setupEventListeners: function() {
+                var self = this;
 
-            this.updateCounts();
-        },
-
-        toggleAction: function(routeKey, action, isChecked) {
-            // Track changes
-            if (!this.changes[routeKey]) {
-                this.changes[routeKey] = { added: [], removed: [] };
-            }
-
-            if (isChecked) {
-                if (!this.changes[routeKey].added.includes(action)) {
-                    this.changes[routeKey].added.push(action);
-                }
-                // Remove from removed if it was there
-                var index = this.changes[routeKey].removed.indexOf(action);
-                if (index > -1) {
-                    this.changes[routeKey].removed.splice(index, 1);
-                }
-            } else {
-                if (!this.changes[routeKey].removed.includes(action)) {
-                    this.changes[routeKey].removed.push(action);
-                }
-                // Remove from added if it was there
-                var index = this.changes[routeKey].added.indexOf(action);
-                if (index > -1) {
-                    this.changes[routeKey].added.splice(index, 1);
-                }
-            }
-
-            // Update UI
-            var badge = $('label[for="action_' + routeKey + '_' + action + '"] .badge');
-            if (isChecked) {
-                badge.removeClass('bg-outline-success').addClass('bg-success');
-            } else {
-                badge.removeClass('bg-success').addClass('bg-outline-success');
-            }
-
-            this.updateCounts();
-        },
-
-        selectAll: function() {
-            $('.route-checkbox').prop('checked', true).trigger('click');
-            $('#selectAllRoutes').prop('checked', true);
-        },
-
-        deselectAll: function() {
-            $('.route-checkbox').prop('checked', false).trigger('click');
-            $('#selectAllRoutes').prop('checked', false);
-        },
-
-        search: function() {
-            var searchTerm = $('#permissionSearch').val().toLowerCase();
-
-            $('.permission-row').each(function() {
-                var routeKey = $(this).data('route').toLowerCase();
-                var row = $(this);
-
-                if (searchTerm === '' || routeKey.includes(searchTerm)) {
-                    row.show();
-                } else {
-                    row.hide();
-                }
-            });
-        },
-
-        updateCounts: function() {
-            var selectedRoutes = $('.route-checkbox:checked').length;
-            var selectedActions = $('.action-checkbox:checked').length;
-
-            $('#selectedCount').text(selectedRoutes);
-            $('#actionCount').text(selectedActions);
-        },
-
-        save: function() {
-            var roleName = $('#roleName').val();
-            var permissions = [];
-
-            // Build permissions array from current state
-            $('.permission-row').each(function() {
-                var routeKey = $(this).data('route');
-                var actions = [];
-
-                $(this).find('.action-checkbox:checked').each(function() {
-                    actions.push($(this).val());
+                // Select all routes checkbox
+                $(document).on('change', '#selectAllRoutes', function() {
+                    var isChecked = $(this).prop('checked');
+                    $('.route-checkbox').prop('checked', isChecked).trigger('change');
                 });
 
-                if (actions.length > 0) {
-                    permissions.push({
-                        routeKey: routeKey,
-                        actions: actions
-                    });
-                }
-            });
+                // Route checkbox change (delegated event)
+                $(document).on('change', '.route-checkbox', function() {
+                    var routeKey = $(this).val();
+                    var isChecked = $(this).prop('checked');
+                    self.toggleRoute(routeKey, isChecked);
+                });
 
-            var model = {
-                roleName: roleName,
-                permissions: permissions
-            };
+                // Action checkbox change (delegated event)
+                $(document).on('change', '.action-checkbox', function() {
+                    var routeKey = $(this).data('route');
+                    var actionCode = $(this).val();
+                    var isChecked = $(this).prop('checked');
+                    var persianName = $(this).data('persian') || '';
+                    self.toggleAction(routeKey, actionCode, isChecked, persianName);
+                });
 
-            $.ajax({
-                url: '/Project/RolePermission/SavePermissions',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(model),
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function(response) {
-                    if (response.status) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'موفقیت',
-                            text: response.message,
-                            timer: 3000,
-                            showConfirmButton: false
-                        }).then(function() {
-                            $('#adminRoleModal').modal('hide');
-                            // Refresh permissions badge on main table
-                            adminRole.updatePermissionBadge(roleName);
-                        });
+                // Search functionality
+                $(document).on('keyup', '#permissionSearch', function(e) {
+                    if (e.keyCode === 13) {
+                        self.search();
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا',
-                            text: response.message
+                        clearTimeout(self.searchTimeout);
+                        self.searchTimeout = setTimeout(function() {
+                            self.search();
+                        }, 300);
+                    }
+                });
+            },
+
+            initializeRouteCheckboxes: function() {
+                // Initialize based on current state
+                $('.permission-row').each(function() {
+                    var routeCheckbox = $(this).find('.route-checkbox');
+                    var actionCheckboxes = $(this).find('.action-checkbox');
+
+                    var totalActions = actionCheckboxes.length;
+                    var checkedActions = actionCheckboxes.filter(':checked').length;
+
+                    routeCheckbox.prop('checked', totalActions > 0 && totalActions === checkedActions);
+                });
+
+                this.updateSelectAllCheckbox();
+            },
+
+            toggleRoute: function(routeKey, isChecked) {
+                console.log('Toggle route:', routeKey, isChecked);
+
+                var row = $('.permission-row[data-route="' + this.escapeSelector(routeKey) + '"]');
+                if (!row.length) {
+                    console.warn('Row not found for route:', routeKey);
+                    return;
+                }
+
+                var actionCheckboxes = row.find('.action-checkbox');
+
+                if (isChecked) {
+                    this.selectedRoutes.add(routeKey);
+                    // Select all actions
+                    actionCheckboxes.prop('checked', true).trigger('change');
+                } else {
+                    this.selectedRoutes.delete(routeKey);
+                    // Deselect all actions
+                    actionCheckboxes.prop('checked', false).trigger('change');
+                }
+
+                this.updateRouteCount(routeKey);
+                this.updateProgress();
+            },
+
+            toggleAction: function(routeKey, actionCode, isChecked, persianName) {
+                console.log('Toggle action:', routeKey, actionCode, isChecked, persianName);
+
+                var row = $('.permission-row[data-route="' + this.escapeSelector(routeKey) + '"]');
+                if (!row.length) {
+                    console.warn('Row not found for route:', routeKey);
+                    return;
+                }
+
+                var actionCheckbox = row.find('.action-checkbox[value="' + this.escapeSelector(actionCode) + '"]');
+                if (!actionCheckbox.length) {
+                    console.warn('Action checkbox not found:', actionCode);
+                    return;
+                }
+
+                var actionBadge = actionCheckbox.next('label').find('.action-badge');
+                var actionIcon = actionBadge.find('i');
+
+                // Update visual state
+                if (isChecked) {
+                    actionBadge.removeClass('bg-light text-dark border')
+                              .addClass('bg-success text-white shadow');
+                    actionIcon.removeClass('bi-circle').addClass('bi-check-circle-fill');
+                } else {
+                    actionBadge.removeClass('bg-success text-white shadow')
+                              .addClass('bg-light text-dark border');
+                    actionIcon.removeClass('bi-check-circle-fill').addClass('bi-circle');
+                }
+
+                // Update route checkbox state
+                this.updateRouteCheckbox(routeKey);
+                this.updateRouteCount(routeKey);
+                this.updateProgress();
+            },
+
+            updateRouteCheckbox: function(routeKey) {
+                var row = $('.permission-row[data-route="' + this.escapeSelector(routeKey) + '"]');
+                var routeCheckbox = row.find('.route-checkbox');
+                var actionCheckboxes = row.find('.action-checkbox');
+
+                var totalActions = actionCheckboxes.length;
+                var checkedActions = actionCheckboxes.filter(':checked').length;
+
+                routeCheckbox.prop('checked', totalActions > 0 && totalActions === checkedActions);
+                this.updateSelectAllCheckbox();
+            },
+
+            updateSelectAllCheckbox: function() {
+                var totalRoutes = $('.route-checkbox').length;
+                var checkedRoutes = $('.route-checkbox:checked').length;
+                $('#selectAllRoutes').prop('checked', totalRoutes > 0 && totalRoutes === checkedRoutes);
+            },
+
+            updateRouteCount: function(routeKey) {
+                var row = $('.permission-row[data-route="' + this.escapeSelector(routeKey) + '"]');
+                var actionCheckboxes = row.find('.action-checkbox');
+                var totalActions = actionCheckboxes.length;
+                var checkedActions = actionCheckboxes.filter(':checked').length;
+
+                var countBadge = row.find('.badge.bg-info');
+                countBadge.find('.assigned-count').text(checkedActions);
+                countBadge.find('.total-count').text(totalActions);
+            },
+
+            updateAllCounts: function() {
+                var selectedRoutes = $('.route-checkbox:checked').length;
+                var selectedActions = $('.action-checkbox:checked').length;
+                var totalActions = $('.action-checkbox').length;
+
+                $('#selectedRoutesCount').text(selectedRoutes);
+                $('#selectedActionsCount').text(selectedActions);
+
+                // Update completion rate
+                var completionRate = totalActions > 0 ? Math.round((selectedActions / totalActions) * 100) : 0;
+                $('#completionRate').text(completionRate + '%');
+            },
+
+            updateProgress: function() {
+                var selectedActions = $('.action-checkbox:checked').length;
+                var totalActions = $('.action-checkbox').length;
+
+                $('#progressText').text(selectedActions + ' از ' + totalActions);
+                $('#totalAssigned').text(selectedActions);
+
+                var progressPercentage = totalActions > 0 ? (selectedActions / totalActions * 100) : 0;
+                $('#progressBar').css('width', progressPercentage + '%')
+                               .attr('aria-valuenow', progressPercentage);
+
+                this.updateAllCounts();
+            },
+
+            selectAll: function() {
+                $('.route-checkbox').prop('checked', true).trigger('change');
+            },
+
+            deselectAll: function() {
+                $('.route-checkbox').prop('checked', false).trigger('change');
+            },
+
+            selectAllActions: function() {
+                $('.action-checkbox').prop('checked', true).trigger('change');
+            },
+
+            search: function() {
+                var searchTerm = $('#permissionSearch').val().toLowerCase().trim();
+
+                if (!searchTerm) {
+                    $('.permission-row').show();
+                    return;
+                }
+
+                $('.permission-row').each(function() {
+                    var routeKey = $(this).data('route') || '';
+                    var persianName = $(this).data('persian') || '';
+                    var matches = routeKey.toLowerCase().includes(searchTerm) ||
+                                 persianName.toLowerCase().includes(searchTerm);
+                    $(this).toggle(matches);
+                });
+            },
+
+            filterByAction: function() {
+                var selectedAction = $('#actionFilter').val();
+
+                if (!selectedAction) {
+                    $('.permission-row').show();
+                    return;
+                }
+
+                $('.permission-row').each(function() {
+                    var hasAction = $(this).find('.action-checkbox[value="' + selectedAction + '"]').length > 0;
+                    $(this).toggle(hasAction);
+                });
+            },
+
+            escapeSelector: function(selector) {
+                if (!selector) return '';
+                return selector.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
+            },
+
+            save: function() {
+                var roleName = $('#roleName').val();
+                var permissions = [];
+
+                // Build permissions array from current state
+                $('.permission-row').each(function() {
+                    var routeKey = $(this).data('route');
+                    var actions = [];
+
+                    $(this).find('.action-checkbox:checked').each(function() {
+                        actions.push($(this).val());
+                    });
+
+                    if (actions.length > 0) {
+                        permissions.push({
+                            routeKey: routeKey,
+                            actions: actions
                         });
                     }
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطا',
-                        text: 'خطا در ارتباط با سرور'
-                    });
-                }
-            });
-        },
-
-        showCopyDialog: function() {
-            $('#copyPermissionsModal').modal('show');
-        },
-
-        loadRolesForCopy: function() {
-            $.get('/Project/AdminRole/GetRolesDropdown', function(roles) {
-                var select = $('#sourceRoleSelect');
-                select.empty();
-                select.append('<option value="">انتخاب کنید...</option>');
-
-                var currentRole = $('#roleName').val();
-
-                roles.forEach(function(role) {
-                    if (role.value !== currentRole) {
-                        select.append(`<option value="${role.value}">${role.text}</option>`);
-                    }
                 });
-            });
-        },
 
-        copyPermissions: function() {
-            var sourceRole = $('#sourceRoleSelect').val();
-            var targetRole = $('#roleName').val();
+                console.log('Saving permissions for role:', roleName, permissions);
 
-            if (!sourceRole) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'هشدار',
-                    text: 'لطفاً یک نقش منبع انتخاب کنید.'
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: 'کپی مجوزها',
-                html: `آیا از کپی مجوزهای نقش <strong>${sourceRole}</strong> به نقش <strong>${targetRole}</strong> مطمئن هستید؟`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'بله، کپی شود',
-                cancelButtonText: 'انصراف'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post('/Project/RolePermission/CopyPermissions', {
-                        sourceRoleName: sourceRole,
-                        targetRoleName: targetRole
-                    }).done(function(response) {
+                $.ajax({
+                    url: '/Project/RolePermission/SavePermissions',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        roleName: roleName,
+                        permissions: permissions
+                    }),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
                         if (response.status) {
                             Swal.fire({
                                 icon: 'success',
@@ -461,9 +596,132 @@
                                 timer: 3000,
                                 showConfirmButton: false
                             }).then(function() {
-                                $('#copyPermissionsModal').modal('hide');
-                                // Reload permissions
-                                rolePermissions.reloadPermissions();
+                                $('#adminRoleModal').modal('hide');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا',
+                                text: response.message || 'خطا در ذخیره مجوزها'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا',
+                            text: 'خطا در ارتباط با سرور'
+                        });
+                    }
+                });
+            },
+
+            showCopyDialog: function() {
+                this.loadRolesForCopy();
+                $('#copyPermissionsModal').modal('show');
+            },
+
+            loadRolesForCopy: function() {
+                var currentRole = $('#roleName').val();
+
+                $.get('/Project/AdminRole/GetRolesDropdown', function(roles) {
+                    var select = $('#sourceRoleSelect');
+                    select.empty();
+                    select.append('<option value="">انتخاب کنید...</option>');
+
+                    if (roles && Array.isArray(roles)) {
+                        roles.forEach(function(role) {
+                            if (role.value && role.value !== currentRole) {
+                                select.append('<option value="' + role.value + '">' + role.text + '</option>');
+                            }
+                        });
+                    }
+                });
+            },
+
+            copyPermissions: function() {
+                var sourceRole = $('#sourceRoleSelect').val();
+                var targetRole = $('#roleName').val();
+
+                if (!sourceRole) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'هشدار',
+                        text: 'لطفاً یک نقش منبع انتخاب کنید.'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'کپی مجوزها',
+                    html: 'آیا از کپی مجوزهای نقش <strong>' + sourceRole + '</strong> به نقش <strong>' + targetRole + '</strong> مطمئن هستید؟',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله، کپی شود',
+                    cancelButtonText: 'انصراف'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        $.post('/Project/RolePermission/CopyPermissions', {
+                            sourceRoleName: sourceRole,
+                            targetRoleName: targetRole
+                        }).done(function(response) {
+                            if (response.status) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'موفقیت',
+                                    text: response.message,
+                                    timer: 3000
+                                }).then(function() {
+                                    $('#copyPermissionsModal').modal('hide');
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'خطا',
+                                    text: response.message
+                                });
+                            }
+                        }).fail(function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا',
+                                text: 'خطا در ارتباط با سرور'
+                            });
+                        });
+                    }
+                });
+            },
+
+            resetConfirm: function() {
+                var roleName = $('#roleName').val();
+
+                Swal.fire({
+                    title: 'ریست مجوزها',
+                    html: 'آیا از ریست تمام مجوزهای نقش <strong>' + roleName + '</strong> مطمئن هستید؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله، ریست شود',
+                    cancelButtonText: 'انصراف'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        window.rolePermissions.resetPermissions();
+                    }
+                });
+            },
+
+            resetPermissions: function() {
+                var roleName = $('#roleName').val();
+
+                $.post('/Project/RolePermission/ResetPermissions', { roleName: roleName })
+                    .done(function(response) {
+                        if (response.status) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'موفقیت',
+                                text: response.message,
+                                timer: 3000
+                            }).then(function() {
+                                window.rolePermissions.deselectAll();
                             });
                         } else {
                             Swal.fire({
@@ -472,83 +730,131 @@
                                 text: response.message
                             });
                         }
-                    }).fail(function() {
+                    })
+                    .fail(function() {
                         Swal.fire({
                             icon: 'error',
                             title: 'خطا',
                             text: 'خطا در ارتباط با سرور'
                         });
                     });
-                }
-            });
-        },
+            }
+        };
 
-        resetConfirm: function() {
-            var roleName = $('#roleName').val();
+        // Initialize when document is ready
+        $(document).ready(function() {
+            if ($('#permissionsTable').length > 0) {
+                rolePermissions.init();
+            }
+        });
+    </text>
 
-            Swal.fire({
-                title: 'ریست مجوزها',
-                html: `آیا از ریست تمام مجوزهای نقش <strong>${roleName}</strong> مطمئن هستید؟<br>
-                      <small class="text-danger">این عمل تمام مجوزها را پاک می‌کند!</small>`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'بله، ریست شود',
-                cancelButtonText: 'انصراف',
-                confirmButtonColor: '#dc3545'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    rolePermissions.resetPermissions();
-                }
-            });
-        },
 
-        resetPermissions: function() {
-            var roleName = $('#roleName').val();
-
-            $.post('/Project/RolePermission/ResetPermissions', { roleName: roleName })
-                .done(function(response) {
-                    if (response.status) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'موفقیت',
-                            text: response.message,
-                            timer: 3000,
-                            showConfirmButton: false
-                        }).then(function() {
-                            rolePermissions.reloadPermissions();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا',
-                            text: response.message
-                        });
-                    }
-                })
-                .fail(function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطا',
-                        text: 'خطا در ارتباط با سرور'
-                    });
-                });
-        },
-
-        reloadPermissions: function() {
-            var roleId = $('#roleId').val();
-            var roleName = $('#roleName').val();
-
-            $.get('/Project/RolePermission/LoadPermissionsModal', {
-                roleId: roleId,
-                roleName: roleName
-            }, function(response) {
-                $('#routePermissionModalContent').html(response);
-            });
-        }
-    };
-
-    // Initialize when modal is shown
-    $(document).ready(function() {
-        rolePermissions.init();
-    });
 </script>
+
+<style>
+    .route-key {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.75rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid #dee2e6;
+        direction: ltr;
+        display: inline-block;
+    }
+
+    .action-badge {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border-width: 1px !important;
+    }
+
+        .action-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+        }
+
+        .action-badge.bg-success:hover {
+            background-color: #157347 !important;
+        }
+
+        .action-badge.bg-light:hover {
+            background-color: #f8f9fa !important;
+        }
+
+    .permission-row {
+        border-left: 4px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+        .permission-row:hover {
+            border-left-color: #198754;
+            background-color: #f8f9fa !important;
+            transform: translateX(2px);
+        }
+
+    .sticky-top {
+        position: sticky;
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.95) !important;
+    }
+
+    .progress-bar-animated {
+        animation: progress-bar-stripes 1s linear infinite;
+    }
+
+    @@keyframes progress-bar-stripes {
+        0% {
+            background-position: 1rem 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+
+    .table-responsive::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+    .form-check-input:checked {
+        background-color: #198754;
+        border-color: #198754;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+
+    @@media (max-width: 768px) {
+        .action-badge {
+            font-size: 0.75rem !important;
+            padding: 0.4rem 0.6rem !important;
+        }
+
+        .permission-row td:first-child {
+            min-width: 250px;
+        }
+
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+    }
+</style>

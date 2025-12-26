@@ -15,12 +15,15 @@ namespace DTO.Project.RolePermission
         public string RoleName { get; set; }
         public List<PermissionDto> Permissions { get; set; } = new List<PermissionDto>();
 
+        // لیست Actionها با نام فارسی
+        public List<ActionItem> ActionItems { get; set; } = new List<ActionItem>();
+
         // آمار برای نمایش
         public int TotalRoutes => Permissions?.Count ?? 0;
         public int TotalAssignedActions => Permissions?.Sum(p => p.AssignedCount) ?? 0;
         public int TotalAvailableActions => Permissions?.Sum(p => p.AvailableCount) ?? 0;
 
         // برای فیلتر کردن
-        public List<string> AllActions { get; set; } = new List<string>();
+        public List<string> GetAllActionCodes() => ActionItems?.Select(a => a.Code).ToList() ?? new List<string>();
     }
 }

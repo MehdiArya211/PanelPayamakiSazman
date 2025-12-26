@@ -3,6 +3,7 @@ using BLL.Project.RolePermission;
 using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.AdminRole;
+using DTO.Project.RolePermission;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -226,5 +227,54 @@ namespace PanelSMS.Areas.Project.AdminRole.Controllers
         }
 
 
+
+        /* ------------ Role Permissions ------------ */
+
+        public async Task<IActionResult> LoadPermissionsForm(string id)
+        {
+            // ابتدا نقش را بگیر برای دریافت نام
+            var roleData = await _roleManager.GetByIdAsync(id);
+            if (roleData == null)
+                return Content("خطا در دریافت اطلاعات نقش.");
+
+            // سپس مجوزهای نقش را بگیر
+            var permissionsData = _rolePermissionManager.GetRolePermissions(roleData.Name);
+            if (permissionsData == null)
+                return Content("خطا در دریافت مجوزهای نقش.");
+
+            permissionsData.RoleId = id;
+            return PartialView("_RolePermissions", permissionsData);
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult SavePermissions([FromBody] SavePermissionsRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request?.RoleName) || request.Permissions == null)
+                {
+                    return Json(new BaseResult
+                    {
+                        Status = false,
+                        Message = "اطلاعات ارسال‌شده معتبر نیست."
+                    });
+                }
+
+                var result = _rolePermissionManager.SaveRolePermissions(request.RoleName, request.Permissions);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new BaseResult { Status = false, Message = ex.Message });
+            }
+        }
+
+        public class SavePermissionsRequest
+        {
+            public string RoleId { get; set; }
+            public string RoleName { get; set; }
+            public List<RoutePermissionInputDTO> Permissions { get; set; }
+        }
     }
 }
