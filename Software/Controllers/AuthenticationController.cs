@@ -181,7 +181,7 @@ namespace Momayezi.Controllers
 
             using var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post,
-                "http://samp.core.api:80/api/auth/change-password");
+                "http://10.128.155.16/api/auth/change-password");
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -243,7 +243,7 @@ namespace Momayezi.Controllers
                     using var client = new HttpClient();
 
                     var request = new HttpRequestMessage(HttpMethod.Post,
-                        "http://samp.core.api:80/api/auth/logout");
+                        "http://10.128.155.16/api/auth/logout");
 
                     // 🔹 استفاده از AccessToken کاربر جاری
                     request.Headers.Authorization =

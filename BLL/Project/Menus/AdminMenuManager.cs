@@ -24,7 +24,7 @@ namespace BLL.Project.Menus
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            _baseUrl = "http://87.107.111.44:8010"; // یا config["ApiBaseUrl"]
+            _baseUrl = config["ApiBaseUrl"]; /*"http://87.107.111.44:8010";*/ // یا config["ApiBaseUrl"]
         }
 
         private void SetAuth()

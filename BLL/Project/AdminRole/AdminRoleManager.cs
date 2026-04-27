@@ -32,7 +32,7 @@ namespace BLL.Project.AdminRole
         {
             _httpContext = httpContext;
             _logger = logger;
-            _baseUrl = /*configuration["ApiSettings:BaseUrl"] ??*/ "http://87.107.111.44:8010";
+            _baseUrl = configuration["ApiBaseUrl"]; /*"http://87.107.111.44:8010"*/
             _httpClient = httpClientFactory.CreateClient("AdminApi");
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
 

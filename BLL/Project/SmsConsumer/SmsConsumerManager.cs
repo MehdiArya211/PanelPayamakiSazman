@@ -24,8 +24,7 @@ namespace BLL.Project.SmsConsumer
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            //_baseUrl = config["ApiBaseUrl"] ?? "http://87.107.111.44:8010";
-            _baseUrl = "http://87.107.111.44:8010";
+            _baseUrl = config["ApiBaseUrl"] /*?? "http://87.107.111.44:8010"*/;
         }
 
         private void SetAuth()

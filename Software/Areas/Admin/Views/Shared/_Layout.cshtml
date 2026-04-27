@@ -463,7 +463,7 @@
     <script src="~/newjs/jquery.validate.unobtrusive.min.js"></script>
     <!-- Bootstrap + SweetAlert -->
     <script src="~/newjs/bootstrap.bundle.min.js"></script>
-    <script src="~/newjs/sweetalert2@11"></script>
+    <script src="~/newjs/sweetalert2@11.js"></script>
    
 
     <!-- DataTables -->
@@ -488,17 +488,19 @@
             const backdrop = document.getElementById("sidebarBackdrop");
             const toggleBtn = document.getElementById("btnToggleSidebar");
 
-            toggleBtn?.addEventListener("click", () => {
+                    if (toggleBtn) {
+            toggleBtn.addEventListener("click", function () {
                 const isShown = sidebar.classList.contains("show");
+
                 if (!isShown) {
                     sidebar.classList.add("show");
                     backdrop.classList.add("show");
-                }
-                else {
+                } else {
                     sidebar.classList.remove("show");
                     backdrop.classList.remove("show");
                 }
             });
+        }
 
             backdrop.addEventListener("click", () => {
                 sidebar.classList.remove("show");

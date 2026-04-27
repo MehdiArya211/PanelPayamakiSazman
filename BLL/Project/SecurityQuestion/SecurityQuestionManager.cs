@@ -3,6 +3,7 @@ using DTO.DataTable;
 using DTO.Project.SecurityQuestion;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,13 @@ namespace BLL.Project.SecurityQuestion
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly HttpClient _client;
+        private readonly string _baseUrl;
 
-        public SecurityQuestionManager(IHttpContextAccessor accessor)
+        public SecurityQuestionManager(IHttpContextAccessor accessor , IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
+            _baseUrl = config["ApiBaseUrl"];
         }
 
         /* ----------------------------------------------
@@ -46,7 +49,7 @@ namespace BLL.Project.SecurityQuestion
             SetAuth();
 
             // طبق نمونه خودت: security-questions/null
-            var url = "http://87.107.111.44:8010/api/admin/security-questions/null";
+            var url = _baseUrl + "/api/admin/security-questions/null";
 
             var res = _client.GetAsync(url).Result;
 
@@ -66,7 +69,7 @@ namespace BLL.Project.SecurityQuestion
             {
                 SetAuth();
 
-                var url = "http://87.107.111.44:8010/api/admin/security-questions";
+                var url = _baseUrl + "/api/admin/security-questions";
 
                 var body = new { text = model.Text }; // 👈 کاملاً مطابق API
 
@@ -94,7 +97,7 @@ namespace BLL.Project.SecurityQuestion
         {
             SetAuth();
 
-            var url = "http://87.107.111.44:8010/api/admin/security-questions/search";
+            var url = _baseUrl + "/api/admin/security-questions/search";
 
             var body = new
             {
@@ -145,7 +148,7 @@ namespace BLL.Project.SecurityQuestion
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/security-questions/{id}";
+                var url = _baseUrl + $"/api/admin/security-questions/{id}";
 
                 var res = _client.GetAsync(url).Result;
 
@@ -176,7 +179,7 @@ namespace BLL.Project.SecurityQuestion
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/security-questions/{model.Id}";
+                var url = _baseUrl + $"/api/admin/security-questions/{model.Id}";
 
                 var json = JsonSerializer.Serialize(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -203,7 +206,7 @@ namespace BLL.Project.SecurityQuestion
             {
                 SetAuth();
 
-                var url = $"http://87.107.111.44:8010/api/admin/security-questions/{id}";
+                var url = _baseUrl + $"/api/admin/security-questions/{id}";
 
                 var res = _client.DeleteAsync(url).Result;
 

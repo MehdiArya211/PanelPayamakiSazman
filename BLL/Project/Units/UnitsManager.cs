@@ -9,20 +9,23 @@ using Domain.Entities;
 using DTO;
 using DTO.User;
 using Infrastructure.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace BLL
 {
     public class UnitsManager : Manager<User, ApplicationContext>, IUnitsManager
     {
+        private readonly string _baseUrl;
 
-        public UnitsManager(DbContexts contexts) : base(contexts)
+        public UnitsManager(DbContexts contexts , IConfiguration config) : base(contexts)
         {
+            _baseUrl = config["ApiBaseUrl"];
         }
 
         public async Task<List<UnitsDTO>> SearchUnitsAsync(UnitSearchRequest request, UserSessionDTO User)
         {
             // مستقیم توی خود متد
-            var baseUrl = "http://87.107.111.44:8010";
+            var baseUrl = _baseUrl;
             var token = User.AccessToken.ToString();
 
             var bodyObj = new

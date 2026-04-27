@@ -25,7 +25,7 @@ namespace BLL.Project.SmsManager
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            _baseUrl = "http://87.107.111.44:8010"; // یا config["ApiBaseUrl"]
+            _baseUrl = _baseUrl = config["ApiBaseUrl"];
         }
 
         private void SetAuth()

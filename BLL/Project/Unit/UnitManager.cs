@@ -26,7 +26,7 @@ namespace BLL.Project.Unit
             _httpContext = accessor;
             _client = new HttpClient();
 
-            _baseUrl ="http://87.107.111.44:8010";
+            _baseUrl = _baseUrl = config["ApiBaseUrl"];
             //_baseUrl = config["ApiBaseUrl"] ?? "http://87.107.111.44:8010";
         }
 

@@ -1,8 +1,10 @@
-﻿using DTO.Base;
+﻿using Domain.Resources;
+using DTO.Base;
 using DTO.DataTable;
 using DTO.Project.ContactGroup;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,11 @@ namespace BLL.Project.ContactGroup
         private readonly HttpClient _client;
         private readonly string _baseUrl;
 
-        public ContactGroupManager(IHttpContextAccessor accessor)
+        public ContactGroupManager(IHttpContextAccessor accessor, IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            _baseUrl = "http://87.107.111.44:8010";
+            _baseUrl = config["ApiBaseUrl"]; /*"http://87.107.111.44:8010"*/
         }
 
         

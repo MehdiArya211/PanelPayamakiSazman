@@ -59,7 +59,7 @@ namespace BLL
                 using var client = new HttpClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Post,
-                    "http://samp.core.api:80/api/auth/login");
+                    "http://10.128.155.16/api/auth/login");
 
                 var body = new
                 {

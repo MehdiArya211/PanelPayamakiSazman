@@ -3,6 +3,7 @@ using DTO.DataTable;
 using DTO.Project.SenderChargeRequestConsumer;
 using DTO.WebApi;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,11 @@ namespace BLL.Project.SenderChargeRequestConsumer
         private readonly HttpClient _client;
         private readonly string _baseUrl;
 
-        public SenderChargeRequestConsumerManager(IHttpContextAccessor accessor)
+        public SenderChargeRequestConsumerManager(IHttpContextAccessor accessor,IConfiguration config)
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            _baseUrl = "http://87.107.111.44:8010";
+            _baseUrl = config["ApiBaseUrl"];
         }
 
         private void SetAuth()

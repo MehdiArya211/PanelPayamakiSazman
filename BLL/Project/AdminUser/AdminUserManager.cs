@@ -24,7 +24,7 @@ namespace BLL.Project.AdminUser
         {
             _httpContext = accessor;
             _client = new HttpClient();
-            _baseUrl = "http://87.107.111.44:8010";
+            _baseUrl = config["ApiBaseUrl"]; 
         }
 
         private void SetAuth()
